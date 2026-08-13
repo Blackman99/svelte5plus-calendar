@@ -1,0 +1,227 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" font-family="-apple-system, 'Segoe UI', 'Helvetica Neue', Arial, 'PingFang SC', sans-serif">
+	<defs>
+		<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#0a2ca8" />
+			<stop offset="0.55" stop-color="#0f3cd9" />
+			<stop offset="1" stop-color="#2b54ee" />
+		</linearGradient>
+		<radialGradient id="glow" cx="0.82" cy="0.05" r="0.9">
+			<stop offset="0" stop-color="#ffffff" stop-opacity="0.16" />
+			<stop offset="0.55" stop-color="#ffffff" stop-opacity="0" />
+		</radialGradient>
+		<pattern id="grid" width="44" height="44" patternUnits="userSpaceOnUse">
+			<path d="M44 0H0V44" fill="none" stroke="#ffffff" stroke-opacity="0.06" />
+		</pattern>
+		<clipPath id="canvas">
+			<rect width="1200" height="480" rx="26" />
+		</clipPath>
+		<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+			<feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#03103f" flood-opacity="0.5" />
+		</filter>
+		<filter id="shadow-sm" x="-40%" y="-40%" width="180%" height="180%">
+			<feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#03103f" flood-opacity="0.45" />
+		</filter>
+	</defs>
+
+	<!-- canvas -->
+	<g clip-path="url(#canvas)">
+		<rect width="1200" height="480" fill="url(#bg)" />
+		<rect width="1200" height="480" fill="url(#grid)" />
+		<rect width="1200" height="480" fill="url(#glow)" />
+		<!-- oversized decorative day number -->
+		<text x="452" y="470" font-size="330" font-weight="700" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="2">31</text>
+	</g>
+
+	<!-- ===== left column ===== -->
+	<!-- logo tile (inverted brand mark so it pops on the blue canvas) -->
+	<g transform="translate(70,60) scale(1.05)" filter="url(#shadow-sm)">
+		<rect width="64" height="64" rx="15" fill="#ffffff" />
+		<g fill="#0f3cd9">
+			<rect x="10" y="10" width="12" height="12" rx="3.5" opacity="0.4" />
+			<rect x="26" y="10" width="12" height="12" rx="3.5" opacity="0.4" />
+			<rect x="42" y="10" width="12" height="12" rx="3.5" opacity="0.4" />
+			<rect x="10" y="26" width="12" height="12" rx="3.5" opacity="0.4" />
+			<rect x="26" y="26" width="12" height="12" rx="3.5" />
+			<rect x="42" y="26" width="12" height="12" rx="3.5" opacity="0.4" />
+			<rect x="42" y="42" width="12" height="12" rx="3.5" opacity="0.4" />
+		</g>
+		<rect x="10" y="42" width="28" height="12" rx="6" fill="#ffb52e" />
+	</g>
+
+	<!-- wordmark -->
+	<text x="70" y="192" font-size="44" font-weight="700" fill="#ffffff" letter-spacing="-1">svelte5plus<tspan fill="#ffb52e" font-style="italic">·calendar</tspan></text>
+
+	<!-- tagline -->
+	<text x="70" y="232" font-size="18" fill="#ffffff" fill-opacity="0.9">Every calendar view your app needs — in one Svelte 5 component.</text>
+	<text x="70" y="260" font-size="15" fill="#ffffff" fill-opacity="0.66">Month · Week · Day · Year · Agenda · Resources</text>
+
+	<!-- feature chips -->
+	<g font-size="13" font-weight="600" fill="#ffffff" text-anchor="middle">
+		<g>
+			<rect x="70" y="288" width="112" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="126" y="308">Drag &amp; drop</text>
+			<rect x="192" y="288" width="148" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="266" y="308">Recurring · RRULE</text>
+			<rect x="350" y="288" width="106" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="403" y="308">Time zones</text>
+			<rect x="466" y="288" width="94" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="513" y="308">i18n ×10</text>
+		</g>
+		<g>
+			<rect x="70" y="328" width="152" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="146" y="348">Built-in popovers</text>
+			<rect x="232" y="328" width="106" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="285" y="348">Dark mode</text>
+			<rect x="348" y="328" width="70" height="30" rx="15" fill="#ffffff" fill-opacity="0.14" />
+			<text x="383" y="348">Touch</text>
+			<rect x="428" y="328" width="60" height="30" rx="15" fill="#ffb52e" />
+			<text x="458" y="348" fill="#0f3cd9">ICS</text>
+		</g>
+	</g>
+
+	<!-- footer line -->
+	<text x="70" y="414" font-size="13.5" fill="#ffffff" fill-opacity="0.62" letter-spacing="0.5">Svelte 5 runes · TypeScript · Zero dependencies · MIT</text>
+
+	<!-- ===== right cluster: week-view card ===== -->
+	<g filter="url(#shadow)">
+		<rect x="640" y="52" width="500" height="376" rx="18" fill="#ffffff" />
+	</g>
+	<g>
+		<!-- toolbar -->
+		<rect x="664" y="74" width="64" height="26" rx="13" fill="none" stroke="#c9ced6" stroke-width="1.5" />
+		<text x="696" y="91" font-size="12.5" font-weight="600" fill="#3c4046" text-anchor="middle">Today</text>
+		<text x="746" y="92" font-size="15" fill="#6a707a">‹</text>
+		<text x="766" y="92" font-size="15" fill="#6a707a">›</text>
+		<text x="790" y="92" font-size="15.5" font-weight="650" fill="#1f2328">August 2026</text>
+		<!-- view switch -->
+		<rect x="984" y="74" width="140" height="26" rx="13" fill="none" stroke="#c9ced6" stroke-width="1.5" />
+		<rect x="1031" y="76.5" width="46" height="21" rx="10.5" fill="#0f3cd9" fill-opacity="0.14" />
+		<text x="1007" y="90" font-size="11.5" fill="#6a707a" text-anchor="middle">Day</text>
+		<text x="1054" y="90" font-size="11.5" font-weight="700" fill="#0f3cd9" text-anchor="middle">Week</text>
+		<text x="1101" y="90" font-size="11.5" fill="#6a707a" text-anchor="middle">Month</text>
+
+		<!-- day header: 7 columns of width 66 starting x=678 -->
+		<g font-size="12" fill="#8b9099" text-anchor="middle">
+			<text x="711" y="126">10</text>
+			<text x="777" y="126">11</text>
+			<text x="843" y="126">12</text>
+			<circle cx="909" cy="121.5" r="11.5" fill="#0f3cd9" />
+			<text x="909" y="126" fill="#ffffff" font-weight="700">13</text>
+			<text x="975" y="126">14</text>
+			<text x="1041" y="126">15</text>
+			<text x="1107" y="126">16</text>
+		</g>
+
+		<!-- all-day amber bar under days 14-15 -->
+		<rect x="944" y="138" width="128" height="14" rx="7" fill="#ffb52e" />
+
+		<!-- grid area: y 162..410, hour lines every 41 -->
+		<g stroke="#e7e4dc">
+			<line x1="664" y1="162" x2="1124" y2="162" />
+			<line x1="664" y1="203" x2="1124" y2="203" />
+			<line x1="664" y1="244" x2="1124" y2="244" />
+			<line x1="664" y1="285" x2="1124" y2="285" />
+			<line x1="664" y1="326" x2="1124" y2="326" />
+			<line x1="664" y1="367" x2="1124" y2="367" />
+		</g>
+		<!-- today column tint -->
+		<rect x="876" y="156" width="66" height="252" fill="#0f3cd9" fill-opacity="0.05" />
+		<g stroke="#efece5">
+			<line x1="744" y1="156" x2="744" y2="408" />
+			<line x1="810" y1="156" x2="810" y2="408" />
+			<line x1="876" y1="156" x2="876" y2="408" />
+			<line x1="942" y1="156" x2="942" y2="408" />
+			<line x1="1008" y1="156" x2="1008" y2="408" />
+			<line x1="1074" y1="156" x2="1074" y2="408" />
+		</g>
+
+		<!-- events (tinted blocks with solid left bars + text-line hints) -->
+		<!-- Mon: blue -->
+		<g>
+			<rect x="682" y="170" width="58" height="72" rx="6" fill="#1a73e8" fill-opacity="0.16" />
+			<rect x="682" y="170" width="3.5" height="72" rx="1.75" fill="#1a73e8" />
+			<rect x="691" y="180" width="38" height="5" rx="2.5" fill="#1a73e8" fill-opacity="0.75" />
+			<rect x="691" y="191" width="28" height="4" rx="2" fill="#1a73e8" fill-opacity="0.4" />
+		</g>
+		<!-- Tue: teal -->
+		<g>
+			<rect x="748" y="211" width="58" height="52" rx="6" fill="#12a4af" fill-opacity="0.16" />
+			<rect x="748" y="211" width="3.5" height="52" rx="1.75" fill="#12a4af" />
+			<rect x="757" y="221" width="36" height="5" rx="2.5" fill="#12a4af" fill-opacity="0.75" />
+			<rect x="757" y="232" width="24" height="4" rx="2" fill="#12a4af" fill-opacity="0.4" />
+		</g>
+		<!-- Wed: green (lunch) -->
+		<g>
+			<rect x="814" y="252" width="58" height="41" rx="6" fill="#188038" fill-opacity="0.16" />
+			<rect x="814" y="252" width="3.5" height="41" rx="1.75" fill="#188038" />
+			<rect x="823" y="262" width="34" height="5" rx="2.5" fill="#188038" fill-opacity="0.75" />
+		</g>
+		<!-- Thu (today): purple + pink overlapping columns -->
+		<g>
+			<rect x="880" y="190" width="28" height="94" rx="6" fill="#8430ce" fill-opacity="0.22" />
+			<rect x="880" y="190" width="3.5" height="94" rx="1.75" fill="#8430ce" />
+			<rect x="888" y="199" width="15" height="4.5" rx="2.25" fill="#8430ce" fill-opacity="0.75" />
+			<rect x="911" y="223" width="28" height="82" rx="6" fill="#d01884" fill-opacity="0.22" />
+			<rect x="911" y="223" width="3.5" height="82" rx="1.75" fill="#d01884" />
+			<rect x="919" y="232" width="15" height="4.5" rx="2.25" fill="#d01884" fill-opacity="0.75" />
+		</g>
+		<!-- Fri: green evening -->
+		<g>
+			<rect x="946" y="305" width="58" height="52" rx="6" fill="#188038" fill-opacity="0.16" />
+			<rect x="946" y="305" width="3.5" height="52" rx="1.75" fill="#188038" />
+			<rect x="955" y="315" width="34" height="5" rx="2.5" fill="#188038" fill-opacity="0.75" />
+		</g>
+		<!-- Sat: pink morning -->
+		<g>
+			<rect x="1078" y="170" width="58" height="41" rx="6" fill="#d01884" fill-opacity="0.16" transform="translate(-66,0)" />
+			<rect x="1012" y="170" width="3.5" height="41" rx="1.75" fill="#d01884" />
+			<rect x="1021" y="180" width="30" height="5" rx="2.5" fill="#d01884" fill-opacity="0.7" />
+		</g>
+
+		<!-- now line across today column -->
+		<line x1="876" y1="298" x2="942" y2="298" stroke="#ea4335" stroke-width="2.5" />
+		<circle cx="876" cy="298" r="4.5" fill="#ea4335" />
+	</g>
+
+	<!-- ===== floating quick-create popover ===== -->
+	<g filter="url(#shadow-sm)">
+		<rect x="986" y="180" width="196" height="128" rx="14" fill="#ffffff" />
+	</g>
+	<g>
+		<text x="1004" y="208" font-size="13.5" font-weight="700" fill="#1f2328">New event</text>
+		<rect x="1004" y="220" width="160" height="26" rx="8" fill="none" stroke="#c9ced6" stroke-width="1.5" />
+		<rect x="1012" y="230" width="60" height="6" rx="3" fill="#b6bbc4" />
+		<circle cx="1010" cy="262" r="4" fill="#188038" />
+		<rect x="1021" y="258" width="52" height="7" rx="3.5" fill="#d7d3ca" />
+		<rect x="1106" y="274" width="58" height="24" rx="12" fill="#0f3cd9" />
+		<text x="1135" y="290" font-size="12" font-weight="700" fill="#ffffff" text-anchor="middle">Add</text>
+	</g>
+
+	<!-- ===== floating dark mini-month ===== -->
+	<g filter="url(#shadow-sm)">
+		<rect x="566" y="284" width="196" height="160" rx="14" fill="#1b1d21" />
+	</g>
+	<g>
+		<text x="584" y="312" font-size="12.5" font-weight="700" fill="#e5e7ea">August</text>
+		<text x="742" y="312" font-size="12" fill="#7c8089" text-anchor="end">‹ ›</text>
+		<!-- dot grid 7×4 -->
+		<g fill="#565b64">
+			<g transform="translate(590,330)">
+				<circle cx="0" cy="0" r="3" /><circle cx="26" cy="0" r="3" /><circle cx="52" cy="0" r="3" /><circle cx="78" cy="0" r="3" /><circle cx="104" cy="0" r="3" /><circle cx="130" cy="0" r="3" /><circle cx="156" cy="0" r="3" />
+			</g>
+			<g transform="translate(590,354)">
+				<circle cx="0" cy="0" r="3" /><circle cx="26" cy="0" r="3" /><circle cx="52" cy="0" r="3" /><circle cx="78" cy="0" r="3" fill="#ffb52e" /><circle cx="104" cy="0" r="3" /><circle cx="130" cy="0" r="3" /><circle cx="156" cy="0" r="3" />
+			</g>
+			<g transform="translate(590,378)">
+				<circle cx="0" cy="0" r="3" /><circle cx="26" cy="0" r="3" />
+				<circle cx="52" cy="0" r="10" fill="#8ab4f8" />
+				<circle cx="78" cy="0" r="3" /><circle cx="104" cy="0" r="3" /><circle cx="130" cy="0" r="3" /><circle cx="156" cy="0" r="3" />
+			</g>
+			<g transform="translate(590,402)">
+				<circle cx="0" cy="0" r="3" /><circle cx="26" cy="0" r="3" /><circle cx="52" cy="0" r="3" /><circle cx="78" cy="0" r="3" /><circle cx="104" cy="0" r="3" fill="#f28b82" /><circle cx="130" cy="0" r="3" /><circle cx="156" cy="0" r="3" />
+			</g>
+		</g>
+		<text x="642" y="382" font-size="11" font-weight="700" fill="#1b1d21" text-anchor="middle">13</text>
+		<text x="584" y="430" font-size="10.5" fill="#7c8089">DARK MODE</text>
+	</g>
+</svg>

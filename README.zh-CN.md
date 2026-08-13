@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Blackman99/svelte5plus-calendar/main/static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
+  <a href="https://blackman99.github.io/svelte5plus-calendar/zh/">
+    <img src="https://raw.githubusercontent.com/Blackman99/svelte5plus-calendar/main/static/banner.svg" alt="svelte5plus-calendar — 一个组件，装下应用需要的每一种日历" width="100%" />
+  </a>
 </p>
 
 # svelte5plus-calendar
