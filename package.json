@@ -1,6 +1,6 @@
 {
 	"name": "svelte5plus-calendar",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "A full-featured, zero-dependency calendar component for Svelte 5 — month/week/day/year/agenda views, drag & drop, recurring events, i18n and dark mode.",
 	"license": "MIT",
 	"repository": {
