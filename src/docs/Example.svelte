@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { page } from '$app/state';
 	import CodeBlock from './CodeBlock.svelte';
 	import sampleEventsRaw from './examples/sample-events.ts?raw';
 
@@ -16,7 +17,7 @@
 		files?: ExampleFile[];
 		/** Give the preview a fixed height (calendar views need one). */
 		tall?: boolean;
-		/** Open the code panel by default. */
+		/** Show the code panel by default. */
 		open?: boolean;
 		codeLabel?: string;
 		children: Snippet;
@@ -31,8 +32,10 @@
 		children
 	}: Props = $props();
 
+	const isZh = $derived(page.params.lang === 'zh');
+
 	// svelte-ignore state_referenced_locally — `open` is an initial value by design
-	let showCode = $state(open);
+	let mode = $state<'preview' | 'code'>(open ? 'code' : 'preview');
 	let activeTab = $state(0);
 
 	// The demos import from '$lib'; readers should see the published package name.
@@ -58,30 +61,53 @@
 	<div class="example-head">
 		<span class="example-title">{title}</span>
 		<span class="example-spacer"></span>
-		<button type="button" class="example-btn" class:on={showCode} onclick={() => (showCode = !showCode)}>
-			{codeLabel}
-		</button>
+		<!-- Code swaps into the preview's spot, so the toggle and the content stay together. -->
+		<div class="example-mode" role="tablist">
+			<button
+				type="button"
+				class="example-btn"
+				class:on={mode === 'preview'}
+				role="tab"
+				aria-selected={mode === 'preview'}
+				onclick={() => (mode = 'preview')}
+			>
+				{isZh ? '预览' : 'Preview'}
+			</button>
+			<button
+				type="button"
+				class="example-btn"
+				class:on={mode === 'code'}
+				role="tab"
+				aria-selected={mode === 'code'}
+				onclick={() => (mode = 'code')}
+			>
+				{codeLabel}
+			</button>
+		</div>
 	</div>
-	<div class="example-preview" class:tall>
+	<!-- Kept mounted while code is shown so the demo's state survives toggling. -->
+	<div class="example-preview" class:tall class:is-hidden={mode === 'code'}>
 		{@render children()}
 	</div>
-	{#if showCode}
-		{#if allFiles.length > 1}
-			<div class="file-tabs" role="tablist">
-				{#each allFiles as file, i (file.name)}
-					<button
-						type="button"
-						class="file-tab"
-						class:active={i === activeTab}
-						role="tab"
-						aria-selected={i === activeTab}
-						onclick={() => (activeTab = i)}
-					>
-						{file.name}
-					</button>
-				{/each}
-			</div>
-		{/if}
-		<CodeBlock code={active.code} lang={active.lang ?? 'svelte'} />
+	{#if mode === 'code'}
+		<div class="example-code-area" class:tall>
+			{#if allFiles.length > 1}
+				<div class="file-tabs" role="tablist">
+					{#each allFiles as file, i (file.name)}
+						<button
+							type="button"
+							class="file-tab"
+							class:active={i === activeTab}
+							role="tab"
+							aria-selected={i === activeTab}
+							onclick={() => (activeTab = i)}
+						>
+							{file.name}
+						</button>
+					{/each}
+				</div>
+			{/if}
+			<CodeBlock code={active.code} lang={active.lang ?? 'svelte'} />
+		</div>
 	{/if}
 </figure>

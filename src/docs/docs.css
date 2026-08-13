@@ -639,26 +639,49 @@ body {
 .example-spacer {
 	flex: 1;
 }
+.example-mode {
+	display: inline-flex;
+	border: 1px solid var(--line-strong);
+	border-radius: 999px;
+	overflow: hidden;
+}
 .example-btn {
 	font: 500 13px var(--body);
 	color: var(--ink-soft);
 	background: none;
-	border: 1px solid var(--line-strong);
-	border-radius: 999px;
-	padding: 4px 14px;
+	border: none;
+	padding: 5px 14px;
 	cursor: pointer;
+}
+.example-btn + .example-btn {
+	border-left: 1px solid var(--line-strong);
 }
 .example-btn:hover {
 	color: var(--accent);
-	border-color: var(--accent);
 }
 .example-btn.on {
 	background: var(--ink);
 	color: var(--paper);
-	border-color: var(--ink);
 }
 .example-preview {
 	padding: 20px;
+}
+.example-preview.is-hidden,
+.example-preview.tall.is-hidden {
+	display: none;
+}
+.example-code-area {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+.example-code-area.tall {
+	height: 620px;
+}
+.example-code-area .codeblock {
+	flex: 1;
+	max-height: none;
+	min-height: 0;
 }
 .example-preview.tall {
 	height: 620px;
