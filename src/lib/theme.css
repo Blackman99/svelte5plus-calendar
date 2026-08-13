@@ -57,6 +57,8 @@
 	min-height: 0;
 	height: 100%;
 	box-sizing: border-box;
+	/* Never bleed into surrounding page content (popovers are position:fixed). */
+	overflow: hidden;
 	--s5c-event-color: var(--s5c-blue);
 }
 
@@ -247,6 +249,8 @@
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
+	/* Weeks have a min-height; scroll instead of overflowing in short containers. */
+	overflow-y: auto;
 }
 .s5c-month-week {
 	position: relative;
