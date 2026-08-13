@@ -31,6 +31,10 @@ jobs:
           npm install
           # taze rewrites workflow YAML with its own formatting — normalize it.
           npm run lint:fix || true
+          # GITHUB_TOKEN may not push workflow-file changes (requires the
+          # `workflows` permission) — leave action version bumps to manual
+          # review via `npx taze`.
+          git checkout -- .github
           if git diff --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
@@ -57,4 +61,6 @@ jobs:
             Tests, lint and svelte-check all passed against the updated set before this PR was opened.
 
             Majors are excluded on purpose — review them locally with `npx taze major`.
+            GitHub Action version bumps are also manual (`npx taze` shows them); the
+            workflow token may not modify workflow files.
           delete-branch: true
