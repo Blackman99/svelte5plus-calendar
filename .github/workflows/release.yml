@@ -44,3 +44,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # `changeset publish` creates the version tag locally, but the action's
+      # own tag-push/release detection does not recognize changesets v3 output.
+      # Push tags ourselves and create the GitHub release when it is missing.
+      - name: Ensure git tag and GitHub release exist
+        run: |
+          git push origin --tags
+          TAG="v$(node -p "require('./package.json').version")"
+          if git rev-parse -q --verify "refs/tags/$TAG" > /dev/null \
+             && ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "$TAG" --generate-notes
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
