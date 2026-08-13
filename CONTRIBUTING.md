@@ -41,6 +41,13 @@ Releases are fully automated with [changesets](https://github.com/changesets/cha
   pushes the git tag, and creates the GitHub release.
 - Publishing requires the `NPM_TOKEN` repository secret (npm automation token).
 
+## Dependency updates
+
+A weekly **Update dependencies** workflow runs [taze](https://github.com/antfu-collective/taze)
+(`taze minor -w`), verifies tests/lint/check against the updated set, and opens
+a PR. Locally: `npm run deps:check` to see pending updates, `npm run deps:update`
+to apply minors/patches, `npx taze major` to review majors.
+
 ## Docs deployment
 
 The docs site deploys to GitHub Pages automatically on every push to `main`.

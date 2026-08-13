@@ -1,0 +1,58 @@
+name: Update dependencies
+
+on:
+  schedule:
+    # Mondays 00:00 UTC (08:00 Beijing)
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update dependencies (taze minor)
+        id: taze
+        run: |
+          npx taze minor -w
+          npm install
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Verify updated dependencies
+        if: steps.taze.outputs.changed == 'true'
+        run: |
+          npm test
+          npm run lint
+          npm run check
+
+      - name: Create pull request
+        if: steps.taze.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/update-deps
+          title: 'chore: update dependencies'
+          commit-message: 'chore: update dependencies (taze minor)'
+          body: |
+            Weekly dependency refresh via [taze](https://github.com/antfu-collective/taze) (`taze minor -w`).
+
+            Tests, lint and svelte-check all passed against the updated set before this PR was opened.
+
+            Majors are excluded on purpose — review them locally with `npx taze major`.
+          delete-branch: true
