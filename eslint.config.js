@@ -25,7 +25,10 @@ export default antfu(
 			'style/arrow-parens': ['error', 'always'],
 			'antfu/if-newline': 'off',
 			// Labeled loops are legitimate in the recurrence-expansion algorithms.
-			'no-labels': ['error', { allowLoop: true }]
+			'no-labels': ['error', { allowLoop: true }],
+			// `Array.from({length}).fill(x)` types as unknown[]; the typed
+			// constant-callback form keeps TypeScript happy.
+			'e18e/prefer-array-fill': 'off'
 		}
 	},
 	{
