@@ -29,6 +29,8 @@ jobs:
         run: |
           npx taze minor -w
           npm install
+          # taze rewrites workflow YAML with its own formatting — normalize it.
+          npm run lint:fix || true
           if git diff --quiet; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
