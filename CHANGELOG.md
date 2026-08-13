@@ -1,5 +1,11 @@
 # svelte5plus-calendar
 
+## 0.3.1
+
+### Patch Changes
+
+- aa123a8: Documentation polish: user-focused README (maintainer/release instructions moved to CONTRIBUTING.md), working logo and links on the npm page, docs-site URL and badges, corrected `theme` default in the API overview.
+
 ## 0.3.0
 
 ### Minor Changes
