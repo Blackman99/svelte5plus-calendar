@@ -51,16 +51,18 @@
 
 <header class="site-header">
 	<a class="brand" href={withBase(`/${lang}/`)}>
-		<svg class="logo" viewBox="0 0 26 26" aria-hidden="true">
-			<rect x="1" y="1" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="9.5" y="1" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="18" y="1" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="1" y="9.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="9.5" y="9.5" width="7" height="7" rx="2" fill="#0f3cd9" stroke="none" />
-			<rect x="18" y="9.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="1" y="18" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="9.5" y="18" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
-			<rect x="18" y="18" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.6" />
+		<svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+			<rect width="64" height="64" rx="15" fill="#0f3cd9" />
+			<g fill="#ffffff">
+				<rect x="10" y="10" width="12" height="12" rx="3.5" opacity=".5" />
+				<rect x="26" y="10" width="12" height="12" rx="3.5" opacity=".5" />
+				<rect x="42" y="10" width="12" height="12" rx="3.5" opacity=".5" />
+				<rect x="10" y="26" width="12" height="12" rx="3.5" opacity=".5" />
+				<rect x="26" y="26" width="12" height="12" rx="3.5" />
+				<rect x="42" y="26" width="12" height="12" rx="3.5" opacity=".5" />
+				<rect x="42" y="42" width="12" height="12" rx="3.5" opacity=".5" />
+			</g>
+			<rect x="10" y="42" width="28" height="12" rx="6" fill="#ffb52e" />
 		</svg>
 		svelte5plus<em>·calendar</em>
 	</a>

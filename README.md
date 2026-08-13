@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
+</p>
+
 # svelte5plus-calendar
 
 **English** | [简体中文](./README.zh-CN.md)
