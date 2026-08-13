@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar, MiniCalendar, type CalendarView } from '$lib';
+	import { Calendar, MiniCalendar, type CalendarView } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
 	let { locale = 'en' }: { locale?: string } = $props();

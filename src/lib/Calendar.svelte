@@ -1,4 +1,8 @@
 <script lang="ts">
+	// Imported here (not only in index.ts): rolldown-based bundlers tree-shake
+	// side-effect-only imports from re-export barrels, but imports inside a
+	// component module that is actually instantiated always survive.
+	import './theme.css';
 	import type { Snippet } from 'svelte';
 	import type {
 		BusinessHours,

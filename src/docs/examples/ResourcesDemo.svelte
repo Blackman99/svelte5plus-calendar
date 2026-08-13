@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar, type CalendarEvent, type Resource } from '$lib';
+	import { Calendar, type CalendarEvent, type Resource } from 'svelte5plus-calendar';
 
 	let { locale = 'en' } = $props();
 

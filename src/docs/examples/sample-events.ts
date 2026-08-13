@@ -2,8 +2,8 @@
  * Demo data used by the documentation examples.
  * Everything is generated relative to “today” so the demos always have content.
  */
-import type { CalendarEvent, CalendarSource } from '$lib';
-import { addDays, startOfDay, startOfWeek } from '$lib';
+import type { CalendarEvent, CalendarSource } from 'svelte5plus-calendar';
+import { addDays, startOfDay, startOfWeek } from 'svelte5plus-calendar';
 
 const zh = (locale: string) => locale.toLowerCase().startsWith('zh');
 

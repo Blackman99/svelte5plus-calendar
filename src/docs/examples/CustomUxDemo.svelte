@@ -3,7 +3,7 @@
 		Calendar,
 		type EventInstance,
 		type RangeSelection
-	} from '$lib';
+	} from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
 	let { locale = 'en' } = $props();

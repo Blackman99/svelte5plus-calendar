@@ -38,19 +38,18 @@
 	let mode = $state<'preview' | 'code'>(open ? 'code' : 'preview');
 	let activeTab = $state(0);
 
-	// The demos import from '$lib'; readers should see the published package name.
-	const clean = (source: string) => source.replaceAll("'$lib'", "'svelte5plus-calendar'");
-
 	/**
 	 * Every file involved in the demo, main file first. Helper modules the demo
 	 * imports (currently `sample-events`) are appended automatically so readers
-	 * always see the complete, runnable source.
+	 * always see the complete, runnable source. The demos import the library by
+	 * its published name (aliased to src/lib locally), so the source is shown
+	 * verbatim — copy-paste identical to real-world usage.
 	 */
 	const allFiles = $derived.by<ExampleFile[]>(() => {
-		const out: ExampleFile[] = [{ name: 'App.svelte', code: clean(code), lang: 'svelte' }];
-		for (const f of files) out.push({ ...f, code: clean(f.code) });
+		const out: ExampleFile[] = [{ name: 'App.svelte', code, lang: 'svelte' }];
+		for (const f of files) out.push(f);
 		if (code.includes('./sample-events.js') && !files.some((f) => f.name.includes('sample-events'))) {
-			out.push({ name: 'sample-events.ts', code: clean(sampleEventsRaw), lang: 'typescript' });
+			out.push({ name: 'sample-events.ts', code: sampleEventsRaw, lang: 'typescript' });
 		}
 		return out;
 	});

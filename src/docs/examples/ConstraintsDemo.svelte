@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Calendar, addDays, startOfWeek } from '$lib';
+	import { Calendar, addDays, startOfWeek } from 'svelte5plus-calendar';
 	import { sampleEvents } from './sample-events.js';
 
 	let { locale = 'en' } = $props();

@@ -11,7 +11,10 @@ export default defineConfig({
 			},
 			adapter: adapter(),
 			alias: {
-				$docs: './src/docs'
+				$docs: './src/docs',
+				// The docs import the library by its published name, so example
+				// code is copy-paste identical to real-world usage.
+				'svelte5plus-calendar': './src/lib'
 			},
 			paths: {
 				// Set by CI when deploying to GitHub Pages (project sites live under /<repo>/).
