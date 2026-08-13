@@ -15,12 +15,16 @@ export type {
 	RangeSelection,
 	RecurrenceFreq,
 	RecurrenceRule,
+	Resource,
+	ValidRange,
 	Weekday
 } from './types.js';
 
 export { en, zhCN, messagesForLocale, localeFirstDay, type CalendarMessages } from './i18n.js';
-export { expandRecurrence, parseRRule } from './recurrence.js';
-export { excludeOccurrence, detachOccurrence } from './series.js';
+export { expandRecurrence, parseRRule, serializeRRule } from './recurrence.js';
+export { excludeOccurrence, detachOccurrence, splitSeries } from './series.js';
+export { parseICS, toICS } from './ics.js';
+export { toZoned, fromZoned } from './tz.js';
 export { expandEvents, PALETTE } from './instances.js';
 export {
 	addDays,

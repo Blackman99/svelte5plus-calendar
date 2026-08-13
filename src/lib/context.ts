@@ -11,6 +11,8 @@ import type {
 	EventChangeInfo,
 	EventInstance,
 	RangeSelection,
+	Resource,
+	ValidRange,
 	Weekday
 } from './types.js';
 import type { CalendarMessages, Formatters } from './i18n.js';
@@ -21,6 +23,7 @@ export interface CalendarContext {
 	readonly view: CalendarView;
 	readonly events: CalendarEvent[];
 	readonly sources: CalendarSource[];
+	readonly resources: Resource[];
 
 	// --- resolved options ---
 	readonly locale: string;
@@ -46,6 +49,19 @@ export interface CalendarContext {
 	readonly quickCreate: boolean;
 	/** Built-in event-details popover enabled. */
 	readonly eventDetails: boolean;
+	/** IANA display time zone, when set. */
+	readonly timeZone?: string;
+	/** Interactive/navigable date bounds. */
+	readonly validRange: ValidRange | null;
+	/** When `false`, drops/creates that overlap another timed event are rejected. */
+	readonly eventOverlap: boolean;
+
+	/** “Now” in the display time zone (falls back to local time). */
+	now(): Date;
+	/** Whether a day is inside `validRange`. */
+	isDayAllowed(day: Date): boolean;
+	/** Announces a message to screen readers (aria-live). */
+	announce(text: string): void;
 
 	// --- derived for the current view ---
 	/** Days visible in the current view (for month: includes leading/trailing). */
@@ -66,7 +82,14 @@ export interface CalendarContext {
 	 * For recurring instances this opens the series-edit confirm popover near
 	 * `anchor` and, on confirm, detaches the occurrence into a standalone event.
 	 */
-	applyTimes(instance: EventInstance, start: Date, end: Date, allDay?: boolean, anchor?: DOMRect): void;
+	applyTimes(
+		instance: EventInstance,
+		start: Date,
+		end: Date,
+		allDay?: boolean,
+		anchor?: DOMRect,
+		resourceId?: string
+	): void;
 	/**
 	 * A range was drag-selected. Calls `onSelect` when provided, otherwise opens
 	 * the built-in quick-create popover near `anchor`.

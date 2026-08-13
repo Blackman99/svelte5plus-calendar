@@ -4,6 +4,8 @@
 	import Example from '$docs/Example.svelte';
 	import TimeGridDemo from '$docs/examples/TimeGridDemo.svelte';
 	import timeGridRaw from '$docs/examples/TimeGridDemo.svelte?raw';
+	import ConstraintsDemo from '$docs/examples/ConstraintsDemo.svelte';
+	import constraintsRaw from '$docs/examples/ConstraintsDemo.svelte?raw';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -47,6 +49,25 @@
 	{t(
 		'Overlapping events are packed into columns per collision cluster — the same algorithm family used by Google and Apple calendars. Freed columns are reused, so a long event and two short consecutive ones only need two columns.',
 		'重叠事件按“碰撞簇”打包分列——与 Google、Apple 日历同族的算法。释放的列会被复用：一个长事件加两个前后相接的短事件只占两列。'
+	)}
+</p>
+
+<h2>{t('Constraints', '约束')}</h2>
+<p>
+	{t(
+		'validRange limits navigation and interaction to a date window (days outside are dimmed and inert, navigation clamps). eventOverlap={false} rejects drops, resizes and quick-creates that would collide with another timed event — ideal for bookings.',
+		'validRange 把导航与交互限制在一个日期窗口内（窗口外的日期置灰且不可交互，翻页自动钳制）。eventOverlap={false} 会拒绝与其他事件时间冲突的拖放、调整和快速新建——预约场景的利器。'
+	)}
+</p>
+<Example title={t('This week only, no double-booking', '仅限本周，禁止时间冲突')} code={constraintsRaw}>
+	<ConstraintsDemo {locale} />
+</Example>
+
+<h2>{t('Keyboard editing', '键盘编辑')}</h2>
+<p>
+	{t(
+		'Focus an event block (Tab) and use Alt+↑/↓ to move it by one snap step, Alt+←/→ to move it a day, and Alt+Shift+↑/↓ to resize. Changes are announced to screen readers via a live region.',
+		'用 Tab 聚焦事件块后：Alt+↑/↓ 按吸附步长移动，Alt+←/→ 移动一天，Alt+Shift+↑/↓ 调整时长。所有变更都会通过 aria-live 区域向屏幕阅读器播报。'
 	)}
 </p>
 

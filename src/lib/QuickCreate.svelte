@@ -36,7 +36,8 @@
 			start: sel.start,
 			end: sel.end,
 			allDay: sel.allDay,
-			calendarId: selectedSource?.id
+			calendarId: selectedSource?.id,
+			...(sel.resourceId !== undefined ? { resourceId: sel.resourceId } : {})
 		});
 		onclose();
 	}

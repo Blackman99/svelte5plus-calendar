@@ -36,7 +36,7 @@
 		<div class="s5c-agenda-day">
 			<div
 				class="s5c-agenda-date"
-				class:s5c-is-today={isSameDay(day, new Date())}
+				class:s5c-is-today={isSameDay(day, ctx.now())}
 				role="button"
 				tabindex="0"
 				onclick={() => openDay(day)}

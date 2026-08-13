@@ -18,17 +18,19 @@ A full-featured, zero-dependency calendar component for **Svelte 5** — month, 
 
 ## Features
 
-- 🗓 **Five views** — month (with spanning multi-day bars and `+N more` popovers), week & day time grids, year overview, agenda list
+- 🗓 **Six views** — month (spanning multi-day bars, `+N more` popovers), week & day time grids, year overview, agenda list, and a **resources view** (rooms/people columns) for booking apps
 - ✋ **Drag & drop** — move events across days/slots, drag all-day bars along the lane, resize from the bottom edge, drag empty space to select/create; touch devices long-press to drag and swipe to scroll
 - 💬 **Built-in popovers** — click an event for a details popover (with delete), click/drag empty space for a quick-create popover — zero config, and any callback you provide takes over
-- 🔁 **Recurring events** — practical RRULE subset (`FREQ`, `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` incl. `2TU`/`-1FR`, `BYMONTHDAY`) as strings or typed objects, plus `exdates`; built-in “this event” edits (drag detaches the occurrence) and occurrence/series deletion
+- 🔁 **Recurring events** — practical RRULE subset (`FREQ`, `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` incl. `2TU`/`-1FR`, `BYMONTHDAY`) as strings or typed objects, plus `exdates`; built-in “this event” **and** “this and following” edits, plus occurrence/series deletion
 - 🎨 **Theming** — light/dark/auto; every color, radius and font is a CSS custom property; 10-color event palette that adapts to dark mode
-- 🌍 **i18n** — any BCP-47 locale via the `Intl` API (no locale bundles); English & Chinese UI strings built in; locale-aware first day of week and 12/24-hour clock
+- 🌍 **i18n & time zones** — any BCP-47 locale via `Intl` (no bundles); UI strings built in for 10 languages; locale-aware week start and clock; `timeZone` prop renders any IANA zone with edits converted back automatically
 - 📚 **Multiple calendars** — sources with shared colors, visibility toggles, per-source and per-event edit permissions
 - ⏰ **Time-grid niceties** — current-time indicator, business hours shading, configurable hours range/slot size/snapping, ISO week numbers, all-day lane
 - 🧩 **Custom rendering** — replace event content with Svelte 5 snippets; hide the toolbar and bring your own via bindable `date`/`view`
 - 🧮 **Headless exports** — the overlap-packing and week-segment layout algorithms, recurrence expansion and date utils are exported as pure functions
-- ♿ **Accessible** — keyboard navigation on the month grid, ARIA roles and labels, focus management
+- ♿ **Accessible** — month-grid keyboard navigation, Alt+arrow keyboard editing in time grids, popover focus trapping, aria-live announcements
+- 🔒 **Constraints** — `validRange` date windows and `eventOverlap={false}` double-booking prevention
+- 📤 **ICS import/export** — `parseICS` / `toICS` round-trip iCalendar files, recurrence included
 - 🪶 **Zero runtime dependencies**, TypeScript-first
 
 ## Installation
@@ -156,7 +158,7 @@ Requires Svelte 5. Styles are imported automatically.
 | `dayMaxEvents` | `number` | `4` | month-cell rows before `+N more` |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | see docs |
 
-**Callbacks:** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
+**Callbacks:** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onSeriesSplit({truncated, created, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
 
 **Built-in popovers:** with `editable` or `selectable` and no callbacks, clicking an event opens a details popover and clicking/drag-selecting empty space opens a quick-create popover. Providing `onEventClick` / `onSelect` / `onDateClick` replaces them; `eventDetails={false}` / `quickCreate={false}` disables them.
 

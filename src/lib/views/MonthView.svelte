@@ -166,7 +166,7 @@
 
 	function onCellPointerDown(day: Date) {
 		return (e: PointerEvent) => {
-			if (e.button !== 0) return;
+			if (e.button !== 0 || !ctx.isDayAllowed(day)) return;
 			if (ctx.selectable || (ctx.editable && ctx.quickCreate)) {
 				beginDrag(e, { kind: 'select', anchor: day, head: day, moved: false });
 			}
@@ -239,7 +239,8 @@
 
 	// ---- keyboard navigation -------------------------------------------------
 	let focusIdx = $state(-1);
-	const todayIdx = $derived(ctx.visibleDays.findIndex((d) => isSameDay(d, new Date())));
+	const today = $derived(ctx.now());
+	const todayIdx = $derived(ctx.visibleDays.findIndex((d) => isSameDay(d, today)));
 	const tabIdx = $derived(focusIdx >= 0 ? focusIdx : todayIdx >= 0 ? todayIdx : 0);
 
 	function onCellKeydown(idx: number, day: Date) {
@@ -317,8 +318,9 @@
 					<div
 						class="s5c-month-cell"
 						class:s5c-other-month={!isSameMonth(day, ctx.date)}
-						class:s5c-is-today={isSameDay(day, new Date())}
+						class:s5c-is-today={isSameDay(day, today)}
 						class:s5c-drag-over={cellHighlighted(day)}
+						class:s5c-disabled={!ctx.isDayAllowed(day)}
 						role="gridcell"
 						aria-label={ctx.fmt.dayTitle(day)}
 						tabindex={idx === tabIdx ? 0 : -1}
@@ -330,7 +332,7 @@
 					>
 						<span
 							class="s5c-daynum"
-							class:s5c-is-today={isSameDay(day, new Date())}
+							class:s5c-is-today={isSameDay(day, today)}
 							role="button"
 							tabindex="-1"
 							onclick={onDayNumClick(day)}

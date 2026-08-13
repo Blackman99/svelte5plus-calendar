@@ -76,10 +76,11 @@
 	}
 
 	// ---- now indicator --------------------------------------------------------
-	let now = $state(new Date());
+	let now = $state(ctx.now());
 	$effect(() => {
+		now = ctx.now();
 		if (!ctx.nowIndicator) return;
-		const t = setInterval(() => (now = new Date()), 30_000);
+		const t = setInterval(() => (now = ctx.now()), 30_000);
 		return () => clearInterval(t);
 	});
 
@@ -392,6 +393,39 @@
 			ctx.setView('day');
 		};
 	}
+
+	/**
+	 * Keyboard editing on a focused event block:
+	 * Alt+↑/↓ moves by the snap step, Alt+←/→ moves by a day,
+	 * Alt+Shift+↑/↓ shrinks/grows the end time.
+	 */
+	function onBlockKeydown(p: TimedPlacement, dayIdx: number) {
+		return (e: KeyboardEvent) => {
+			if (!e.altKey || !ctx.canEdit(p.instance)) return;
+			const { instance } = p;
+			const anchor = (e.currentTarget as HTMLElement).getBoundingClientRect();
+			const step = ctx.snapDuration * 60_000;
+			let start = instance.start;
+			let end = instance.end;
+			if (e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+				end = new Date(end.getTime() + (e.key === 'ArrowDown' ? step : -step));
+				if (end.getTime() - start.getTime() < step) return;
+			} else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+				const delta = e.key === 'ArrowDown' ? step : -step;
+				start = new Date(start.getTime() + delta);
+				end = new Date(end.getTime() + delta);
+			} else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+				const dayDelta = e.key === 'ArrowRight' ? 1 : -1;
+				start = addDays(start, dayDelta);
+				end = addDays(end, dayDelta);
+				void dayIdx;
+			} else {
+				return;
+			}
+			e.preventDefault();
+			ctx.applyTimes(instance, start, end, instance.allDay, anchor);
+		};
+	}
 </script>
 
 <svelte:window
@@ -519,7 +553,9 @@
 							style="{colorVars(p.instance.color)} top:{top}px; height:{height}px; left:{p.col *
 								width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
 							aria-label={p.instance.event.title}
+							aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight"
 							onpointerdown={onBlockPointerDown(p, dayIdx)}
+							onkeydown={onBlockKeydown(p, dayIdx)}
 							onclick={(e) => {
 								e.stopPropagation();
 								ctx.clickEvent(p.instance, e);

@@ -33,16 +33,53 @@
 	function onWindowKeydown(e: KeyboardEvent) {
 		if (e.key === 'Escape') onclose();
 	}
+
+	// ---- focus management ------------------------------------------------------
+	// Move focus into the popover on open, cycle Tab within it, restore on close.
+	const focusablesIn = (root: HTMLElement) =>
+		Array.from(
+			root.querySelectorAll<HTMLElement>(
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			)
+		);
+
+	$effect(() => {
+		if (!el) return;
+		const previous = document.activeElement as HTMLElement | null;
+		// Autofocusing inputs (quick-create) win over the default focus target.
+		if (!el.contains(document.activeElement)) {
+			focusablesIn(el)[0]?.focus();
+		}
+		return () => previous?.focus?.();
+	});
+
+	function onPopoverKeydown(e: KeyboardEvent) {
+		if (e.key !== 'Tab' || !el) return;
+		const items = focusablesIn(el);
+		if (!items.length) return;
+		const first = items[0];
+		const last = items[items.length - 1];
+		if (e.shiftKey && document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		} else if (!e.shiftKey && document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
 </script>
 
 <svelte:window onpointerdown={onWindowPointerDown} onkeydown={onWindowKeydown} />
 
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div
 	class="s5c-popover"
 	bind:this={el}
 	style="left:{pos.left}px; top:{pos.top}px;"
 	role="dialog"
 	aria-label={label}
+	tabindex="-1"
+	onkeydown={onPopoverKeydown}
 >
 	{@render children()}
 </div>

@@ -5,9 +5,12 @@
 	import CodeBlock from '$docs/CodeBlock.svelte';
 	import I18nDemo from '$docs/examples/I18nDemo.svelte';
 	import i18nRaw from '$docs/examples/I18nDemo.svelte?raw';
+	import TimezoneDemo from '$docs/examples/TimezoneDemo.svelte';
+	import timezoneRaw from '$docs/examples/TimezoneDemo.svelte?raw';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
+	const locale = $derived(lang === 'zh' ? 'zh-CN' : 'en');
 
 	const custom = `import type { CalendarMessages } from 'svelte5plus-calendar';
 
@@ -46,7 +49,12 @@ const de: Partial<CalendarMessages> = {
 	<li>{t('Month/day/weekday names, title formats and time labels (via Intl.DateTimeFormat).', '月份/日期/星期名称、标题格式与时间标签（通过 Intl.DateTimeFormat）。')}</li>
 	<li>{t('The default first day of week (via Intl.Locale weekInfo, with a safe fallback) — override with firstDayOfWeek.', '默认周首日（通过 Intl.Locale weekInfo，含安全回退）——可用 firstDayOfWeek 覆盖。')}</li>
 	<li>{t('12/24-hour clock — override with hour12.', '12/24 小时制——可用 hour12 覆盖。')}</li>
-	<li>{t('Built-in UI strings when the locale is en or zh.', '当 locale 为 en 或 zh 时自动套用内置界面文案。')}</li>
+	<li>
+		{t(
+			'Built-in UI strings for 10 languages: en, zh, de, fr, es, pt, ja, ko, ru, it — anything else falls back to English (override via messages).',
+			'内置 10 种语言的界面文案：en、zh、de、fr、es、pt、ja、ko、ru、it——其他语言回退到英文（可用 messages 覆盖）。'
+		)}
+	</li>
 </ul>
 
 <h2>{t('Custom UI strings', '自定义界面文案')}</h2>
@@ -56,10 +64,20 @@ const de: Partial<CalendarMessages> = {
 	<code>&lt;Calendar locale="de" messages={'{'}de{'}'} /&gt;</code>
 </p>
 
-<div class="callout">
-	<strong>{t('Time zones', '时区')}</strong> —
+<h2>{t('Display time zone', '显示时区')}</h2>
+<p>
 	{t(
-		'the calendar renders plain Date objects in the user’s local time zone, the same model as most calendar UIs. Convert on the data layer if you store UTC.',
-		'日历按用户本地时区渲染普通 Date 对象，与多数日历 UI 的模型一致。若你的数据以 UTC 存储，请在数据层完成转换。'
+		'Pass an IANA zone via the timeZone prop to render the whole calendar in that zone. Event Dates remain real instants — the grid, popovers, quick-create and drag edits are all displayed and interpreted in the target zone, and edited values are converted back automatically.',
+		'通过 timeZone 属性传入 IANA 时区，整个日历即按该时区渲染。事件的 Date 依然是真实时刻——网格、弹层、快速新建与拖拽编辑都以目标时区显示和解释，编辑结果自动换算回真实时刻。'
+	)}
+</p>
+<Example title={t('Same events, different zones', '同一批事件，不同时区')} code={timezoneRaw}>
+	<TimezoneDemo {locale} />
+</Example>
+<div class="callout">
+	<strong>{t('Recurrence caveat', '重复事件注意')}</strong> —
+	{t(
+		'recurring wall-clock times follow the display zone (a 9:30 standup stays at 9:30 in the zone you are viewing). Anchor-zone recurrence is on the roadmap.',
+		'重复事件的“墙上时钟”跟随显示时区（9:30 的站会在你查看的时区里始终显示为 9:30）。锚定原时区的重复语义在路线图中。'
 	)}
 </div>

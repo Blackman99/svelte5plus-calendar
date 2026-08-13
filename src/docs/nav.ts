@@ -20,6 +20,7 @@ export const guideNav: NavItem[] = [
 	{ slug: 'interactions', en: 'Drag, Drop & Selection', zh: '拖拽与选择' },
 	{ slug: 'recurrence', en: 'Recurring Events', zh: '重复事件' },
 	{ slug: 'time-grid', en: 'Time Grid Options', zh: '时间网格' },
+	{ slug: 'resources', en: 'Resources View', zh: '资源视图' },
 	{ slug: 'theming', en: 'Theming & Dark Mode', zh: '主题与暗色模式' },
 	{ slug: 'i18n', en: 'Internationalization', zh: '国际化' },
 	{ slug: 'custom-rendering', en: 'Custom Rendering', zh: '自定义渲染' },

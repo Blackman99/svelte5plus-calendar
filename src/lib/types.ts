@@ -3,8 +3,8 @@
  * All dates are plain JS `Date` objects interpreted in the user's local time zone.
  */
 
-/** Built-in view names. */
-export type CalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda';
+/** Built-in view names. `resources` shows one day split by {@link Resource} columns. */
+export type CalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda' | 'resources';
 
 /** Named palette colors (mapped to CSS variables) — any CSS color string is also accepted. */
 export type PaletteColor =
@@ -48,6 +48,21 @@ export interface RecurrenceRule {
 	byNthDay?: { ordinal: 1 | 2 | 3 | 4 | 5 | -1; day: Weekday };
 }
 
+/** A bookable resource (person, room, machine) for the resources view. */
+export interface Resource {
+	id: string;
+	name: string;
+	color?: PaletteColor | string;
+}
+
+/** Navigable/interactive date bounds. Days outside are read-only and unreachable. */
+export interface ValidRange {
+	/** First allowed day (inclusive, day precision). */
+	start?: Date;
+	/** Last allowed day (inclusive, day precision). */
+	end?: Date;
+}
+
 /** A calendar (event source/group), e.g. “Work”, “Family”. */
 export interface CalendarSource {
 	id: string;
@@ -81,6 +96,8 @@ export interface CalendarEvent {
 	description?: string;
 	/** Overrides calendar/source editability for this event. */
 	editable?: boolean;
+	/** Id of the {@link Resource} this event occupies (resources view). */
+	resourceId?: string;
 	/** Arbitrary application data, carried through untouched. */
 	meta?: Record<string, unknown>;
 }
@@ -109,6 +126,9 @@ export interface EventChangeInfo {
 	start: Date;
 	end: Date;
 	allDay: boolean;
+	/** Set when the drop moved the event to another resource column. */
+	resourceId?: string;
+	oldResourceId?: string;
 	/** Restores the event to its previous times. */
 	revert: () => void;
 }
@@ -118,6 +138,8 @@ export interface RangeSelection {
 	start: Date;
 	end: Date;
 	allDay: boolean;
+	/** Set when the selection was made inside a resource column. */
+	resourceId?: string;
 }
 
 /** Business hours definition — used to shade working time in time-grid views. */

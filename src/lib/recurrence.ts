@@ -73,6 +73,25 @@ export function normalizeRule(rule: RecurrenceRule | string): RecurrenceRule {
 	return typeof rule === 'string' ? parseRRule(rule) : rule;
 }
 
+const DAY_NAMES: string[] = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+
+/** Serializes a {@link RecurrenceRule} back into an RRULE string (RFC 5545 subset). */
+export function serializeRRule(rule: RecurrenceRule | string): string {
+	const r = normalizeRule(rule);
+	const parts = [`FREQ=${r.freq.toUpperCase()}`];
+	if (r.interval && r.interval > 1) parts.push(`INTERVAL=${r.interval}`);
+	if (r.count) parts.push(`COUNT=${r.count}`);
+	if (r.until) {
+		const u = r.until;
+		const pad = (n: number) => String(n).padStart(2, '0');
+		parts.push(`UNTIL=${u.getFullYear()}${pad(u.getMonth() + 1)}${pad(u.getDate())}`);
+	}
+	if (r.byNthDay) parts.push(`BYDAY=${r.byNthDay.ordinal}${DAY_NAMES[r.byNthDay.day]}`);
+	else if (r.byDay?.length) parts.push(`BYDAY=${r.byDay.map((d) => DAY_NAMES[d]).join(',')}`);
+	if (r.byMonthDay?.length) parts.push(`BYMONTHDAY=${r.byMonthDay.join(',')}`);
+	return parts.join(';');
+}
+
 /** Date of the Nth weekday of a month, or `null` when it does not exist (e.g. 5th Friday). */
 function nthWeekdayOfMonth(year: number, month: number, ordinal: number, day: Weekday): Date | null {
 	if (ordinal === -1) {

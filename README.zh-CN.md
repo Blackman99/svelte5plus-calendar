@@ -18,17 +18,19 @@
 
 ## 功能特性
 
-- 🗓 **五种视图** —— 月视图（跨天长条 + “还有 N 项”弹层）、周/日时间网格、年概览、议程列表
+- 🗓 **六种视图** —— 月视图（跨天长条 + “还有 N 项”弹层）、周/日时间网格、年概览、议程列表，以及面向预约场景的**资源视图**（按会议室/人员分列）
 - ✋ **拖拽交互** —— 跨日期/时间格移动事件、横向拖动全天条、拖底边调整时长、空白处拖选新建；触屏长按拖拽、轻扫滚动
 - 💬 **内置弹层** —— 点击日程弹出详情（含删除），点击/框选空白弹出快速新建——零配置可用，提供回调即可完全接管
-- 🔁 **重复事件** —— 实用的 RRULE 子集（`FREQ`、`INTERVAL`、`COUNT`、`UNTIL`、`BYDAY` 含 `2TU`/`-1FR`、`BYMONTHDAY`），支持字符串或类型化对象，以及 `exdates` 排除日期；内置“仅此日程”编辑（拖拽自动拆分系列）与单次/整系列删除
+- 🔁 **重复事件** —— 实用的 RRULE 子集（`FREQ`、`INTERVAL`、`COUNT`、`UNTIL`、`BYDAY` 含 `2TU`/`-1FR`、`BYMONTHDAY`），支持字符串或类型化对象，以及 `exdates` 排除日期；内置“仅此日程”与“此次及以后”编辑，以及单次/整系列删除
 - 🎨 **主题定制** —— 明/暗/跟随系统；所有颜色、圆角、字体均为 CSS 自定义属性；10 色事件调色板自动适配暗色模式
-- 🌍 **国际化** —— 基于 `Intl` API 支持任意 BCP-47 区域设置（无需语言包）；内置中英文界面文案；周首日与 12/24 小时制跟随区域设置
+- 🌍 **国际化与时区** —— 基于 `Intl` 支持任意 BCP-47 区域设置（无需语言包）；内置 10 种语言界面文案；周首日与时制跟随区域设置；`timeZone` 属性可按任意 IANA 时区渲染，编辑自动换算
 - 📚 **多日历源** —— 分组统一配色、独立显示/隐藏、按源和按事件控制编辑权限
 - ⏰ **时间网格细节** —— 当前时间指示线、营业时间阴影、可配置小时范围/网格密度/吸附步长、ISO 周数、全天事件栏
 - 🧩 **自定义渲染** —— 用 Svelte 5 snippet 替换事件内容；隐藏内置工具栏，通过可绑定的 `date`/`view` 自建导航
 - 🧮 **无头能力** —— 重叠分列、周行分段布局算法与重复展开、日期工具均以纯函数导出
-- ♿ **可访问性** —— 月视图网格键盘导航、ARIA 角色与标签、焦点管理
+- ♿ **可访问性** —— 月视图键盘导航、时间网格 Alt+方向键键盘编辑、弹层焦点圈闭、aria-live 变更播报
+- 🔒 **约束能力** —— `validRange` 日期窗口与 `eventOverlap={false}` 防重复预订
+- 📤 **ICS 导入/导出** —— `parseICS` / `toICS` 往返 iCalendar 文件，含重复规则
 - 🪶 **零运行时依赖**，TypeScript 优先
 
 ## 安装
@@ -150,7 +152,7 @@ npm install svelte5plus-calendar
 | `dayMaxEvents` | `number` | `4` | 月格折叠阈值 |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | 详见文档 |
 
-**回调：** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
+**回调：** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onSeriesSplit({truncated, created, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
 
 **内置弹层：** 开启 `editable` 或 `selectable` 且不提供回调时，点击日程弹出详情弹层、点击/框选空白弹出快速新建弹层。提供 `onEventClick` / `onSelect` / `onDateClick` 即接管对应交互；也可用 `eventDetails={false}` / `quickCreate={false}` 关闭。
 

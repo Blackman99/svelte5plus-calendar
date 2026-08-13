@@ -23,6 +23,10 @@
 		<tr><td><code>date</code> <i>bindable</i></td><td><code>Date</code></td><td><code>new Date()</code></td><td>{t('Focused date.', '聚焦日期。')}</td></tr>
 		<tr><td><code>view</code> <i>bindable</i></td><td><code>CalendarView</code></td><td><code>'month'</code></td><td>{t('Active view.', '当前视图。')}</td></tr>
 		<tr><td><code>sources</code></td><td><code>CalendarSource[]</code></td><td><code>[]</code></td><td>{t('Calendar groups: color, visibility, editability.', '日历分组：颜色、可见性、可编辑性。')}</td></tr>
+		<tr><td><code>resources</code></td><td><code>Resource[]</code></td><td><code>[]</code></td><td>{t('Columns of the resources view; events link via resourceId.', '资源视图的列；事件通过 resourceId 关联。')}</td></tr>
+		<tr><td><code>timeZone</code></td><td><code>string</code></td><td>{t('local', '本地')}</td><td>{t('IANA display time zone; edits convert back to real instants.', 'IANA 显示时区；编辑结果自动换算回真实时刻。')}</td></tr>
+		<tr><td><code>validRange</code></td><td><code>{'{ start?, end? }'}</code></td><td>—</td><td>{t('Days outside are read-only and unreachable.', '范围外的日期只读且不可导航。')}</td></tr>
+		<tr><td><code>eventOverlap</code></td><td><code>boolean</code></td><td><code>true</code></td><td>{t('false rejects overlapping drops/creates (timed events).', 'false 时拒绝时间冲突的拖放/新建（定时事件）。')}</td></tr>
 	</tbody>
 </table>
 
@@ -73,7 +77,8 @@
 		<tr><td><code>onEventChange</code></td><td><code>(info: EventChangeInfo) =&gt; void</code></td><td>{t('Drag/resize landed; info.revert() rolls back.', '拖拽落地；info.revert() 可回滚。')}</td></tr>
 		<tr><td><code>onEventCreate</code></td><td><code>(event) =&gt; void</code></td><td>{t('Quick-create added an event to the bound array.', '快速新建向绑定数组添加了日程。')}</td></tr>
 		<tr><td><code>onEventDelete</code></td><td><code>(event, occurrence?) =&gt; void</code></td><td>{t('An event was removed; occurrence set when one instance of a series was deleted.', '日程被删除；仅删系列中某一次时携带 occurrence。')}</td></tr>
-		<tr><td><code>onSeriesDetach</code></td><td><code>({'{ series, detached, occurrence }'}) =&gt; void</code></td><td>{t('A dragged occurrence was split into a standalone event.', '拖拽使某次从系列拆分为独立日程。')}</td></tr>
+		<tr><td><code>onSeriesDetach</code></td><td><code>({'{ series, detached, occurrence }'}) =&gt; void</code></td><td>{t('“This event”: an occurrence was split into a standalone event.', '“仅此日程”：某次被拆分为独立日程。')}</td></tr>
+		<tr><td><code>onSeriesSplit</code></td><td><code>({'{ truncated, created, occurrence }'}) =&gt; void</code></td><td>{t('“This and following”: the series was split at an occurrence.', '“此次及以后”：系列在该次处被拆分。')}</td></tr>
 		<tr><td><code>onRangeChange</code></td><td><code>(start, end) =&gt; void</code></td><td>{t('Visible range changed (incl. mount) — fetch events here.', '可见范围变化（含首次挂载）——适合按需拉取数据。')}</td></tr>
 		<tr><td><code>onViewChange</code></td><td><code>(view) =&gt; void</code></td><td>{t('View switched.', '视图切换。')}</td></tr>
 		<tr><td><code>onDateChange</code></td><td><code>(date) =&gt; void</code></td><td>{t('Focused date moved.', '聚焦日期变化。')}</td></tr>
@@ -96,7 +101,10 @@
 	<tbody>
 		<tr><td><code>MiniCalendar</code></td><td>{t('Standalone month picker component.', '独立迷你月历组件。')}</td></tr>
 		<tr><td><code>parseRRule / expandRecurrence</code></td><td>{t('Recurrence parsing & expansion.', '重复规则解析与展开。')}</td></tr>
-		<tr><td><code>detachOccurrence / excludeOccurrence</code></td><td>{t('Pure “this event” series-edit helpers.', '“仅此日程”系列编辑纯函数。')}</td></tr>
+		<tr><td><code>detachOccurrence / excludeOccurrence / splitSeries</code></td><td>{t('Pure series-edit helpers (“this event” / “this and following”).', '系列编辑纯函数（“仅此日程”/“此次及以后”）。')}</td></tr>
+		<tr><td><code>parseICS / toICS</code></td><td>{t('iCalendar (.ics) import & export.', 'iCalendar（.ics）导入与导出。')}</td></tr>
+		<tr><td><code>serializeRRule</code></td><td>{t('RecurrenceRule → RRULE string.', 'RecurrenceRule → RRULE 字符串。')}</td></tr>
+		<tr><td><code>toZoned / fromZoned</code></td><td>{t('Display-time-zone conversion helpers.', '显示时区换算辅助函数。')}</td></tr>
 		<tr><td><code>expandEvents</code></td><td>{t('Events → concrete instances for a range.', '事件 → 区间内的具体实例。')}</td></tr>
 		<tr><td><code>layoutDay / layoutWeekRow</code></td><td>{t('The pure layout algorithms.', '纯函数布局算法。')}</td></tr>
 		<tr><td><code>en / zhCN / messagesForLocale / localeFirstDay</code></td><td>{t('i18n helpers.', '国际化辅助。')}</td></tr>

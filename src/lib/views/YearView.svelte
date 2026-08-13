@@ -48,7 +48,7 @@
 							type="button"
 							class="s5c-mini-day"
 							class:s5c-other-month={!isSameMonth(day, month)}
-							class:s5c-is-today={isSameDay(day, new Date())}
+							class:s5c-is-today={isSameDay(day, ctx.now())}
 							aria-label={ctx.fmt.dayTitle(day)}
 							onclick={() => pick(day)}
 						>

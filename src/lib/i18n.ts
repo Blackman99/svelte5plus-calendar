@@ -41,7 +41,11 @@ export interface CalendarMessages {
 	editRecurring: string;
 	/** Series-edit confirm popover: apply to this occurrence only. */
 	thisEvent: string;
+	/** Series-edit confirm popover: apply to this and all following occurrences. */
+	thisAndFollowing: string;
 	cancel: string;
+	/** Toolbar label of the resource view. */
+	resources: string;
 }
 
 export const en: CalendarMessages = {
@@ -69,7 +73,9 @@ export const en: CalendarMessages = {
 	deleteSeries: 'Delete series',
 	editRecurring: 'Edit recurring event',
 	thisEvent: 'This event',
-	cancel: 'Cancel'
+	thisAndFollowing: 'This and following',
+	cancel: 'Cancel',
+	resources: 'Resources'
 };
 
 export const zhCN: CalendarMessages = {
@@ -97,14 +103,265 @@ export const zhCN: CalendarMessages = {
 	deleteSeries: '删除整个系列',
 	editRecurring: '修改重复日程',
 	thisEvent: '仅此日程',
-	cancel: '取消'
+	thisAndFollowing: '此次及以后',
+	cancel: '取消',
+	resources: '资源'
+};
+
+export const de: CalendarMessages = {
+	today: 'Heute',
+	day: 'Tag',
+	week: 'Woche',
+	month: 'Monat',
+	year: 'Jahr',
+	agenda: 'Agenda',
+	allDay: 'Ganztägig',
+	more: (n) => `+${n} weitere`,
+	noEvents: 'Keine Termine',
+	newEvent: 'Neuer Termin',
+	weekNo: (n) => `KW ${n}`,
+	previous: 'Zurück',
+	next: 'Weiter',
+	events: 'Termine',
+	add: 'Hinzufügen',
+	delete: 'Löschen',
+	titlePlaceholder: 'Titel hinzufügen',
+	untitled: '(Ohne Titel)',
+	recurringEvent: 'Serientermin',
+	close: 'Schließen',
+	deleteOccurrence: 'Nur diesen Termin löschen',
+	deleteSeries: 'Serie löschen',
+	editRecurring: 'Serientermin bearbeiten',
+	thisEvent: 'Dieser Termin',
+	thisAndFollowing: 'Dieser und folgende',
+	cancel: 'Abbrechen',
+	resources: 'Ressourcen'
+};
+
+export const fr: CalendarMessages = {
+	today: "Aujourd'hui",
+	day: 'Jour',
+	week: 'Semaine',
+	month: 'Mois',
+	year: 'Année',
+	agenda: 'Agenda',
+	allDay: 'Journée entière',
+	more: (n) => `+${n} autres`,
+	noEvents: 'Aucun événement',
+	newEvent: 'Nouvel événement',
+	weekNo: (n) => `S${n}`,
+	previous: 'Précédent',
+	next: 'Suivant',
+	events: 'événements',
+	add: 'Ajouter',
+	delete: 'Supprimer',
+	titlePlaceholder: 'Ajouter un titre',
+	untitled: '(Sans titre)',
+	recurringEvent: 'Événement récurrent',
+	close: 'Fermer',
+	deleteOccurrence: 'Supprimer cette occurrence',
+	deleteSeries: 'Supprimer la série',
+	editRecurring: "Modifier l'événement récurrent",
+	thisEvent: 'Cet événement',
+	thisAndFollowing: 'Celui-ci et les suivants',
+	cancel: 'Annuler',
+	resources: 'Ressources'
+};
+
+export const es: CalendarMessages = {
+	today: 'Hoy',
+	day: 'Día',
+	week: 'Semana',
+	month: 'Mes',
+	year: 'Año',
+	agenda: 'Agenda',
+	allDay: 'Todo el día',
+	more: (n) => `+${n} más`,
+	noEvents: 'Sin eventos',
+	newEvent: 'Nuevo evento',
+	weekNo: (n) => `S${n}`,
+	previous: 'Anterior',
+	next: 'Siguiente',
+	events: 'eventos',
+	add: 'Añadir',
+	delete: 'Eliminar',
+	titlePlaceholder: 'Añadir título',
+	untitled: '(Sin título)',
+	recurringEvent: 'Evento recurrente',
+	close: 'Cerrar',
+	deleteOccurrence: 'Eliminar esta repetición',
+	deleteSeries: 'Eliminar la serie',
+	editRecurring: 'Editar evento recurrente',
+	thisEvent: 'Este evento',
+	thisAndFollowing: 'Este y los siguientes',
+	cancel: 'Cancelar',
+	resources: 'Recursos'
+};
+
+export const pt: CalendarMessages = {
+	today: 'Hoje',
+	day: 'Dia',
+	week: 'Semana',
+	month: 'Mês',
+	year: 'Ano',
+	agenda: 'Agenda',
+	allDay: 'Dia inteiro',
+	more: (n) => `+${n} mais`,
+	noEvents: 'Sem eventos',
+	newEvent: 'Novo evento',
+	weekNo: (n) => `S${n}`,
+	previous: 'Anterior',
+	next: 'Próximo',
+	events: 'eventos',
+	add: 'Adicionar',
+	delete: 'Excluir',
+	titlePlaceholder: 'Adicionar título',
+	untitled: '(Sem título)',
+	recurringEvent: 'Evento recorrente',
+	close: 'Fechar',
+	deleteOccurrence: 'Excluir esta ocorrência',
+	deleteSeries: 'Excluir a série',
+	editRecurring: 'Editar evento recorrente',
+	thisEvent: 'Este evento',
+	thisAndFollowing: 'Este e os seguintes',
+	cancel: 'Cancelar',
+	resources: 'Recursos'
+};
+
+export const ja: CalendarMessages = {
+	today: '今日',
+	day: '日',
+	week: '週',
+	month: '月',
+	year: '年',
+	agenda: '予定リスト',
+	allDay: '終日',
+	more: (n) => `他 ${n} 件`,
+	noEvents: '予定なし',
+	newEvent: '新しい予定',
+	weekNo: (n) => `第${n}週`,
+	previous: '前へ',
+	next: '次へ',
+	events: '件',
+	add: '追加',
+	delete: '削除',
+	titlePlaceholder: 'タイトルを追加',
+	untitled: '（タイトルなし）',
+	recurringEvent: '繰り返しの予定',
+	close: '閉じる',
+	deleteOccurrence: 'この予定のみ削除',
+	deleteSeries: 'シリーズを削除',
+	editRecurring: '繰り返しの予定を変更',
+	thisEvent: 'この予定',
+	thisAndFollowing: 'これ以降すべて',
+	cancel: 'キャンセル',
+	resources: 'リソース'
+};
+
+export const ko: CalendarMessages = {
+	today: '오늘',
+	day: '일',
+	week: '주',
+	month: '월',
+	year: '년',
+	agenda: '일정 목록',
+	allDay: '종일',
+	more: (n) => `+${n}개 더보기`,
+	noEvents: '일정 없음',
+	newEvent: '새 일정',
+	weekNo: (n) => `${n}주차`,
+	previous: '이전',
+	next: '다음',
+	events: '개 일정',
+	add: '추가',
+	delete: '삭제',
+	titlePlaceholder: '제목 추가',
+	untitled: '(제목 없음)',
+	recurringEvent: '반복 일정',
+	close: '닫기',
+	deleteOccurrence: '이 일정만 삭제',
+	deleteSeries: '반복 모두 삭제',
+	editRecurring: '반복 일정 수정',
+	thisEvent: '이 일정',
+	thisAndFollowing: '이 일정 및 향후 일정',
+	cancel: '취소',
+	resources: '리소스'
+};
+
+export const ru: CalendarMessages = {
+	today: 'Сегодня',
+	day: 'День',
+	week: 'Неделя',
+	month: 'Месяц',
+	year: 'Год',
+	agenda: 'Повестка',
+	allDay: 'Весь день',
+	more: (n) => `ещё ${n}`,
+	noEvents: 'Нет событий',
+	newEvent: 'Новое событие',
+	weekNo: (n) => `Нед. ${n}`,
+	previous: 'Назад',
+	next: 'Вперёд',
+	events: 'события',
+	add: 'Добавить',
+	delete: 'Удалить',
+	titlePlaceholder: 'Добавьте название',
+	untitled: '(Без названия)',
+	recurringEvent: 'Повторяющееся событие',
+	close: 'Закрыть',
+	deleteOccurrence: 'Удалить только это событие',
+	deleteSeries: 'Удалить серию',
+	editRecurring: 'Изменить повторяющееся событие',
+	thisEvent: 'Это событие',
+	thisAndFollowing: 'Это и последующие',
+	cancel: 'Отмена',
+	resources: 'Ресурсы'
+};
+
+export const it: CalendarMessages = {
+	today: 'Oggi',
+	day: 'Giorno',
+	week: 'Settimana',
+	month: 'Mese',
+	year: 'Anno',
+	agenda: 'Agenda',
+	allDay: 'Tutto il giorno',
+	more: (n) => `+${n} altri`,
+	noEvents: 'Nessun evento',
+	newEvent: 'Nuovo evento',
+	weekNo: (n) => `Sett. ${n}`,
+	previous: 'Indietro',
+	next: 'Avanti',
+	events: 'eventi',
+	add: 'Aggiungi',
+	delete: 'Elimina',
+	titlePlaceholder: 'Aggiungi titolo',
+	untitled: '(Senza titolo)',
+	recurringEvent: 'Evento ricorrente',
+	close: 'Chiudi',
+	deleteOccurrence: 'Elimina questa occorrenza',
+	deleteSeries: 'Elimina la serie',
+	editRecurring: 'Modifica evento ricorrente',
+	thisEvent: 'Questo evento',
+	thisAndFollowing: 'Questo e i successivi',
+	cancel: 'Annulla',
+	resources: 'Risorse'
 };
 
 const BUILT_IN: Record<string, CalendarMessages> = {
 	en,
 	'zh-cn': zhCN,
 	zh: zhCN,
-	'zh-hans': zhCN
+	'zh-hans': zhCN,
+	de,
+	fr,
+	es,
+	pt,
+	'pt-br': pt,
+	ja,
+	ko,
+	ru,
+	it
 };
 
 export function messagesForLocale(

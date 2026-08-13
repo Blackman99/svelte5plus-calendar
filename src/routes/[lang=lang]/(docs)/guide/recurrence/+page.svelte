@@ -65,8 +65,8 @@ exdates: [new Date(2026, 7, 19)]`;
 	<li>{t('Yearly rules starting Feb 29 only fire in leap years.', '起始于 2 月 29 日的每年重复只在闰年出现。')}</li>
 	<li>
 		{t(
-			'Recurring instances show a ↻ mark. Dragging or resizing one asks for confirmation and then detaches that occurrence into a standalone event (the series gains an exdate) — like “this event” edits in Google Calendar.',
-			'重复实例带 ↻ 标记。拖动或调整某一次会先弹出确认，然后把该次拆分为独立日程（系列自动添加 exdate）——即 Google 日历的“仅此日程”编辑。'
+			'Recurring instances show a ↻ mark. Dragging or resizing one opens a confirm popover with “This event” (detaches the occurrence) and “This and following” (splits the series at that point) — like Google Calendar.',
+			'重复实例带 ↻ 标记。拖动或调整某一次会弹出确认层，提供“仅此日程”（拆分该次为独立日程）与“此次及以后”（在该点拆分系列）两种选择——与 Google 日历一致。'
 		)}
 	</li>
 	<li>
@@ -81,7 +81,7 @@ exdates: [new Date(2026, 7, 19)]`;
 <div class="callout">
 	<strong>{t('Editing a series', '编辑重复系列')}</strong> —
 	{t(
-		'“this event” edits are built in (drag/resize detaches the occurrence; onSeriesDetach reports the split, and the pure helpers detachOccurrence / excludeOccurrence are exported). For “this and following”, split the series in your data: shorten the original with until, then create a new series.',
-		'“仅此日程”编辑已内置（拖拽/调整会自动拆分该次；onSeriesDetach 回调上报拆分结果，纯函数 detachOccurrence / excludeOccurrence 也已导出）。如需“此次及以后”，请在数据层拆分：用 until 截断原系列后新建一个系列。'
+		'both “this event” and “this and following” edits are built in: onSeriesDetach / onSeriesSplit report the results, COUNT and exdates are re-partitioned automatically, and weekly BYDAY lists re-anchor when the drag changes the weekday. The pure helpers detachOccurrence, excludeOccurrence and splitSeries are exported for data-layer use.',
+		'“仅此日程”与“此次及以后”均已内置：onSeriesDetach / onSeriesSplit 回调上报结果，COUNT 与 exdates 自动重新分配，拖拽改变星期几时每周 BYDAY 列表会自动重锚。纯函数 detachOccurrence、excludeOccurrence、splitSeries 也已导出供数据层使用。'
 	)}
 </div>

@@ -53,7 +53,7 @@
 	<li>{t('Drag an event block to another time or day (week/day views).', '把事件块拖到其他时间或日期（周/日视图）。')}</li>
 	<li>{t('Drag an event pill to another day (month view), or an all-day bar along the all-day lane.', '把事件条拖到其他日期（月视图），或在全天栏内横向拖动全天事件。')}</li>
 	<li>{t('Drag the bottom edge of a block to resize it.', '拖动事件块底边调整时长。')}</li>
-	<li>{t('Drag a recurring instance — a confirm popover detaches that occurrence (“this event”).', '拖动重复实例——确认弹层将该次拆分为独立日程（“仅此日程”）。')}</li>
+	<li>{t('Drag a recurring instance — a confirm popover offers “this event” or “this and following”.', '拖动重复实例——确认弹层提供“仅此日程”或“此次及以后”。')}</li>
 	<li>{t('Drag across empty slots to select a time range (fires onSelect).', '在空白时间格上拖选一个范围（触发 onSelect）。')}</li>
 	<li>{t('Drag across month cells to select a day range.', '在月视图单元格上拖选一个日期范围。')}</li>
 	<li>{t('Click an empty slot or day (fires onDateClick).', '点击空白时间格或日期（触发 onDateClick）。')}</li>

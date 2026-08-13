@@ -8,6 +8,8 @@
 		EventChangeInfo,
 		EventInstance,
 		RangeSelection,
+		Resource,
+		ValidRange,
 		Weekday
 	} from './types.js';
 	import {
@@ -21,7 +23,9 @@
 		startOfWeek
 	} from './date.js';
 	import { expandEvents } from './instances.js';
-	import { detachOccurrence, excludeOccurrence } from './series.js';
+	import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
+	import { normalizeRule } from './recurrence.js';
+	import { toZoned, fromZoned } from './tz.js';
 	import { formatters, localeFirstDay, messagesForLocale, type CalendarMessages } from './i18n.js';
 	import { setCalendarContext, type CalendarContext } from './context.js';
 	import Toolbar from './Toolbar.svelte';
@@ -29,6 +33,7 @@
 	import TimeGrid from './views/TimeGrid.svelte';
 	import YearView from './views/YearView.svelte';
 	import AgendaView from './views/AgendaView.svelte';
+	import ResourceView from './views/ResourceView.svelte';
 	import EventDetails from './EventDetails.svelte';
 	import QuickCreate from './QuickCreate.svelte';
 	import SeriesConfirm from './SeriesConfirm.svelte';
@@ -42,6 +47,18 @@
 		view?: CalendarView;
 		/** Event sources/groups (colors, visibility). */
 		sources?: CalendarSource[];
+		/** Resources (people, rooms) shown as columns by the `resources` view. */
+		resources?: Resource[];
+		/**
+		 * IANA time zone to display in (e.g. `"Asia/Shanghai"`). Event `Date`s
+		 * stay real instants; the grid, popovers and edits are rendered and
+		 * interpreted in this zone. Defaults to the runtime's local zone.
+		 */
+		timeZone?: string;
+		/** Days outside this range are read-only and unreachable via navigation. */
+		validRange?: ValidRange;
+		/** When `false`, drops/creates overlapping another timed event are rejected. */
+		eventOverlap?: boolean;
 		/** BCP-47 locale tag, drives all labels and date formats. */
 		locale?: string;
 		/** Override built-in UI strings. */
@@ -122,6 +139,16 @@
 			detached: CalendarEvent;
 			occurrence: Date;
 		}) => void;
+		/**
+		 * Fires after a “this and following” edit: the original series was
+		 * truncated (`null` when the occurrence was the first) and a new series
+		 * was created from the occurrence onward.
+		 */
+		onSeriesSplit?: (info: {
+			truncated: CalendarEvent | null;
+			created: CalendarEvent;
+			occurrence: Date;
+		}) => void;
 		onViewChange?: (view: CalendarView) => void;
 		onDateChange?: (date: Date) => void;
 		/** Fires when the visible date range changes — ideal for fetching events. */
@@ -138,6 +165,10 @@
 		date = $bindable(new Date()),
 		view = $bindable('month'),
 		sources = [],
+		resources = [],
+		timeZone,
+		validRange,
+		eventOverlap = true,
 		locale = 'en',
 		messages: messagesOverride,
 		firstDayOfWeek,
@@ -169,6 +200,7 @@
 		onEventCreate,
 		onEventDelete,
 		onSeriesDetach,
+		onSeriesSplit,
 		onViewChange,
 		onDateChange,
 		onRangeChange,
@@ -186,6 +218,59 @@
 
 	const isVisibleDay = (d: Date) => weekends || (d.getDay() !== 0 && d.getDay() !== 6);
 
+	// ---- display time zone ---------------------------------------------------
+	/** Real instant → display wall-clock (identity without `timeZone`). */
+	const toView = (d: Date) => (timeZone ? toZoned(d, timeZone) : d);
+	/** Display wall-clock → real instant (identity without `timeZone`). */
+	const toReal = (d: Date) => (timeZone ? fromZoned(d, timeZone) : d);
+
+	/** Events with start/end/exdates/until shifted into the display zone. */
+	const zonedEvents = $derived.by<CalendarEvent[]>(() => {
+		if (!timeZone) return events;
+		return events.map((ev) => {
+			const shifted: CalendarEvent = {
+				...ev,
+				start: toView(ev.start),
+				end: toView(ev.end),
+				exdates: ev.exdates?.map(toView)
+			};
+			if (ev.recurrence) {
+				const rule = normalizeRule(ev.recurrence);
+				shifted.recurrence = rule.until ? { ...rule, until: toView(rule.until) } : rule;
+			}
+			return shifted;
+		});
+	});
+
+	function now(): Date {
+		return toView(new Date());
+	}
+
+	function isDayAllowed(day: Date): boolean {
+		if (!validRange) return true;
+		if (validRange.start && day.getTime() < startOfDay(validRange.start).getTime()) return false;
+		if (validRange.end && day.getTime() > startOfDay(validRange.end).getTime()) return false;
+		return true;
+	}
+
+	/** Clamps a focus date into `validRange`. */
+	function clampDate(d: Date): Date {
+		if (!validRange) return d;
+		if (validRange.start && d.getTime() < validRange.start.getTime()) {
+			return new Date(validRange.start);
+		}
+		if (validRange.end && d.getTime() > validRange.end.getTime()) {
+			return new Date(validRange.end);
+		}
+		return d;
+	}
+
+	// ---- screen-reader announcements ----------------------------------------
+	let announcement = $state('');
+	function announce(text: string) {
+		announcement = text;
+	}
+
 	/** All day-cells the current view shows (month: leading/trailing included). */
 	const visibleDays = $derived.by<Date[]>(() => {
 		switch (view) {
@@ -196,6 +281,7 @@
 				return Array.from({ length: 7 }, (_, i) => addDays(first, i)).filter(isVisibleDay);
 			}
 			case 'day':
+			case 'resources':
 				return [startOfDay(date)];
 			case 'year': {
 				const first = new Date(date.getFullYear(), 0, 1);
@@ -213,7 +299,7 @@
 
 	const rangeStart = $derived(visibleDays[0]);
 	const rangeEnd = $derived(endOfDay(visibleDays[visibleDays.length - 1]));
-	const instances = $derived(expandEvents(events, rangeStart, rangeEnd, sources));
+	const instances = $derived(expandEvents(zonedEvents, rangeStart, rangeEnd, sources));
 
 	// Notify when the visible range changes (initial mount included).
 	let lastRange: { s: number; e: number } | null = null;
@@ -222,7 +308,7 @@
 		const e = rangeEnd.getTime();
 		if (lastRange && lastRange.s === s && lastRange.e === e) return;
 		lastRange = { s, e };
-		onRangeChange?.(new Date(s), new Date(e));
+		onRangeChange?.(toReal(new Date(s)), toReal(new Date(e)));
 	});
 
 	const title = $derived.by(() => {
@@ -232,6 +318,7 @@
 			case 'week':
 				return fm.range(rangeStart, addDays(rangeEnd, -1));
 			case 'day':
+			case 'resources':
 				return fm.dayTitle(date);
 			case 'year':
 				return fm.yearTitle(date);
@@ -241,8 +328,8 @@
 	});
 
 	function setDate(d: Date) {
-		date = d;
-		onDateChange?.(d);
+		date = clampDate(d);
+		onDateChange?.(date);
 	}
 	function setView(v: CalendarView) {
 		if (v === view) return;
@@ -258,6 +345,7 @@
 				setDate(addDays(date, dir * 7));
 				break;
 			case 'day':
+			case 'resources':
 				setDate(addDays(date, dir));
 				break;
 			case 'year':
@@ -269,7 +357,7 @@
 		}
 	}
 	function goToday() {
-		setDate(new Date());
+		setDate(now());
 	}
 
 	const sourceById = $derived(new Map(sources.map((s) => [s.id, s])));
@@ -290,22 +378,61 @@
 		end: Date;
 		allDay: boolean;
 		anchor: DOMRect;
+		resourceId?: string;
 	} | null>(null);
 
 	function confirmSeriesDetach() {
 		if (!seriesConfirm) return;
-		const { instance, start, end, allDay } = seriesConfirm;
+		const { instance, start, end, allDay, resourceId } = seriesConfirm;
 		seriesConfirm = null;
 		const target = events.find((ev) => ev.id === instance.event.id);
 		if (!target) return;
 		const { series, detached } = detachOccurrence(
 			target,
-			instance.start,
-			{ start, end, allDay },
+			toReal(instance.start),
+			{ start: toReal(start), end: toReal(end), allDay },
 			crypto.randomUUID()
 		);
+		if (resourceId !== undefined) detached.resourceId = resourceId;
 		events = [...events.map((ev) => (ev === target ? series : ev)), detached];
-		onSeriesDetach?.({ series, detached, occurrence: instance.start });
+		onSeriesDetach?.({ series, detached, occurrence: toReal(instance.start) });
+		announceChange(detached.title, start, allDay);
+	}
+
+	function confirmSeriesSplit() {
+		if (!seriesConfirm) return;
+		const { instance, start, end, allDay, resourceId } = seriesConfirm;
+		seriesConfirm = null;
+		const target = events.find((ev) => ev.id === instance.event.id);
+		if (!target) return;
+		const { truncated, created } = splitSeries(
+			target,
+			toReal(instance.start),
+			{ start: toReal(start), end: toReal(end), allDay },
+			crypto.randomUUID()
+		);
+		if (resourceId !== undefined) created.resourceId = resourceId;
+		events = truncated
+			? [...events.map((ev) => (ev === target ? truncated : ev)), created]
+			: events.map((ev) => (ev === target ? created : ev));
+		onSeriesSplit?.({ truncated, created, occurrence: toReal(instance.start) });
+		announceChange(created.title, start, allDay);
+	}
+
+	/** True when a timed range would collide with another visible timed event. */
+	function violatesOverlap(start: Date, end: Date, allDay: boolean, excludeId?: string): boolean {
+		if (eventOverlap || allDay) return false;
+		return instances.some(
+			(i) =>
+				!i.allDay &&
+				i.event.id !== excludeId &&
+				i.start.getTime() < end.getTime() &&
+				start.getTime() < i.end.getTime()
+		);
+	}
+
+	function announceChange(title: string, start: Date, allDay: boolean) {
+		announce(`${title}: ${fm.dayTitle(start)}${allDay ? '' : ` ${fm.time(start)}`}`);
 	}
 
 	function applyTimes(
@@ -313,10 +440,13 @@
 		start: Date,
 		end: Date,
 		allDay?: boolean,
-		anchor?: DOMRect
+		anchor?: DOMRect,
+		resourceId?: string
 	) {
+		if (!isDayAllowed(startOfDay(start))) return;
+		if (violatesOverlap(start, end, allDay ?? instance.allDay, instance.event.id)) return;
 		if (instance.isRecurring) {
-			// Editing one occurrence needs a decision — confirm before detaching.
+			// Editing one occurrence needs a decision — confirm before applying.
 			const fallback = new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 1, 1);
 			detailsPopover = null;
 			quickPopover = null;
@@ -325,7 +455,8 @@
 				start,
 				end,
 				allDay: allDay ?? instance.allDay,
-				anchor: anchor ?? fallback
+				anchor: anchor ?? fallback,
+				resourceId
 			};
 			return;
 		}
@@ -334,26 +465,41 @@
 		const oldStart = target.start;
 		const oldEnd = target.end;
 		const oldAllDay = target.allDay ?? false;
+		const oldResourceId = target.resourceId;
 		const nextAllDay = allDay ?? oldAllDay;
+		const realStart = toReal(start);
+		const realEnd = toReal(end);
+		const nextResourceId = resourceId ?? oldResourceId;
 		if (
-			oldStart.getTime() === start.getTime() &&
-			oldEnd.getTime() === end.getTime() &&
-			oldAllDay === nextAllDay
+			oldStart.getTime() === realStart.getTime() &&
+			oldEnd.getTime() === realEnd.getTime() &&
+			oldAllDay === nextAllDay &&
+			oldResourceId === nextResourceId
 		) {
 			return;
 		}
-		const updated: CalendarEvent = { ...target, start, end, allDay: nextAllDay };
+		const updated: CalendarEvent = {
+			...target,
+			start: realStart,
+			end: realEnd,
+			allDay: nextAllDay,
+			...(nextResourceId !== undefined ? { resourceId: nextResourceId } : {})
+		};
 		events = events.map((ev) => (ev === target ? updated : ev));
+		announceChange(updated.title, start, nextAllDay);
 		onEventChange?.({
 			event: updated,
 			oldStart,
 			oldEnd,
-			start,
-			end,
+			start: realStart,
+			end: realEnd,
 			allDay: nextAllDay,
+			...(resourceId !== undefined ? { resourceId: nextResourceId, oldResourceId } : {}),
 			revert: () => {
 				events = events.map((ev) =>
-					ev.id === updated.id ? { ...ev, start: oldStart, end: oldEnd, allDay: oldAllDay } : ev
+					ev.id === updated.id
+						? { ...ev, start: oldStart, end: oldEnd, allDay: oldAllDay, resourceId: oldResourceId }
+						: ev
 				);
 			}
 		});
@@ -364,9 +510,17 @@
 	let quickPopover = $state<{ sel: RangeSelection; anchor: DOMRect } | null>(null);
 
 	function createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }) {
-		const event: CalendarEvent = { id: data.id ?? crypto.randomUUID(), ...data };
+		if (!isDayAllowed(startOfDay(data.start))) return;
+		if (violatesOverlap(data.start, data.end, data.allDay ?? false)) return;
+		const event: CalendarEvent = {
+			id: data.id ?? crypto.randomUUID(),
+			...data,
+			start: toReal(data.start),
+			end: toReal(data.end)
+		};
 		events = [...events, event];
 		onEventCreate?.(event);
+		announceChange(event.title, data.start, data.allDay ?? false);
 	}
 
 	function deleteEvent(instance: EventInstance) {
@@ -379,9 +533,10 @@
 	function deleteOccurrence(instance: EventInstance) {
 		const target = events.find((ev) => ev.id === instance.event.id);
 		if (!target) return;
-		const updated = excludeOccurrence(target, instance.start);
+		const occurrence = toReal(instance.start);
+		const updated = excludeOccurrence(target, occurrence);
 		events = events.map((ev) => (ev === target ? updated : ev));
-		onEventDelete?.(updated, instance.start);
+		onEventDelete?.(updated, occurrence);
 	}
 
 	function handleEventClick(instance: EventInstance, e: MouseEvent | KeyboardEvent) {
@@ -398,6 +553,7 @@
 	}
 
 	function handleSelect(sel: RangeSelection, anchor?: DOMRect) {
+		if (!isDayAllowed(startOfDay(sel.start))) return;
 		if (onSelect) {
 			onSelect(sel);
 			return;
@@ -409,6 +565,7 @@
 	}
 
 	function handleDateClick(d: Date, allDay: boolean, anchor?: DOMRect) {
+		if (!isDayAllowed(startOfDay(d))) return;
 		if (onDateClick) {
 			onDateClick(d, allDay);
 			return;
@@ -434,6 +591,9 @@
 		},
 		get sources() {
 			return sources;
+		},
+		get resources() {
+			return resources;
 		},
 		get locale() {
 			return locale;
@@ -498,6 +658,18 @@
 		get eventDetails() {
 			return eventDetails;
 		},
+		get timeZone() {
+			return timeZone;
+		},
+		get validRange() {
+			return validRange ?? null;
+		},
+		get eventOverlap() {
+			return eventOverlap;
+		},
+		now,
+		isDayAllowed,
+		announce,
 		get visibleDays() {
 			return visibleDays;
 		},
@@ -553,11 +725,14 @@
 		<MonthView />
 	{:else if view === 'week' || view === 'day'}
 		<TimeGrid />
+	{:else if view === 'resources'}
+		<ResourceView />
 	{:else if view === 'year'}
 		<YearView />
 	{:else if view === 'agenda'}
 		<AgendaView />
 	{/if}
+	<div class="s5c-sr-only" aria-live="polite">{announcement}</div>
 	{#if detailsPopover}
 		<EventDetails
 			instance={detailsPopover.instance}
@@ -576,6 +751,7 @@
 		<SeriesConfirm
 			anchor={seriesConfirm.anchor}
 			onconfirm={confirmSeriesDetach}
+			onsplit={confirmSeriesSplit}
 			onclose={() => (seriesConfirm = null)}
 		/>
 	{/if}
