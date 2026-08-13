@@ -780,6 +780,9 @@
 	font-size: 13px;
 	color: var(--s5c-text);
 	width: 252px;
+	/* Size to content — the picker must not stretch inside fixed-height
+	 * parents (`.s5c` sets height: 100% for the full calendar). */
+	height: auto;
 	user-select: none;
 }
 .s5c-mini-toolbar {
