@@ -22,7 +22,7 @@
 	)}
 </p>
 
-<Example title={t('Standalone date picker with event dots', '独立日期选择器（带事件圆点）')} code={miniRaw} tall={false}>
+<Example title={t('Pick a day → see it in the day view', '点选日期 → 右侧日视图联动')} code={miniRaw}>
 	<MiniCalendarDemo {locale} />
 </Example>
 
@@ -39,10 +39,24 @@
 	</tbody>
 </table>
 
-<h2>{t('Pairing with the main calendar', '与主日历联动')}</h2>
-<p>
-	{t(
-		'Point the mini calendar’s onSelect at the main calendar’s bound date — clicking a day jumps the big view there. The landing-page demo of this site is built exactly that way.',
-		'把迷你月历的 onSelect 指向主日历绑定的 date——点击某天，大日历即跳转过去。本站首页的演示正是这样实现的。'
-	)}
-</p>
+<h2>{t('How the two-way link works', '双向联动的实现')}</h2>
+<ul>
+	<li>
+		{t(
+			'Mini → day view: onSelect writes the picked day into the Calendar’s bound date.',
+			'迷你 → 日视图：onSelect 把选中的日期写入 Calendar 绑定的 date。'
+		)}
+	</li>
+	<li>
+		{t(
+			'Day view → mini: with bind:date, toolbar navigation updates the same state; a one-line $effect keeps the mini calendar’s bound month following it.',
+			'日视图 → 迷你：bind:date 让工具栏导航更新同一份状态；再用一行 $effect 让迷你月历绑定的 month 跟随即可。'
+		)}
+	</li>
+	<li>
+		{t(
+			'Passing value={date} keeps the picked day highlighted in the mini grid.',
+			'把 value={date} 传给迷你月历，选中的日期会保持高亮。'
+		)}
+	</li>
+</ul>
