@@ -5,6 +5,8 @@
 	import CodeBlock from '$docs/CodeBlock.svelte';
 	import CustomRenderDemo from '$docs/examples/CustomRenderDemo.svelte';
 	import customRaw from '$docs/examples/CustomRenderDemo.svelte?raw';
+	import CustomUxDemo from '$docs/examples/CustomUxDemo.svelte';
+	import customUxRaw from '$docs/examples/CustomUxDemo.svelte?raw';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -50,6 +52,24 @@
 <Example title={t('Emoji per calendar', '按日历源加表情前缀')} code={customRaw}>
 	<CustomRenderDemo {locale} />
 </Example>
+
+<h2>{t('Custom create & details UI', '自定义新建与详情 UI')}</h2>
+<p>
+	{t(
+		'The built-in popovers are defaults, not a cage: the moment you provide onSelect / onDateClick the quick-create popover steps aside, and onEventClick replaces the details popover. From there any UI works — a modal, a drawer, a routed page. This demo swaps them for a centered create dialog and a details side drawer:',
+		'内置弹层只是默认行为，不是束缚：一旦提供 onSelect / onDateClick，快速新建弹层就会让位；提供 onEventClick 则替换详情弹层。之后任何 UI 都可以——模态框、抽屉、独立路由页。下面的示例把它们换成了居中的新建对话框和右侧详情抽屉：'
+	)}
+</p>
+<Example title={t('Your own dialog & drawer', '自己的对话框与抽屉')} code={customUxRaw}>
+	<CustomUxDemo {locale} />
+</Example>
+<div class="callout">
+	<strong>{t('Styling the built-ins', '只想换皮肤？')}</strong> —
+	{t(
+		'if the default popovers just need a different look, restyle them with CSS variables and the .s5c-popover class instead of replacing them.',
+		'如果只是想调整默认弹层的外观，用 CSS 变量和 .s5c-popover 类名换肤即可，无需整体替换。'
+	)}
+</div>
 
 <h2>{t('Extra toolbar content', '附加工具栏内容')}</h2>
 <p>
