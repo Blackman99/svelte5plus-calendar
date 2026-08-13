@@ -38,8 +38,8 @@
 <div class="callout">
 	<strong>{t('Precedence', '优先级')}</strong> —
 	{t(
-		'providing onEventClick suppresses the details popover; providing onSelect / onDateClick suppresses quick-create. Set eventDetails={false} or quickCreate={false} to turn the built-ins off without supplying handlers. Quick-create requires selectable.',
-		'提供 onEventClick 时详情弹层让位；提供 onSelect / onDateClick 时快速新建让位。也可以用 eventDetails={false} 或 quickCreate={false} 直接关闭内置弹层。快速新建需要开启 selectable。'
+		'providing onEventClick suppresses the details popover; providing onSelect / onDateClick suppresses quick-create. Set eventDetails={false} or quickCreate={false} to turn the built-ins off without supplying handlers. Quick-create activates when the calendar is selectable or editable.',
+		'提供 onEventClick 时详情弹层让位；提供 onSelect / onDateClick 时快速新建让位。也可以用 eventDetails={false} 或 quickCreate={false} 直接关闭内置弹层。开启 selectable 或 editable 即可使用快速新建。'
 	)}
 </div>
 

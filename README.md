@@ -152,7 +152,7 @@ Requires Svelte 5. Styles are imported automatically.
 
 **Callbacks:** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event)` · `onViewChange(view)` · `onDateChange(date)`
 
-**Built-in popovers:** with `editable`/`selectable` and no callbacks, clicking an event opens a details popover and clicking/drag-selecting empty space opens a quick-create popover. Providing `onEventClick` / `onSelect` / `onDateClick` replaces them; `eventDetails={false}` / `quickCreate={false}` disables them.
+**Built-in popovers:** with `editable` or `selectable` and no callbacks, clicking an event opens a details popover and clicking/drag-selecting empty space opens a quick-create popover. Providing `onEventClick` / `onSelect` / `onDateClick` replaces them; `eventDetails={false}` / `quickCreate={false}` disables them.
 
 **Theming from an ancestor:** omit the `theme` prop and set `data-s5c-theme="dark"` on any ancestor (e.g. `<html>`) to switch every calendar at once.
 

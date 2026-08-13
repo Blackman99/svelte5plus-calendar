@@ -15,4 +15,5 @@
 	]);
 </script>
 
-<Calendar bind:events {locale} view="month" />
+<!-- editable + selectable: drag events around, click/drag empty space to create -->
+<Calendar bind:events {locale} view="month" editable selectable />

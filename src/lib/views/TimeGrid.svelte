@@ -144,7 +144,8 @@
 
 	function onColPointerDown(dayIdx: number) {
 		return (e: PointerEvent) => {
-			if (e.button !== 0 || !ctx.selectable) return;
+			if (e.button !== 0) return;
+			if (!ctx.selectable && !(ctx.editable && ctx.quickCreate)) return;
 			const min = floorToStep(pointToMin(e.clientY), ctx.snapDuration);
 			drag = { kind: 'create', dayIdx, anchorMin: min, headMin: min + ctx.snapDuration, moved: false };
 		};

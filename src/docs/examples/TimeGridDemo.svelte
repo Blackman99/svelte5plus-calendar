@@ -4,11 +4,13 @@
 
 	let { locale = 'en' } = $props();
 
-	const events = $derived(sampleEvents(locale));
+	// Seeded once per mount (the docs remount this demo when the locale changes).
+	// svelte-ignore state_referenced_locally
+	let events = $state(sampleEvents(locale));
 </script>
 
 <Calendar
-	{events}
+	bind:events
 	{locale}
 	view="week"
 	sources={sampleSources(locale)}
@@ -22,4 +24,6 @@
 	businessHours={{ days: [1, 2, 3, 4, 5], startHour: 9, endHour: 18 }}
 	nowIndicator
 	views={['day', 'week']}
+	editable
+	selectable
 />

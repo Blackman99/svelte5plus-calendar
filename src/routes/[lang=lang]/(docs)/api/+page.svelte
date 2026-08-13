@@ -66,7 +66,7 @@
 		<tr><td><code>editable</code></td><td><code>boolean</code></td><td>{t('Enable drag & resize.', '启用拖动与调整。')}</td></tr>
 		<tr><td><code>selectable</code></td><td><code>boolean</code></td><td>{t('Enable drag-selection.', '启用拖选。')}</td></tr>
 		<tr><td><code>eventDetails</code></td><td><code>boolean</code> = <code>true</code></td><td>{t('Built-in details popover on event click (skipped when onEventClick is set).', '点击日程时的内置详情弹层（设置 onEventClick 时让位）。')}</td></tr>
-		<tr><td><code>quickCreate</code></td><td><code>boolean</code> = <code>true</code></td><td>{t('Built-in quick-create popover on empty click/selection (needs selectable; skipped when onSelect/onDateClick are set).', '点击/框选空白时的内置快速新建弹层（需 selectable；设置 onSelect/onDateClick 时让位）。')}</td></tr>
+		<tr><td><code>quickCreate</code></td><td><code>boolean</code> = <code>true</code></td><td>{t('Built-in quick-create popover on empty click/selection (needs selectable or editable; skipped when onSelect/onDateClick are set).', '点击/框选空白时的内置快速新建弹层（需 selectable 或 editable；设置 onSelect/onDateClick 时让位）。')}</td></tr>
 		<tr><td><code>onEventClick</code></td><td><code>(instance, e) =&gt; void</code></td><td>{t('Event activated.', '事件被点击。')}</td></tr>
 		<tr><td><code>onDateClick</code></td><td><code>(date, allDay) =&gt; void</code></td><td>{t('Empty cell / slot clicked.', '空白格被点击。')}</td></tr>
 		<tr><td><code>onSelect</code></td><td><code>(sel: RangeSelection) =&gt; void</code></td><td>{t('Drag-selection finished.', '拖选完成。')}</td></tr>

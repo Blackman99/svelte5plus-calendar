@@ -73,8 +73,9 @@
 		/** Allow drag-selecting ranges (fires `onSelect`). */
 		selectable?: boolean;
 		/**
-		 * Built-in quick-create popover when clicking/drag-selecting empty space
-		 * (requires `selectable`; skipped when `onSelect`/`onDateClick` are provided).
+		 * Built-in quick-create popover when clicking/drag-selecting empty space.
+		 * Active when the calendar is `selectable` or `editable`; skipped when
+		 * `onSelect`/`onDateClick` are provided.
 		 */
 		quickCreate?: boolean;
 		/**
@@ -330,7 +331,8 @@
 			onDateClick(d, allDay);
 			return;
 		}
-		if (!selectable || !quickCreate || !anchor) return;
+		// Quick-create is available on any calendar the user may write to.
+		if (!(selectable || editable) || !quickCreate || !anchor) return;
 		const sel: RangeSelection = allDay
 			? { start: startOfDay(d), end: endOfDay(d), allDay: true }
 			: { start: d, end: addMinutes(d, Math.max(slotDuration * 2, 30)), allDay: false };

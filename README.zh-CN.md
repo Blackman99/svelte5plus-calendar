@@ -146,7 +146,7 @@ npm install svelte5plus-calendar
 
 **回调：** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event)` · `onViewChange(view)` · `onDateChange(date)`
 
-**内置弹层：** 开启 `editable`/`selectable` 且不提供回调时，点击日程弹出详情弹层、点击/框选空白弹出快速新建弹层。提供 `onEventClick` / `onSelect` / `onDateClick` 即接管对应交互；也可用 `eventDetails={false}` / `quickCreate={false}` 关闭。
+**内置弹层：** 开启 `editable` 或 `selectable` 且不提供回调时，点击日程弹出详情弹层、点击/框选空白弹出快速新建弹层。提供 `onEventClick` / `onSelect` / `onDateClick` 即接管对应交互；也可用 `eventDetails={false}` / `quickCreate={false}` 关闭。
 
 **祖先驱动主题：** 省略 `theme` 属性，在任意祖先元素（如 `<html>`）上设置 `data-s5c-theme="dark"`，即可统一切换页面上所有日历的主题。
 

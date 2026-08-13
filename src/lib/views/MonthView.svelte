@@ -120,7 +120,7 @@
 	function onCellPointerDown(day: Date) {
 		return (e: PointerEvent) => {
 			if (e.button !== 0) return;
-			if (ctx.selectable) {
+			if (ctx.selectable || (ctx.editable && ctx.quickCreate)) {
 				drag = { kind: 'select', anchor: day, head: day, moved: false };
 			}
 		};
