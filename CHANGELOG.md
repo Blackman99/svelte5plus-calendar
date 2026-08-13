@@ -1,5 +1,11 @@
 # svelte5plus-calendar
 
+## 0.2.1
+
+### Patch Changes
+
+- 9ea9262: Fix week/day and month view column misalignment when classic (space-consuming) scrollbars are active: the header and all-day rows are now compensated by the measured scrollbar width, keeping them aligned with the scrollable grid body.
+
 ## 0.2.0
 
 ### Minor Changes
