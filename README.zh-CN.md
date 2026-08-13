@@ -1,14 +1,20 @@
 <p align="center">
-  <img src="./static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
+  <img src="https://raw.githubusercontent.com/Blackman99/svelte5plus-calendar/main/static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
 </p>
 
 # svelte5plus-calendar
 
-[English](./README.md) | **简体中文**
+[English](https://github.com/Blackman99/svelte5plus-calendar/blob/main/README.md) | **简体中文**
+
+<p>
+  <a href="https://www.npmjs.com/package/svelte5plus-calendar"><img src="https://img.shields.io/npm/v/svelte5plus-calendar?color=0f3cd9" alt="npm version" /></a>
+  <a href="https://github.com/Blackman99/svelte5plus-calendar/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/svelte5plus-calendar?color=0f3cd9" alt="license" /></a>
+  <a href="https://github.com/Blackman99/svelte5plus-calendar/actions/workflows/deploy.yml"><img src="https://github.com/Blackman99/svelte5plus-calendar/actions/workflows/deploy.yml/badge.svg" alt="CI" /></a>
+</p>
 
 为 **Svelte 5** 打造的全功能零依赖日历组件——月、周、日、年、议程五种视图，拖拽编辑、重复事件、多日历源、国际化与暗色模式。功能对标 Google 日历、Apple 日历与 Outlook。
 
-> 📖 **带在线示例的完整文档：** 在本仓库运行 `npm run dev`，或访问托管文档站（中文 & English）。
+> 📖 **带在线示例的完整文档：** https://blackman99.github.io/svelte5plus-calendar/zh/
 
 ## 功能特性
 
@@ -23,7 +29,7 @@
 - 🧩 **自定义渲染** —— 用 Svelte 5 snippet 替换事件内容；隐藏内置工具栏，通过可绑定的 `date`/`view` 自建导航
 - 🧮 **无头能力** —— 重叠分列、周行分段布局算法与重复展开、日期工具均以纯函数导出
 - ♿ **可访问性** —— 月视图网格键盘导航、ARIA 角色与标签、焦点管理
-- 🪶 **零运行时依赖**，TypeScript 优先，约 19 kB min+gz
+- 🪶 **零运行时依赖**，TypeScript 优先
 
 ## 安装
 
@@ -136,7 +142,7 @@ npm install svelte5plus-calendar
 | `sources` | `CalendarSource[]` | `[]` | 日历分组 |
 | `locale` | `string` | `'en'` | BCP-47 标签 |
 | `editable` / `selectable` | `boolean` | `false` | 交互开关 |
-| `theme` | `'light' \| 'dark' \| 'auto'` | `'light'` | 配色方案 |
+| `theme` | `'light' \| 'dark' \| 'auto'` | 继承祖先 `data-s5c-theme`，否则亮色 | 配色方案 |
 | `firstDayOfWeek` | `0–6` | 由 locale 推断 | 0 = 周日 |
 | `dayStartHour` / `dayEndHour` | `number` | `0` / `24` | 可见小时范围 |
 | `slotDuration` / `snapDuration` | 分钟 | `30` / `15` | 网格密度与吸附 |
@@ -156,26 +162,10 @@ npm install svelte5plus-calendar
 
 完整参考请见文档站的 **API 参考** 页面。
 
-## 本地开发
+## 参与贡献
 
-```bash
-npm install
-npm run dev        # 启动带在线示例的文档站
-npm test           # 单元测试（vitest）
-npm run check      # svelte-check 类型检查
-npm run build      # 构建文档站 + 打包组件库
-```
-
-## 版本发布
-
-版本管理与 npm 发布通过 [changesets](https://github.com/changesets/changesets) 自动化：
-
-1. 随代码变更运行 `npx changeset`，描述改动并选择版本级别（patch/minor/major），提交生成的文件。
-2. 推送到 `main` 后，**Release** 工作流会自动创建/更新一个 "chore: version packages" PR。
-3. 合并该 PR 即自动升级版本号、更新 `CHANGELOG.md` 并发布到 npm。
-
-一次性配置：在仓库 Secrets 中添加 npm 自动化令牌 `NPM_TOKEN`。
+欢迎贡献！克隆仓库后运行 `npm install && npm run dev` 即可启动带在线示例的文档站。项目结构、测试方式与发布流程详见 [CONTRIBUTING.md](https://github.com/Blackman99/svelte5plus-calendar/blob/main/CONTRIBUTING.md)。
 
 ## 协议
 
-[MIT](./LICENSE)
+[MIT](https://github.com/Blackman99/svelte5plus-calendar/blob/main/LICENSE)

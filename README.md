@@ -1,14 +1,20 @@
 <p align="center">
-  <img src="./static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
+  <img src="https://raw.githubusercontent.com/Blackman99/svelte5plus-calendar/main/static/favicon.svg" width="84" alt="svelte5plus-calendar logo" />
 </p>
 
 # svelte5plus-calendar
 
-**English** | [简体中文](./README.zh-CN.md)
+**English** | [简体中文](https://github.com/Blackman99/svelte5plus-calendar/blob/main/README.zh-CN.md)
+
+<p>
+  <a href="https://www.npmjs.com/package/svelte5plus-calendar"><img src="https://img.shields.io/npm/v/svelte5plus-calendar?color=0f3cd9" alt="npm version" /></a>
+  <a href="https://github.com/Blackman99/svelte5plus-calendar/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/svelte5plus-calendar?color=0f3cd9" alt="license" /></a>
+  <a href="https://github.com/Blackman99/svelte5plus-calendar/actions/workflows/deploy.yml"><img src="https://github.com/Blackman99/svelte5plus-calendar/actions/workflows/deploy.yml/badge.svg" alt="CI" /></a>
+</p>
 
 A full-featured, zero-dependency calendar component for **Svelte 5** — month, week, day, year and agenda views, drag & drop editing, recurring events, multiple calendars, i18n and dark mode. Feature-set inspired by Google Calendar, Apple Calendar and Outlook.
 
-> 📖 **Documentation with live examples:** run `npm run dev` in this repo, or visit the hosted docs (English & 中文).
+> 📖 **Docs with live examples:** https://blackman99.github.io/svelte5plus-calendar/
 
 ## Features
 
@@ -23,7 +29,7 @@ A full-featured, zero-dependency calendar component for **Svelte 5** — month, 
 - 🧩 **Custom rendering** — replace event content with Svelte 5 snippets; hide the toolbar and bring your own via bindable `date`/`view`
 - 🧮 **Headless exports** — the overlap-packing and week-segment layout algorithms, recurrence expansion and date utils are exported as pure functions
 - ♿ **Accessible** — keyboard navigation on the month grid, ARIA roles and labels, focus management
-- 🪶 **Zero runtime dependencies**, TypeScript-first, ~19 kB min+gz
+- 🪶 **Zero runtime dependencies**, TypeScript-first
 
 ## Installation
 
@@ -142,7 +148,7 @@ Requires Svelte 5. Styles are imported automatically.
 | `sources` | `CalendarSource[]` | `[]` | calendar groups |
 | `locale` | `string` | `'en'` | BCP-47 tag |
 | `editable` / `selectable` | `boolean` | `false` | interactions |
-| `theme` | `'light' \| 'dark' \| 'auto'` | `'light'` | |
+| `theme` | `'light' \| 'dark' \| 'auto'` | inherits ancestor `data-s5c-theme`, else light | |
 | `firstDayOfWeek` | `0–6` | from locale | 0 = Sunday |
 | `dayStartHour` / `dayEndHour` | `number` | `0` / `24` | visible hours |
 | `slotDuration` / `snapDuration` | minutes | `30` / `15` | grid & snapping |
@@ -162,26 +168,12 @@ Requires Svelte 5. Styles are imported automatically.
 
 Full reference: see the **API Reference** page in the docs site.
 
-## Development
+## Contributing
 
-```bash
-npm install
-npm run dev        # docs site with live examples
-npm test           # unit tests (vitest)
-npm run check      # svelte-check
-npm run build      # build docs + package the library
-```
-
-## Releasing
-
-Versioning and npm publishing are automated with [changesets](https://github.com/changesets/changesets):
-
-1. With your change, run `npx changeset` and describe it (patch/minor/major) — commit the generated file.
-2. On push to `main`, the **Release** workflow opens/updates a "chore: version packages" PR.
-3. Merging that PR bumps the version, updates `CHANGELOG.md`, and publishes to npm.
-
-One-time setup: add an npm automation token as the `NPM_TOKEN` repository secret.
+Contributions are welcome! To run the docs site locally, clone the repo and run
+`npm install && npm run dev`. See [CONTRIBUTING.md](https://github.com/Blackman99/svelte5plus-calendar/blob/main/CONTRIBUTING.md) for the
+project layout, testing, and how releases work.
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](https://github.com/Blackman99/svelte5plus-calendar/blob/main/LICENSE)
