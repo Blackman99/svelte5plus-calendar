@@ -117,7 +117,12 @@
 		return Math.max(startMin, Math.min(endMin, min));
 	}
 	function suppressNextClick() {
-		window.addEventListener('click', (e) => e.stopPropagation(), { capture: true, once: true });
+		// Swallow the compat click that follows pointerup on the drag's target.
+		// Removed on a timeout too: when the drag ends over a different element
+		// no click fires at all, and the suppressor must not eat the next one.
+		const handler = (e: MouseEvent) => e.stopPropagation();
+		window.addEventListener('click', handler, { capture: true });
+		setTimeout(() => window.removeEventListener('click', handler, { capture: true }), 0);
 	}
 
 	function onColPointerDown(dayIdx: number) {
@@ -222,23 +227,22 @@
 		};
 	});
 
-	function onPointerUp() {
+	function onPointerUp(e: PointerEvent) {
 		if (!drag) return;
 		const d = drag;
 		const result = dragResult;
 		drag = null;
+		const anchor = new DOMRect(e.clientX, e.clientY, 1, 1);
 		if (!d.moved || !result) {
 			if (d.kind === 'create' && result) {
 				// Plain click on an empty slot.
-				ctx.clickDate(result.start, false);
+				ctx.clickDate(result.start, false, anchor);
 			}
 			return;
 		}
 		suppressNextClick();
 		if (d.kind === 'create') {
-			ctx.select({ start: result.start, end: result.end, allDay: false });
-		} else if (d.kind === 'move') {
-			ctx.applyTimes(d.instance, result.start, result.end, d.instance.allDay);
+			ctx.select({ start: result.start, end: result.end, allDay: false }, anchor);
 		} else {
 			ctx.applyTimes(d.instance, result.start, result.end, d.instance.allDay);
 		}
@@ -292,7 +296,8 @@
 		{#each days as day (dayKey(day))}
 			<div
 				class="s5c-allday-cell"
-				onclick={() => ctx.clickDate(day, true)}
+				onclick={(e) =>
+					ctx.clickDate(day, true, (e.currentTarget as HTMLElement).getBoundingClientRect())}
 				role="button"
 				tabindex="-1"
 				onkeydown={() => {}}
@@ -370,7 +375,10 @@
 								width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
 							aria-label={p.instance.event.title}
 							onpointerdown={onBlockPointerDown(p, dayIdx)}
-							onclick={(e) => ctx.clickEvent(p.instance, e)}
+							onclick={(e) => {
+								e.stopPropagation();
+								ctx.clickEvent(p.instance, e);
+							}}
 						>
 							{#if ctx.eventContent}
 								{@render ctx.eventContent(p.instance)}

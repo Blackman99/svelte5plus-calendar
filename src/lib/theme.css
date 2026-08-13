@@ -68,8 +68,11 @@
 	box-sizing: border-box;
 }
 
-/* dark theme --------------------------------------------------------------- */
-.s5c.s5c-dark {
+/* dark theme ----------------------------------------------------------------
+ * Applied by theme="dark", or inherited from any ancestor carrying
+ * data-s5c-theme="dark" when no explicit theme prop is set. */
+.s5c.s5c-dark,
+[data-s5c-theme='dark'] .s5c.s5c-inherit {
 	--s5c-bg: #1b1d21;
 	--s5c-bg-subtle: #24262b;
 	--s5c-bg-hover: rgba(232, 234, 237, 0.1);
@@ -94,7 +97,9 @@
 	--s5c-today-num-bg: #8ab4f8;
 }
 .s5c.s5c-dark .s5c-bar,
-.s5c.s5c-dark .s5c-daynum.s5c-is-today {
+.s5c.s5c-dark .s5c-daynum.s5c-is-today,
+[data-s5c-theme='dark'] .s5c.s5c-inherit .s5c-bar,
+[data-s5c-theme='dark'] .s5c.s5c-inherit .s5c-daynum.s5c-is-today {
 	color: #1b1d21;
 }
 
@@ -816,6 +821,79 @@
 .s5c-popover .s5c-bar,
 .s5c-popover .s5c-dotline {
 	margin-bottom: 3px;
+}
+.s5c-detail-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 650;
+	font-size: 14.5px;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.s5c-detail-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--s5c-text-muted);
+	margin: 7px 0;
+	min-width: 0;
+}
+.s5c-detail-row .s5c-dot {
+	margin: 0 1px;
+}
+.s5c-detail-desc {
+	display: block;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	border-top: 1px solid var(--s5c-border);
+	padding-top: 8px;
+}
+.s5c-popover-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 12px;
+}
+.s5c-input {
+	width: 100%;
+	font: inherit;
+	font-size: 13.5px;
+	color: var(--s5c-text);
+	background: var(--s5c-bg);
+	border: 1px solid var(--s5c-border-strong);
+	border-radius: 8px;
+	padding: 7px 10px;
+	margin: 4px 0 2px;
+	box-sizing: border-box;
+}
+.s5c-input:focus-visible {
+	outline: 2px solid var(--s5c-accent);
+	outline-offset: -1px;
+	border-color: transparent;
+}
+.s5c-select {
+	width: auto;
+	flex: 1;
+	margin: 0;
+	padding: 4px 8px;
+}
+.s5c-btn-accent {
+	background: var(--s5c-accent);
+	color: var(--s5c-accent-contrast);
+	border-color: transparent;
+	font-weight: 600;
+}
+.s5c-btn-accent:hover {
+	background: color-mix(in srgb, var(--s5c-accent) 85%, var(--s5c-text));
+}
+.s5c-btn-danger {
+	color: var(--s5c-red);
+	border-color: color-mix(in srgb, var(--s5c-red) 45%, transparent);
+}
+.s5c-btn-danger:hover {
+	background: color-mix(in srgb, var(--s5c-red) 12%, transparent);
 }
 
 /* responsive ---------------------------------------------------------------------*/

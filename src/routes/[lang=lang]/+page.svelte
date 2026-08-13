@@ -22,7 +22,7 @@
 		{ en: ['Agenda view', 'A clean rolling list of upcoming events.'], zh: ['议程视图', '滚动式日程列表，一目了然。'] },
 		{ en: ['Drag & drop', 'Move events across days and time slots.'], zh: ['拖拽移动', '在日期与时间格之间自由拖动事件。'] },
 		{ en: ['Resize', 'Drag the bottom edge to change duration.'], zh: ['拖拽调整时长', '拖动事件底边即可改变时长。'] },
-		{ en: ['Drag to create', 'Select an empty range to create events.'], zh: ['框选新建', '在空白处拖选时间段来新建日程。'] },
+		{ en: ['Drag to create', 'Built-in quick-create popover on selection.'], zh: ['框选新建', '内置快速新建弹层，框选即建。'] },
 		{ en: ['Recurring events', 'RRULE subset: daily/weekly/monthly/yearly.'], zh: ['重复事件', '支持 RRULE 子集：按日/周/月/年重复。'] },
 		{ en: ['All-day & multi-day', 'Dedicated all-day lane, week-spanning bars.'], zh: ['全天与跨天', '独立全天栏，跨周长条无缝衔接。'] },
 		{ en: ['Multiple calendars', 'Sources with colors, visibility toggles.'], zh: ['多日历源', '分组着色，可独立显示 / 隐藏。'] },

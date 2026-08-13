@@ -87,7 +87,12 @@
 	}
 
 	function suppressNextClick() {
-		window.addEventListener('click', (e) => e.stopPropagation(), { capture: true, once: true });
+		// Swallow the compat click that follows pointerup on the drag's target.
+		// Removed on a timeout too: when the drag ends over a different element
+		// no click fires at all, and the suppressor must not eat the next one.
+		const handler = (e: MouseEvent) => e.stopPropagation();
+		window.addEventListener('click', handler, { capture: true });
+		setTimeout(() => window.removeEventListener('click', handler, { capture: true }), 0);
 	}
 
 	function onSegPointerDown(instance: EventInstance) {
@@ -142,7 +147,8 @@
 			suppressNextClick();
 			const start = minDate(d.anchor, d.head);
 			const end = endOfDay(maxDate(d.anchor, d.head));
-			ctx.select({ start, end, allDay: true });
+			const headCell = rootEl?.querySelector(`[data-s5c-day="${dayKey(d.head)}"]`);
+			ctx.select({ start, end, allDay: true }, headCell?.getBoundingClientRect());
 		}
 	}
 
@@ -168,7 +174,7 @@
 			else if (e.key === 'ArrowUp') next = idx - cols;
 			else if (e.key === 'Enter' || e.key === ' ') {
 				e.preventDefault();
-				ctx.clickDate(day, true);
+				ctx.clickDate(day, true, (e.currentTarget as HTMLElement).getBoundingClientRect());
 				return;
 			} else return;
 			e.preventDefault();
@@ -229,7 +235,8 @@
 						tabindex={idx === tabIdx ? 0 : -1}
 						data-s5c-day={dayKey(day)}
 						onpointerdown={onCellPointerDown(day)}
-						onclick={() => ctx.clickDate(day, true)}
+						onclick={(e) =>
+							ctx.clickDate(day, true, (e.currentTarget as HTMLElement).getBoundingClientRect())}
 						onkeydown={onCellKeydown(idx, day)}
 					>
 						<span

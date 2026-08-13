@@ -12,6 +12,7 @@
 		firstDayOfWeek?: Weekday;
 		/** Events to mark with a dot. */
 		events?: CalendarEvent[];
+		/** Color scheme. When omitted, inherits from an ancestor's `data-s5c-theme`. */
 		theme?: 'light' | 'dark' | 'auto';
 		onSelect?: (date: Date) => void;
 		class?: string;
@@ -23,10 +24,14 @@
 		locale = 'en',
 		firstDayOfWeek,
 		events = [],
-		theme = 'light',
+		theme,
 		onSelect,
 		class: className = ''
 	}: Props = $props();
+
+	const themeClass = $derived(
+		theme === 'dark' ? 's5c-dark' : theme === 'auto' ? 's5c-auto' : theme === 'light' ? '' : 's5c-inherit'
+	);
 
 	const fdow = $derived(firstDayOfWeek ?? localeFirstDay(locale));
 	const fm = $derived(formatters(locale));
@@ -52,7 +57,7 @@
 	}
 </script>
 
-<div class="s5c-mini s5c {theme === 'dark' ? 's5c-dark' : theme === 'auto' ? 's5c-auto' : ''} {className}">
+<div class="s5c-mini s5c {themeClass} {className}">
 	<div class="s5c-mini-toolbar">
 		<span class="s5c-mini-title">{fm.monthTitle(month)}</span>
 		<span class="s5c-nav-group">

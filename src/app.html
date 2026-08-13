@@ -10,6 +10,21 @@
 			href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap"
 			rel="stylesheet"
 		/>
+		<script>
+			// Apply the saved (or OS-preferred) docs theme before first paint.
+			(function () {
+				try {
+					var t = localStorage.getItem('s5c-docs-theme');
+					if (t !== 'light' && t !== 'dark') {
+						t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+					}
+					document.documentElement.dataset.theme = t;
+					document.documentElement.dataset.s5cTheme = t;
+				} catch (e) {
+					/* no-op */
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

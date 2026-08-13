@@ -42,6 +42,10 @@ export interface CalendarContext {
 	readonly selectable: boolean;
 	readonly agendaDays: number;
 	readonly nowIndicator: boolean;
+	/** Built-in quick-create popover enabled. */
+	readonly quickCreate: boolean;
+	/** Built-in event-details popover enabled. */
+	readonly eventDetails: boolean;
 
 	// --- derived for the current view ---
 	/** Days visible in the current view (for month: includes leading/trailing). */
@@ -59,9 +63,25 @@ export interface CalendarContext {
 	canEdit(instance: EventInstance): boolean;
 	/** Applies new times to an event and notifies `onEventChange` (with revert). */
 	applyTimes(instance: EventInstance, start: Date, end: Date, allDay?: boolean): void;
-	select(sel: RangeSelection): void;
+	/**
+	 * A range was drag-selected. Calls `onSelect` when provided, otherwise opens
+	 * the built-in quick-create popover near `anchor`.
+	 */
+	select(sel: RangeSelection, anchor?: DOMRect): void;
+	/**
+	 * An event was activated. Calls `onEventClick` when provided, otherwise
+	 * opens the built-in details popover.
+	 */
 	clickEvent(instance: EventInstance, e: MouseEvent | KeyboardEvent): void;
-	clickDate(date: Date, allDay: boolean, e?: Event): void;
+	/**
+	 * An empty cell/slot was clicked. Calls `onDateClick` when provided;
+	 * otherwise (when `selectable`) opens the quick-create popover.
+	 */
+	clickDate(date: Date, allDay: boolean, anchor?: DOMRect): void;
+	/** Adds a new event to the bound `events` array and fires `onEventCreate`. */
+	createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }): void;
+	/** Removes an event from the bound `events` array and fires `onEventDelete`. */
+	deleteEvent(instance: EventInstance): void;
 
 	// --- optional user callbacks (read-only views may check presence) ---
 	readonly onEventClick?: (instance: EventInstance, e: MouseEvent | KeyboardEvent) => void;

@@ -20,12 +20,40 @@
 	--mono: 'JetBrains Mono', ui-monospace, 'SF Mono', menlo, monospace;
 }
 
+/* dark docs theme — toggled via data-theme on <html> ----------------------- */
+html[data-theme='dark'] {
+	--paper: #16171b;
+	--paper-raised: #1e2025;
+	--ink: #e7e8eb;
+	--ink-soft: #b4b8c0;
+	--ink-faint: #7e838d;
+	--line: #2c2f36;
+	--line-strong: #454952;
+	--accent: #86a3ff;
+	--accent-soft: rgba(134, 163, 255, 0.14);
+	--accent-hover: #a4baff;
+	--code-bg: #101116;
+	color-scheme: dark;
+}
+html[data-theme='dark'] .btn-primary {
+	color: #101116;
+}
+html[data-theme='dark'] .hero-date {
+	-webkit-text-stroke-color: var(--line-strong);
+}
+html[data-theme='dark'] .demo-frame {
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.4),
+		0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+
 * {
 	box-sizing: border-box;
 }
 
 html {
 	scroll-behavior: smooth;
+	transition: background 0.15s ease;
 }
 
 body {
@@ -130,6 +158,24 @@ body {
 }
 .gh-link:hover {
 	color: var(--ink);
+}
+.theme-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--line-strong);
+	border-radius: 50%;
+	background: transparent;
+	color: var(--ink-soft);
+	cursor: pointer;
+	font-size: 15px;
+	line-height: 1;
+}
+.theme-btn:hover {
+	color: var(--ink);
+	background: color-mix(in srgb, var(--line) 40%, transparent);
 }
 
 /* landing ------------------------------------------------------------------- */

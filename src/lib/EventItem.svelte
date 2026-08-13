@@ -42,7 +42,10 @@
 	aria-label={label}
 	title={label}
 	{onpointerdown}
-	onclick={(e) => ctx.clickEvent(instance, e)}
+	onclick={(e) => {
+		e.stopPropagation();
+		ctx.clickEvent(instance, e);
+	}}
 >
 	{#if ctx.eventContent}
 		{@render ctx.eventContent(instance)}

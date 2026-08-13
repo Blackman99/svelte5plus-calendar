@@ -22,6 +22,17 @@ export interface CalendarMessages {
 	previous: string;
 	next: string;
 	events: string;
+	/** Quick-create popover: confirm button. */
+	add: string;
+	/** Event details popover: delete button. */
+	delete: string;
+	/** Quick-create popover: title input placeholder. */
+	titlePlaceholder: string;
+	/** Title shown for events saved without a title. */
+	untitled: string;
+	/** Details popover: label for recurring events. */
+	recurringEvent: string;
+	close: string;
 }
 
 export const en: CalendarMessages = {
@@ -38,7 +49,13 @@ export const en: CalendarMessages = {
 	weekNo: (n) => `W${n}`,
 	previous: 'Previous',
 	next: 'Next',
-	events: 'events'
+	events: 'events',
+	add: 'Add',
+	delete: 'Delete',
+	titlePlaceholder: 'Add title',
+	untitled: '(no title)',
+	recurringEvent: 'Recurring event',
+	close: 'Close'
 };
 
 export const zhCN: CalendarMessages = {
@@ -55,7 +72,13 @@ export const zhCN: CalendarMessages = {
 	weekNo: (n) => `第${n}周`,
 	previous: '上一页',
 	next: '下一页',
-	events: '项日程'
+	events: '项日程',
+	add: '添加',
+	delete: '删除',
+	titlePlaceholder: '添加标题',
+	untitled: '（无标题）',
+	recurringEvent: '重复日程',
+	close: '关闭'
 };
 
 const BUILT_IN: Record<string, CalendarMessages> = {

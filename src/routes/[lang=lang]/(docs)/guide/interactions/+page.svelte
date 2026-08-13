@@ -5,6 +5,8 @@
 	import CodeBlock from '$docs/CodeBlock.svelte';
 	import InteractionsDemo from '$docs/examples/InteractionsDemo.svelte';
 	import interactionsRaw from '$docs/examples/InteractionsDemo.svelte?raw';
+	import DefaultUxDemo from '$docs/examples/DefaultUxDemo.svelte';
+	import defaultUxRaw from '$docs/examples/DefaultUxDemo.svelte?raw';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -18,12 +20,31 @@
 <h1>{t('Drag, Drop & Selection', '拖拽与选择')}</h1>
 <p class="lede">
 	{t(
-		'Two flags unlock the interactive behaviors: editable lets users move and resize events, selectable lets them drag across empty space to pick a range.',
-		'两个开关解锁全部交互：editable 允许用户移动和调整事件，selectable 允许在空白处拖选时间范围。'
+		'Two flags unlock the interactive behaviors: editable lets users move and resize events, selectable lets them drag across empty space to pick a range. Sensible popover UIs are built in — callbacks let you replace them.',
+		'两个开关解锁全部交互：editable 允许用户移动和调整事件，selectable 允许在空白处拖选时间范围。组件内置了合理的弹层交互，也可以用回调完全替换。'
 	)}
 </p>
 
-<Example title={t('Editable + selectable week', '可编辑、可框选的周视图')} code={interactionsRaw}>
+<h2>{t('Built-in popovers (zero config)', '内置弹层（零配置）')}</h2>
+<p>
+	{t(
+		'With no callbacks configured, the calendar behaves like Google Calendar out of the box: clicking an event opens a details popover (time, calendar, location, description, delete); clicking or drag-selecting empty space opens a quick-create popover with a title input and calendar picker.',
+		'不配置任何回调时，日历开箱即用地提供类似 Google 日历的交互：点击日程弹出详情弹层（时间、所属日历、地点、描述、删除按钮）；点击或框选空白区域弹出快速新建弹层，可输入标题并选择日历。'
+	)}
+</p>
+<Example title={t('Try it: click events, drag empty slots', '试试：点击日程、框选空白时段')} code={defaultUxRaw}>
+	<DefaultUxDemo {locale} />
+</Example>
+<div class="callout">
+	<strong>{t('Precedence', '优先级')}</strong> —
+	{t(
+		'providing onEventClick suppresses the details popover; providing onSelect / onDateClick suppresses quick-create. Set eventDetails={false} or quickCreate={false} to turn the built-ins off without supplying handlers. Quick-create requires selectable.',
+		'提供 onEventClick 时详情弹层让位；提供 onSelect / onDateClick 时快速新建让位。也可以用 eventDetails={false} 或 quickCreate={false} 直接关闭内置弹层。快速新建需要开启 selectable。'
+	)}
+</div>
+
+<h2>{t('Custom handling via callbacks', '用回调自定义交互')}</h2>
+<Example title={t('Editable + selectable, custom callbacks', '可编辑、可框选（自定义回调）')} code={interactionsRaw}>
 	<InteractionsDemo {locale} />
 </Example>
 
@@ -60,6 +81,16 @@
 			<td><code>onEventChange</code></td>
 			<td>{t('a drag or resize lands', '拖动或调整完成落地')}</td>
 			<td><code>{'{ event, oldStart, oldEnd, start, end, revert }'}</code></td>
+		</tr>
+		<tr>
+			<td><code>onEventCreate</code></td>
+			<td>{t('the quick-create popover adds an event', '快速新建弹层添加了日程')}</td>
+			<td><code>(event)</code></td>
+		</tr>
+		<tr>
+			<td><code>onEventDelete</code></td>
+			<td>{t('the details popover deletes an event', '详情弹层删除了日程')}</td>
+			<td><code>(event)</code></td>
 		</tr>
 		<tr>
 			<td><code>onViewChange</code> / <code>onDateChange</code></td>

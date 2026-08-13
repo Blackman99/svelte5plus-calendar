@@ -28,7 +28,8 @@
 
 	function pick(day: Date) {
 		ctx.setDate(day);
-		ctx.clickDate(day, true);
+		// Navigation only — bypass the quick-create default of ctx.clickDate.
+		ctx.onDateClick?.(day, true);
 		ctx.setView('day');
 	}
 </script>

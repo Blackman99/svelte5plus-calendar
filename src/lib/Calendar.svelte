@@ -12,6 +12,7 @@
 	} from './types.js';
 	import {
 		addDays,
+		addMinutes,
 		addMonths,
 		addYears,
 		endOfDay,
@@ -27,6 +28,8 @@
 	import TimeGrid from './views/TimeGrid.svelte';
 	import YearView from './views/YearView.svelte';
 	import AgendaView from './views/AgendaView.svelte';
+	import EventDetails from './EventDetails.svelte';
+	import QuickCreate from './QuickCreate.svelte';
 
 	interface Props {
 		/** Event list. Bindable — the calendar updates it after drag/resize edits. */
@@ -69,13 +72,27 @@
 		editable?: boolean;
 		/** Allow drag-selecting ranges (fires `onSelect`). */
 		selectable?: boolean;
+		/**
+		 * Built-in quick-create popover when clicking/drag-selecting empty space
+		 * (requires `selectable`; skipped when `onSelect`/`onDateClick` are provided).
+		 */
+		quickCreate?: boolean;
+		/**
+		 * Built-in details popover when an event is clicked
+		 * (skipped when `onEventClick` is provided).
+		 */
+		eventDetails?: boolean;
 		/** Days shown by the agenda view. */
 		agendaDays?: number;
 		/** Show the current-time line. */
 		nowIndicator?: boolean;
 		/** Force 12/24-hour time display. Defaults to the locale's convention. */
 		hour12?: boolean;
-		/** Color scheme. `auto` follows `prefers-color-scheme`. */
+		/**
+		 * Color scheme. `auto` follows `prefers-color-scheme`. When omitted, the
+		 * calendar inherits from a `data-s5c-theme="dark"` attribute on any
+		 * ancestor element (falling back to light).
+		 */
 		theme?: 'light' | 'dark' | 'auto';
 		/** Which views the toolbar offers. */
 		views?: CalendarView[];
@@ -85,6 +102,10 @@
 		onDateClick?: (date: Date, allDay: boolean) => void;
 		onSelect?: (sel: RangeSelection) => void;
 		onEventChange?: (info: EventChangeInfo) => void;
+		/** Fires after the built-in quick-create popover (or `createEvent`) adds an event. */
+		onEventCreate?: (event: CalendarEvent) => void;
+		/** Fires after the built-in details popover (or `deleteEvent`) removes an event. */
+		onEventDelete?: (event: CalendarEvent) => void;
 		onViewChange?: (view: CalendarView) => void;
 		onDateChange?: (date: Date) => void;
 		/** Custom renderer for event content. */
@@ -115,16 +136,20 @@
 		businessHours = null,
 		editable = false,
 		selectable = false,
+		quickCreate = true,
+		eventDetails = true,
 		agendaDays = 30,
 		nowIndicator = true,
 		hour12,
-		theme = 'light',
+		theme,
 		views = ['day', 'week', 'month', 'year', 'agenda'],
 		header = true,
 		onEventClick,
 		onDateClick,
 		onSelect,
 		onEventChange,
+		onEventCreate,
+		onEventDelete,
 		onViewChange,
 		onDateChange,
 		eventContent,
@@ -259,6 +284,60 @@
 		});
 	}
 
+	// ---- built-in popovers (details on event click, quick-create on selection) ----
+	let detailsPopover = $state<{ instance: EventInstance; anchor: DOMRect } | null>(null);
+	let quickPopover = $state<{ sel: RangeSelection; anchor: DOMRect } | null>(null);
+
+	function createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }) {
+		const event: CalendarEvent = { id: data.id ?? crypto.randomUUID(), ...data };
+		events = [...events, event];
+		onEventCreate?.(event);
+	}
+
+	function deleteEvent(instance: EventInstance) {
+		const target = events.find((ev) => ev.id === instance.event.id);
+		if (!target) return;
+		events = events.filter((ev) => ev !== target);
+		onEventDelete?.(target);
+	}
+
+	function handleEventClick(instance: EventInstance, e: MouseEvent | KeyboardEvent) {
+		if (onEventClick) {
+			onEventClick(instance, e);
+			return;
+		}
+		if (!eventDetails) return;
+		const anchor = (e.currentTarget as HTMLElement | null)?.getBoundingClientRect();
+		if (anchor) {
+			quickPopover = null;
+			detailsPopover = { instance, anchor };
+		}
+	}
+
+	function handleSelect(sel: RangeSelection, anchor?: DOMRect) {
+		if (onSelect) {
+			onSelect(sel);
+			return;
+		}
+		if (quickCreate && anchor) {
+			detailsPopover = null;
+			quickPopover = { sel, anchor };
+		}
+	}
+
+	function handleDateClick(d: Date, allDay: boolean, anchor?: DOMRect) {
+		if (onDateClick) {
+			onDateClick(d, allDay);
+			return;
+		}
+		if (!selectable || !quickCreate || !anchor) return;
+		const sel: RangeSelection = allDay
+			? { start: startOfDay(d), end: endOfDay(d), allDay: true }
+			: { start: d, end: addMinutes(d, Math.max(slotDuration * 2, 30)), allDay: false };
+		detailsPopover = null;
+		quickPopover = { sel, anchor };
+	}
+
 	const ctx: CalendarContext = {
 		get date() {
 			return date;
@@ -329,6 +408,12 @@
 		get nowIndicator() {
 			return nowIndicator;
 		},
+		get quickCreate() {
+			return quickCreate;
+		},
+		get eventDetails() {
+			return eventDetails;
+		},
 		get visibleDays() {
 			return visibleDays;
 		},
@@ -341,9 +426,11 @@
 		goToday,
 		canEdit,
 		applyTimes,
-		select: (sel) => onSelect?.(sel),
-		clickEvent: (instance, e) => onEventClick?.(instance, e),
-		clickDate: (d, allDay) => onDateClick?.(d, allDay),
+		select: handleSelect,
+		clickEvent: handleEventClick,
+		clickDate: handleDateClick,
+		createEvent,
+		deleteEvent,
 		get onEventClick() {
 			return onEventClick;
 		},
@@ -364,7 +451,13 @@
 </script>
 
 <div
-	class="s5c {theme === 'dark' ? 's5c-dark' : theme === 'auto' ? 's5c-auto' : ''} {className}"
+	class="s5c {theme === 'dark'
+		? 's5c-dark'
+		: theme === 'auto'
+			? 's5c-auto'
+			: theme === 'light'
+				? ''
+				: 's5c-inherit'} {className}"
 	role="application"
 	aria-label="Calendar"
 >
@@ -379,5 +472,19 @@
 		<YearView />
 	{:else if view === 'agenda'}
 		<AgendaView />
+	{/if}
+	{#if detailsPopover}
+		<EventDetails
+			instance={detailsPopover.instance}
+			anchor={detailsPopover.anchor}
+			onclose={() => (detailsPopover = null)}
+		/>
+	{/if}
+	{#if quickPopover}
+		<QuickCreate
+			sel={quickPopover.sel}
+			anchor={quickPopover.anchor}
+			onclose={() => (quickPopover = null)}
+		/>
 	{/if}
 </div>

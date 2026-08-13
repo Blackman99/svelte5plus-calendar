@@ -21,6 +21,22 @@
 	$effect(() => {
 		document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
 	});
+
+	// Docs color scheme — initialized before paint by the inline script in app.html.
+	let docsTheme = $state<'light' | 'dark'>('light');
+	$effect(() => {
+		docsTheme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+	});
+	function toggleTheme() {
+		docsTheme = docsTheme === 'dark' ? 'light' : 'dark';
+		document.documentElement.dataset.theme = docsTheme;
+		document.documentElement.dataset.s5cTheme = docsTheme;
+		try {
+			localStorage.setItem('s5c-docs-theme', docsTheme);
+		} catch {
+			/* private mode */
+		}
+	}
 </script>
 
 <svelte:head>
@@ -59,6 +75,24 @@
 		<a href={otherPath('en')} class:active={lang === 'en'}>EN</a>
 		<a href={otherPath('zh')} class:active={lang === 'zh'}>中文</a>
 	</nav>
+	<button
+		type="button"
+		class="theme-btn"
+		onclick={toggleTheme}
+		aria-label={docsTheme === 'dark' ? t('Switch to light theme', '切换到亮色主题') : t('Switch to dark theme', '切换到暗色主题')}
+		title={docsTheme === 'dark' ? t('Light theme', '亮色主题') : t('Dark theme', '暗色主题')}
+	>
+		{#if docsTheme === 'dark'}
+			<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+				<circle cx="12" cy="12" r="4.5" />
+				<path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" />
+			</svg>
+		{:else}
+			<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+				<path d="M20.4 14.4A8.6 8.6 0 0 1 9.6 3.6 9 9 0 1 0 20.4 14.4Z" />
+			</svg>
+		{/if}
+	</button>
 	<a class="gh-link" href={REPO_URL} target="_blank" rel="noreferrer">
 		<svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 			<path
