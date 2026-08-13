@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Calendar, type Weekday } from 'svelte5plus-calendar';
+	import type { Weekday } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents } from './sample-events.js';
 
 	let locale = $state('zh-CN');

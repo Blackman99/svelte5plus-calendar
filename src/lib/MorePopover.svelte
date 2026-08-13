@@ -11,7 +11,7 @@
 		anchor: DOMRect;
 		onclose: () => void;
 	}
-	let { day, instances, anchor, onclose }: Props = $props();
+	const { day, instances, anchor, onclose }: Props = $props();
 
 	const ctx = getCalendarContext();
 </script>

@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
-import { expandRecurrence } from './recurrence.js';
 import type { CalendarEvent, RecurrenceRule } from './types.js';
+import { describe, expect, it } from 'vitest';
 import { dayKey } from './date.js';
+import { expandRecurrence } from './recurrence.js';
+import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
 
 const series: CalendarEvent = {
 	id: 'standup',

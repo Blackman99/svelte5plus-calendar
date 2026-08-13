@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Calendar, MiniCalendar, type CalendarView } from 'svelte5plus-calendar';
+	import type { CalendarView } from 'svelte5plus-calendar';
+	import { Calendar, MiniCalendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' }: { locale?: string } = $props();
+	const { locale = 'en' }: { locale?: string } = $props();
 
 	// Seeded once per mount (the docs remount this demo when the locale changes).
 	// svelte-ignore state_referenced_locally
@@ -10,7 +11,7 @@
 	// svelte-ignore state_referenced_locally
 	let events = $state(sampleEvents(locale));
 	// svelte-ignore state_referenced_locally
-	let sources = $state(sampleSources(locale));
+	const sources = $state(sampleSources(locale));
 	let date = $state(new Date());
 	let view = $state<CalendarView>('week');
 	let mini = $state<Date | null>(null);
@@ -38,7 +39,7 @@
 		</p>
 	</aside>
 	<!-- No onEventClick / onSelect handlers: the built-in
-	     details & quick-create popovers take over. -->
+		details & quick-create popovers take over. -->
 	<Calendar
 		bind:events
 		bind:date

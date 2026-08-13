@@ -2,7 +2,7 @@
 	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	// Seeded once per mount (the docs remount this demo when the locale changes).
 	// svelte-ignore state_referenced_locally

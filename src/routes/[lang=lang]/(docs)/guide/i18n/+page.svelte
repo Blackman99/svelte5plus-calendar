@@ -1,12 +1,13 @@
 <script lang="ts">
+	import type { Lang } from '$docs/nav.js';
 	import { page } from '$app/state';
-	import { T, type Lang } from '$docs/nav.js';
-	import Example from '$docs/Example.svelte';
 	import CodeBlock from '$docs/CodeBlock.svelte';
+	import Example from '$docs/Example.svelte';
 	import I18nDemo from '$docs/examples/I18nDemo.svelte';
 	import i18nRaw from '$docs/examples/I18nDemo.svelte?raw';
 	import TimezoneDemo from '$docs/examples/TimezoneDemo.svelte';
 	import timezoneRaw from '$docs/examples/TimezoneDemo.svelte?raw';
+	import { T } from '$docs/nav.js';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -61,7 +62,7 @@ const de: Partial<CalendarMessages> = {
 <CodeBlock standalone lang="typescript" code={custom} />
 <p>
 	{t('Then pass them to the component:', '然后传给组件：')}
-	<code>&lt;Calendar locale="de" messages={'{'}de{'}'} /&gt;</code>
+	<code>&lt;Calendar locale="de" messages={'{'}de} /&gt;</code>
 </p>
 
 <h2>{t('Display time zone', '显示时区')}</h2>

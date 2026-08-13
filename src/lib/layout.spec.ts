@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
-import { layoutDay, layoutWeekRow } from './layout.js';
-import { expandEvents } from './instances.js';
 import type { CalendarEvent, EventInstance } from './types.js';
+import { describe, expect, it } from 'vitest';
 import { addDays } from './date.js';
+import { expandEvents } from './instances.js';
+import { layoutDay, layoutWeekRow } from './layout.js';
 
 let seq = 0;
 function inst(start: Date, end: Date, allDay = false, title = `e${++seq}`): EventInstance {
@@ -96,8 +96,7 @@ describe('layoutWeekRow (month/all-day segments)', () => {
 
 	it('hides overflow rows and counts them per day', () => {
 		const evs = Array.from({ length: 5 }, (_, i) =>
-			inst(new Date(2026, 7, 10, 9 + i), new Date(2026, 7, 10, 10 + i), false, `t${i}`)
-		);
+			inst(new Date(2026, 7, 10, 9 + i), new Date(2026, 7, 10, 10 + i), false, `t${i}`));
 		const { segments, hiddenCounts, usedRows } = layoutWeekRow(evs, week, 3);
 		expect(usedRows).toBe(5);
 		// maxRows 3 → 2 visible event rows + "+N more" row
@@ -109,8 +108,7 @@ describe('layoutWeekRow (month/all-day segments)', () => {
 	it('a hidden spanning bar counts on every day it covers', () => {
 		const bar = inst(new Date(2026, 7, 9), new Date(2026, 7, 16), true, 'bar');
 		const fillers = Array.from({ length: 4 }, (_, i) =>
-			inst(new Date(2026, 7, 10, 9 + i), new Date(2026, 7, 10, 10 + i), false, `f${i}`)
-		);
+			inst(new Date(2026, 7, 10, 9 + i), new Date(2026, 7, 10, 10 + i), false, `f${i}`));
 		// bar gets row 0 (longest); fillers rows 1-4 on Monday; maxRows 2 → only bar visible
 		const { segments, hiddenCounts } = layoutWeekRow([bar, ...fillers], week, 2);
 		expect(segments.map((s) => s.instance.event.title)).toEqual(['bar']);

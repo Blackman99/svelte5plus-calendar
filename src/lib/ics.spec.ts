@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
-import { parseICS, toICS } from './ics.js';
-import { dayKey } from './date.js';
 import type { CalendarEvent, RecurrenceRule } from './types.js';
+import { describe, expect, it } from 'vitest';
+import { dayKey } from './date.js';
+import { parseICS, toICS } from './ics.js';
 
 const events: CalendarEvent[] = [
 	{

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EventInstance } from './types.js';
-	import { getCalendarContext, colorVars } from './context.js';
+	import { colorVars, getCalendarContext } from './context.js';
 	import { isSameDay } from './date.js';
 	import Popover from './Popover.svelte';
 
@@ -9,7 +9,7 @@
 		anchor: DOMRect;
 		onclose: () => void;
 	}
-	let { instance, anchor, onclose }: Props = $props();
+	const { instance, anchor, onclose }: Props = $props();
 
 	const ctx = getCalendarContext();
 

@@ -1,12 +1,13 @@
 <script lang="ts">
+	import type { Lang } from '$docs/nav.js';
 	import { page } from '$app/state';
-	import { T, type Lang } from '$docs/nav.js';
-	import Example from '$docs/Example.svelte';
 	import CodeBlock from '$docs/CodeBlock.svelte';
+	import Example from '$docs/Example.svelte';
 	import CustomRenderDemo from '$docs/examples/CustomRenderDemo.svelte';
 	import customRaw from '$docs/examples/CustomRenderDemo.svelte?raw';
 	import CustomUxDemo from '$docs/examples/CustomUxDemo.svelte';
 	import customUxRaw from '$docs/examples/CustomUxDemo.svelte?raw';
+	import { T } from '$docs/nav.js';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));

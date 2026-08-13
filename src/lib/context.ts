@@ -1,8 +1,4 @@
-/**
- * The shared context object that `Calendar.svelte` provides to its view
- * components. Reactive fields are exposed as getters backed by `$state`.
- */
-import { getContext, setContext } from 'svelte';
+import type { CalendarMessages, Formatters } from './i18n.js';
 import type {
 	BusinessHours,
 	CalendarEvent,
@@ -15,7 +11,11 @@ import type {
 	ValidRange,
 	Weekday
 } from './types.js';
-import type { CalendarMessages, Formatters } from './i18n.js';
+/**
+ * The shared context object that `Calendar.svelte` provides to its view
+ * components. Reactive fields are exposed as getters backed by `$state`.
+ */
+import { getContext, setContext } from 'svelte';
 
 export interface CalendarContext {
 	// --- reactive state ---
@@ -57,11 +57,11 @@ export interface CalendarContext {
 	readonly eventOverlap: boolean;
 
 	/** “Now” in the display time zone (falls back to local time). */
-	now(): Date;
+	now: () => Date;
 	/** Whether a day is inside `validRange`. */
-	isDayAllowed(day: Date): boolean;
+	isDayAllowed: (day: Date) => boolean;
 	/** Announces a message to screen readers (aria-live). */
-	announce(text: string): void;
+	announce: (text: string) => void;
 
 	// --- derived for the current view ---
 	/** Days visible in the current view (for month: includes leading/trailing). */
@@ -70,47 +70,47 @@ export interface CalendarContext {
 	readonly instances: EventInstance[];
 
 	// --- navigation ---
-	setDate(d: Date): void;
-	setView(v: CalendarView): void;
-	navigate(dir: 1 | -1): void;
-	goToday(): void;
+	setDate: (d: Date) => void;
+	setView: (v: CalendarView) => void;
+	navigate: (dir: 1 | -1) => void;
+	goToday: () => void;
 
 	// --- interactions ---
-	canEdit(instance: EventInstance): boolean;
+	canEdit: (instance: EventInstance) => boolean;
 	/**
 	 * Applies new times to an event and notifies `onEventChange` (with revert).
 	 * For recurring instances this opens the series-edit confirm popover near
 	 * `anchor` and, on confirm, detaches the occurrence into a standalone event.
 	 */
-	applyTimes(
+	applyTimes: (
 		instance: EventInstance,
 		start: Date,
 		end: Date,
 		allDay?: boolean,
 		anchor?: DOMRect,
 		resourceId?: string
-	): void;
+	) => void;
 	/**
 	 * A range was drag-selected. Calls `onSelect` when provided, otherwise opens
 	 * the built-in quick-create popover near `anchor`.
 	 */
-	select(sel: RangeSelection, anchor?: DOMRect): void;
+	select: (sel: RangeSelection, anchor?: DOMRect) => void;
 	/**
 	 * An event was activated. Calls `onEventClick` when provided, otherwise
 	 * opens the built-in details popover.
 	 */
-	clickEvent(instance: EventInstance, e: MouseEvent | KeyboardEvent): void;
+	clickEvent: (instance: EventInstance, e: MouseEvent | KeyboardEvent) => void;
 	/**
 	 * An empty cell/slot was clicked. Calls `onDateClick` when provided;
 	 * otherwise (when `selectable`) opens the quick-create popover.
 	 */
-	clickDate(date: Date, allDay: boolean, anchor?: DOMRect): void;
+	clickDate: (date: Date, allDay: boolean, anchor?: DOMRect) => void;
 	/** Adds a new event to the bound `events` array and fires `onEventCreate`. */
-	createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }): void;
+	createEvent: (data: Omit<CalendarEvent, 'id'> & { id?: string }) => void;
 	/** Removes an event from the bound `events` array and fires `onEventDelete`. */
-	deleteEvent(instance: EventInstance): void;
+	deleteEvent: (instance: EventInstance) => void;
 	/** Excludes a single occurrence of a recurring series (adds an exdate). */
-	deleteOccurrence(instance: EventInstance): void;
+	deleteOccurrence: (instance: EventInstance) => void;
 
 	// --- optional user callbacks (read-only views may check presence) ---
 	readonly onEventClick?: (instance: EventInstance, e: MouseEvent | KeyboardEvent) => void;

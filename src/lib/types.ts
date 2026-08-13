@@ -7,17 +7,17 @@
 export type CalendarView = 'day' | 'week' | 'month' | 'year' | 'agenda' | 'resources';
 
 /** Named palette colors (mapped to CSS variables) — any CSS color string is also accepted. */
-export type PaletteColor =
-	| 'graphite'
-	| 'red'
-	| 'orange'
-	| 'yellow'
-	| 'green'
-	| 'teal'
-	| 'blue'
-	| 'indigo'
-	| 'purple'
-	| 'pink';
+export type PaletteColor
+	= | 'graphite'
+		| 'red'
+		| 'orange'
+		| 'yellow'
+		| 'green'
+		| 'teal'
+		| 'blue'
+		| 'indigo'
+		| 'purple'
+		| 'pink';
 
 /** Days of week, 0 = Sunday … 6 = Saturday (same as `Date#getDay`). */
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;

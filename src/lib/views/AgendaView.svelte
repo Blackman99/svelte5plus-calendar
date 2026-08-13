@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { EventInstance } from '../types.js';
-	import { getCalendarContext } from '../context.js';
+	import { colorVars, getCalendarContext } from '../context.js';
 	import { dayKey, endOfDay, isSameDay, overlaps } from '../date.js';
-	import { colorVars } from '../context.js';
 
 	const ctx = getCalendarContext();
 

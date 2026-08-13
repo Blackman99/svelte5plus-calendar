@@ -8,7 +8,7 @@
 		onsplit: () => void;
 		onclose: () => void;
 	}
-	let { anchor, onconfirm, onsplit, onclose }: Props = $props();
+	const { anchor, onconfirm, onsplit, onclose }: Props = $props();
 
 	const ctx = getCalendarContext();
 </script>

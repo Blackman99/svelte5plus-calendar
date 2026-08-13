@@ -1,9 +1,10 @@
 <script lang="ts">
+	import type { Lang } from '$docs/nav.js';
 	import { page } from '$app/state';
-	import { T, type Lang } from '$docs/nav.js';
 	import Example from '$docs/Example.svelte';
 	import ViewsDemo from '$docs/examples/ViewsDemo.svelte';
 	import viewsRaw from '$docs/examples/ViewsDemo.svelte?raw';
+	import { T } from '$docs/nav.js';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -62,10 +63,10 @@
 <ul>
 	<li>
 		<code>views</code> — {t('which buttons the toolbar offers, e.g.', '工具栏提供哪些视图按钮，例如')}
-		<code>views={'{'}['week', 'month']{'}'}</code>
+		<code>views={'{'}['week', 'month']}</code>
 	</li>
 	<li>
-		<code>weekends={'{'}false{'}'}</code> — {t('hide Saturday and Sunday in month & week views.', '在月视图和周视图中隐藏周六、周日。')}
+		<code>weekends={'{'}false}</code> — {t('hide Saturday and Sunday in month & week views.', '在月视图和周视图中隐藏周六、周日。')}
 	</li>
 	<li>
 		<code>fixedWeeks</code> — {t('always render 6 rows in the month view so the height never jumps.', '月视图恒定渲染 6 行，高度不随月份跳动。')}

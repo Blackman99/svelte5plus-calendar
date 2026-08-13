@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Calendar, type CalendarEvent } from 'svelte5plus-calendar';
+	import type { CalendarEvent } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	const monday = (() => {
 		const d = new Date();

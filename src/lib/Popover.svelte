@@ -8,7 +8,7 @@
 		label?: string;
 		children: Snippet;
 	}
-	let { anchor, onclose, label, children }: Props = $props();
+	const { anchor, onclose, label, children }: Props = $props();
 
 	let el = $state<HTMLDivElement>();
 	let pos = $state({ left: -9999, top: -9999 });
@@ -62,7 +62,8 @@
 		if (e.shiftKey && document.activeElement === first) {
 			e.preventDefault();
 			last.focus();
-		} else if (!e.shiftKey && document.activeElement === last) {
+		}
+		else if (!e.shiftKey && document.activeElement === last) {
 			e.preventDefault();
 			first.focus();
 		}

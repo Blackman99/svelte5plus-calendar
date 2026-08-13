@@ -2,7 +2,7 @@
 	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	let timeZone = $state<string | undefined>('America/New_York');
 

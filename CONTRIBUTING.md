@@ -14,12 +14,13 @@ Thanks for your interest in improving svelte5plus-calendar!
 npm install
 npm run dev        # docs site with live examples — the best playground
 npm test           # unit tests (vitest)
+npm run lint       # eslint (@antfu/eslint-config)
 npm run check      # svelte-check + TypeScript
 npm run build      # build the docs site and package the library
 ```
 
-Please keep `npm test` and `npm run check` green; both run in CI on every push
-and pull request.
+Please keep `npm test`, `npm run lint` and `npm run check` green; all three run
+in CI on every push. `npm run lint:fix` auto-fixes most style issues.
 
 ## Submitting changes
 

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { Lang } from '$docs/nav.js';
 	import { page } from '$app/state';
-	import { T, withBase, type Lang } from '$docs/nav.js';
-	import Example from '$docs/Example.svelte';
 	import CodeBlock from '$docs/CodeBlock.svelte';
+	import Example from '$docs/Example.svelte';
 	import HelloCalendar from '$docs/examples/HelloCalendar.svelte';
 	import helloRaw from '$docs/examples/HelloCalendar.svelte?raw';
+	import { T, withBase } from '$docs/nav.js';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));

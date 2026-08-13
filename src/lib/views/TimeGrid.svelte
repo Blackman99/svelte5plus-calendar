@@ -1,21 +1,22 @@
 <script lang="ts">
+	import type { TimedPlacement } from '../layout.js';
 	import type { EventInstance } from '../types.js';
-	import { getCalendarContext, colorVars } from '../context.js';
-	import { layoutDay, layoutWeekRow, type TimedPlacement } from '../layout.js';
-	import { isAllDayLike } from '../instances.js';
+	import { colorVars, getCalendarContext } from '../context.js';
 	import {
 		addDays,
 		dayKey,
 		endOfDay,
 		floorToStep,
-		isSameDay,
 		isoWeek,
+		isSameDay,
 		minutesOfDay,
 		overlaps,
 		roundToStep,
 		withMinutesOfDay
 	} from '../date.js';
 	import EventItem from '../EventItem.svelte';
+	import { isAllDayLike } from '../instances.js';
+	import { layoutDay, layoutWeekRow } from '../layout.js';
 
 	const ctx = getCalendarContext();
 
@@ -119,24 +120,24 @@
 		startX: number;
 		startY: number;
 	}
-	type DragData =
-		| { kind: 'create'; dayIdx: number; anchorMin: number; headMin: number; moved: boolean }
-		| {
+	type DragData
+		= | { kind: 'create'; dayIdx: number; anchorMin: number; headMin: number; moved: boolean }
+			| {
 				kind: 'move';
 				instance: EventInstance;
 				grabOffsetMin: number;
 				headDayIdx: number;
 				headMin: number;
 				moved: boolean;
-		  }
-		| { kind: 'resize'; instance: EventInstance; dayIdx: number; headMin: number; moved: boolean }
-		| {
+			}
+			| { kind: 'resize'; instance: EventInstance; dayIdx: number; headMin: number; moved: boolean }
+			| {
 				kind: 'allday';
 				instance: EventInstance;
 				startDayIdx: number;
 				headDayIdx: number;
 				moved: boolean;
-		  };
+			};
 	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
 
@@ -270,14 +271,16 @@
 			if (min !== drag.headMin || dayIdx !== drag.dayIdx || !drag.moved) {
 				drag = { ...drag, headMin: min, dayIdx, moved: true };
 			}
-		} else if (drag.kind === 'move') {
+		}
+		else if (drag.kind === 'move') {
 			drag = {
 				...drag,
 				headDayIdx: pointToDayIdx(e.clientX),
 				headMin: pointToMin(e.clientY),
 				moved: true
 			};
-		} else {
+		}
+		else {
 			drag = { ...drag, headMin: roundToStep(pointToMin(e.clientY), ctx.snapDuration), moved: true };
 		}
 	}
@@ -370,7 +373,8 @@
 		suppressNextClick();
 		if (d.kind === 'create') {
 			ctx.select({ start: result.start, end: result.end, allDay: false }, anchor);
-		} else {
+		}
+		else {
 			ctx.applyTimes(d.instance, result.start, result.end, d.instance.allDay, anchor);
 		}
 	}
@@ -380,9 +384,9 @@
 	}
 
 	const draggingKey = $derived(
-		drag &&
-			drag.moved &&
-			(drag.kind === 'move' || drag.kind === 'resize' || drag.kind === 'allday')
+		drag
+			&& drag.moved
+			&& (drag.kind === 'move' || drag.kind === 'resize' || drag.kind === 'allday')
 			? drag.instance.key
 			: null
 	);
@@ -410,16 +414,19 @@
 			if (e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
 				end = new Date(end.getTime() + (e.key === 'ArrowDown' ? step : -step));
 				if (end.getTime() - start.getTime() < step) return;
-			} else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+			}
+			else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
 				const delta = e.key === 'ArrowDown' ? step : -step;
 				start = new Date(start.getTime() + delta);
 				end = new Date(end.getTime() + delta);
-			} else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+			}
+			else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
 				const dayDelta = e.key === 'ArrowRight' ? 1 : -1;
 				start = addDays(start, dayDelta);
 				end = addDays(end, dayDelta);
 				void dayIdx;
-			} else {
+			}
+			else {
 				return;
 			}
 			e.preventDefault();
@@ -485,8 +492,8 @@
 				<div
 					class="s5c-seg"
 					class:s5c-dragging={draggingKey === seg.instance.key}
-					style="top:{seg.row * 24}px; left:{(seg.startCol / n) * 100}%; width:{(seg.span / n) *
-						100}%"
+					style="top:{seg.row * 24}px; left:{(seg.startCol / n) * 100}%; width:{(seg.span / n)
+						* 100}%"
 				>
 					<EventItem
 						instance={seg.instance}
@@ -550,8 +557,8 @@
 							type="button"
 							class="s5c-block"
 							class:s5c-dragging={draggingKey === p.instance.key}
-							style="{colorVars(p.instance.color)} top:{top}px; height:{height}px; left:{p.col *
-								width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
+							style="{colorVars(p.instance.color)} top:{top}px; height:{height}px; left:{p.col
+								* width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
 							aria-label={p.instance.event.title}
 							aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight"
 							onpointerdown={onBlockPointerDown(p, dayIdx)}
@@ -589,8 +596,8 @@
 						{#if drag.kind === 'create'}
 							<div
 								class="s5c-select-preview"
-								style="top:{minToY(dragResult.startMin)}px; height:{minToY(dragResult.endMin) -
-									minToY(dragResult.startMin)}px"
+								style="top:{minToY(dragResult.startMin)}px; height:{minToY(dragResult.endMin)
+									- minToY(dragResult.startMin)}px"
 							>
 								{ctx.fmt.time(dragResult.start)} – {ctx.fmt.time(dragResult.end)}
 							</div>
@@ -600,8 +607,8 @@
 								style="{colorVars(dragResult.color ?? 'blue')} top:{minToY(
 									Math.max(dragResult.startMin, startMin)
 								)}px; height:{Math.max(
-									minToY(Math.min(dragResult.endMin, endMin)) -
-										minToY(Math.max(dragResult.startMin, startMin)),
+									minToY(Math.min(dragResult.endMin, endMin))
+										- minToY(Math.max(dragResult.startMin, startMin)),
 									18
 								)}px; left:0; width:calc(100% - 3px)"
 							>

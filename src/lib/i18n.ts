@@ -139,7 +139,7 @@ export const de: CalendarMessages = {
 };
 
 export const fr: CalendarMessages = {
-	today: "Aujourd'hui",
+	today: 'Aujourd\'hui',
 	day: 'Jour',
 	week: 'Semaine',
 	month: 'Mois',
@@ -161,7 +161,7 @@ export const fr: CalendarMessages = {
 	close: 'Fermer',
 	deleteOccurrence: 'Supprimer cette occurrence',
 	deleteSeries: 'Supprimer la série',
-	editRecurring: "Modifier l'événement récurrent",
+	editRecurring: 'Modifier l\'événement récurrent',
 	thisEvent: 'Cet événement',
 	thisAndFollowing: 'Celui-ci et les suivants',
 	cancel: 'Annuler',
@@ -351,7 +351,7 @@ export const it: CalendarMessages = {
 const BUILT_IN: Record<string, CalendarMessages> = {
 	en,
 	'zh-cn': zhCN,
-	zh: zhCN,
+	'zh': zhCN,
 	'zh-hans': zhCN,
 	de,
 	fr,
@@ -382,11 +382,12 @@ export function localeFirstDay(locale: string): Weekday {
 		};
 		const info = loc.getWeekInfo?.() ?? loc.weekInfo;
 		if (info) return (info.firstDay % 7) as Weekday; // Intl: 1=Mon…7=Sun → 0=Sun
-	} catch {
+	}
+	catch {
 		// fall through to heuristic
 	}
 	// Heuristic fallback: US-style locales start Sunday, most others Monday.
-	return /^(en-US|en-CA|ja|ko|zh-TW|he|pt-BR)/i.test(locale) ? 0 : 1;
+	return /^(?:en-US|en-CA|ja|ko|zh-TW|he|pt-BR)/i.test(locale) ? 0 : 1;
 }
 
 /** Memoized `Intl.DateTimeFormat` factory (constructing them is expensive). */
@@ -403,8 +404,8 @@ export function fmt(locale: string, options: Intl.DateTimeFormatOptions): Intl.D
 
 /** Formatting helpers used across the components. */
 export function formatters(locale: string, hour12?: boolean) {
-	const hourOpts: Intl.DateTimeFormatOptions =
-		hour12 === undefined ? {} : { hour12 };
+	const hourOpts: Intl.DateTimeFormatOptions
+		= hour12 === undefined ? {} : { hour12 };
 	return {
 		/** “August 2026” / “2026年8月” */
 		monthTitle: (d: Date) => fmt(locale, { year: 'numeric', month: 'long' }).format(d),

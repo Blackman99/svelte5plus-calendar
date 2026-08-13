@@ -1,13 +1,14 @@
 <script lang="ts">
+	import type { Lang } from '../../docs/nav.js';
+	import { base } from '$app/paths';
+	import { page } from '$app/state';
+	import { REPO_URL, T, withBase } from '../../docs/nav.js';
 	// Explicit side-effect import: Vite 8 (rolldown) tree-shakes the CSS import
 	// inside $lib/index.ts despite `sideEffects: ["**/*.css"]`.
 	import '$lib/theme.css';
 	import '../../docs/docs.css';
-	import { page } from '$app/state';
-	import { base } from '$app/paths';
-	import { T, REPO_URL, withBase, type Lang } from '../../docs/nav.js';
 
-	let { children } = $props();
+	const { children } = $props();
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));
@@ -33,8 +34,9 @@
 		document.documentElement.dataset.s5cTheme = docsTheme;
 		try {
 			localStorage.setItem('s5c-docs-theme', docsTheme);
-		} catch {
-			/* private mode */
+		}
+		catch {
+		/* private mode */
 		}
 	}
 </script>

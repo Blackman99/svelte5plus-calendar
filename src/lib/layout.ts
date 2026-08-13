@@ -144,10 +144,10 @@ export function layoutWeekRow(
 	// Google-style ordering: longer spans first, then earlier start, then title.
 	segs.sort(
 		(a, b) =>
-			b.sortSpan - a.sortSpan ||
-			a.sortStart - b.sortStart ||
-			minutesOfDay(a.instance.start) - minutesOfDay(b.instance.start) ||
-			a.instance.event.title.localeCompare(b.instance.event.title)
+			b.sortSpan - a.sortSpan
+			|| a.sortStart - b.sortStart
+			|| minutesOfDay(a.instance.start) - minutesOfDay(b.instance.start)
+			|| a.instance.event.title.localeCompare(b.instance.event.title)
 	);
 
 	// Greedy row assignment: first row where all covered cells are free.
@@ -155,7 +155,7 @@ export function layoutWeekRow(
 	for (const seg of segs) {
 		let r = 0;
 		for (; ; r++) {
-			if (!rows[r]) rows[r] = new Array(days.length).fill(false);
+			if (!rows[r]) rows[r] = Array.from({ length: days.length }, () => false);
 			let free = true;
 			for (let c = seg.startCol; c < seg.startCol + seg.span; c++) {
 				if (rows[r][c]) {
@@ -170,7 +170,7 @@ export function layoutWeekRow(
 	}
 
 	const usedRows = rows.length;
-	const hiddenCounts = new Array(days.length).fill(0);
+	const hiddenCounts = Array.from({ length: days.length }, () => 0);
 	let visible = segs;
 
 	if (usedRows > maxRows) {
@@ -180,7 +180,8 @@ export function layoutWeekRow(
 		for (const seg of segs) {
 			if (seg.row < cutoff) {
 				visible.push(seg);
-			} else {
+			}
+			else {
 				for (let c = seg.startCol; c < seg.startCol + seg.span; c++) hiddenCounts[c] += 1;
 			}
 		}

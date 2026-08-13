@@ -47,36 +47,37 @@ Requires Svelte 5. Styles are imported automatically.
 
 ```svelte
 <script lang="ts">
-  import { Calendar, type CalendarEvent } from 'svelte5plus-calendar';
+	import type { CalendarEvent } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 
-  let events = $state<CalendarEvent[]>([
-    {
-      id: '1',
-      title: 'Kickoff meeting',
-      start: new Date(2026, 7, 13, 10, 0),
-      end: new Date(2026, 7, 13, 11, 0),
-      color: 'teal'
-    },
-    {
-      id: '2',
-      title: 'Conference',
-      start: new Date(2026, 7, 17),
-      end: new Date(2026, 7, 20),
-      allDay: true
-    },
-    {
-      id: '3',
-      title: 'Standup',
-      start: new Date(2026, 7, 10, 9, 30),
-      end: new Date(2026, 7, 10, 9, 45),
-      recurrence: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'
-    }
-  ]);
+	let events = $state<CalendarEvent[]>([
+		{
+			id: '1',
+			title: 'Kickoff meeting',
+			start: new Date(2026, 7, 13, 10, 0),
+			end: new Date(2026, 7, 13, 11, 0),
+			color: 'teal'
+		},
+		{
+			id: '2',
+			title: 'Conference',
+			start: new Date(2026, 7, 17),
+			end: new Date(2026, 7, 20),
+			allDay: true
+		},
+		{
+			id: '3',
+			title: 'Standup',
+			start: new Date(2026, 7, 10, 9, 30),
+			end: new Date(2026, 7, 10, 9, 45),
+			recurrence: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'
+		}
+	]);
 </script>
 
 <!-- The calendar fills its parent — give the wrapper a height -->
 <div style="height: 640px">
-  <Calendar bind:events view="week" locale="en" editable selectable />
+	<Calendar bind:events view="week" locale="en" editable selectable />
 </div>
 ```
 
@@ -86,15 +87,16 @@ Requires Svelte 5. Styles are imported automatically.
 
 ```svelte
 <Calendar
-  bind:events
-  editable
-  onEventChange={async ({ event, start, end, revert }) => {
-    try {
-      await api.update(event.id, { start, end });
-    } catch {
-      revert();
-    }
-  }}
+	bind:events
+	editable
+	onEventChange={async ({ event, start, end, revert }) => {
+		try {
+			await api.update(event.id, { start, end });
+		}
+		catch {
+			revert();
+		}
+	}}
 />
 ```
 
@@ -102,11 +104,11 @@ Requires Svelte 5. Styles are imported automatically.
 
 ```svelte
 <Calendar
-  bind:events
-  selectable
-  onSelect={({ start, end, allDay }) => {
-    events = [...events, { id: crypto.randomUUID(), title: 'New event', start, end, allDay }];
-  }}
+	bind:events
+	selectable
+	onSelect={({ start, end, allDay }) => {
+		events = [...events, { id: crypto.randomUUID(), title: 'New event', start, end, allDay }];
+	}}
 />
 ```
 
@@ -114,10 +116,10 @@ Requires Svelte 5. Styles are imported automatically.
 
 ```svelte
 <script lang="ts">
-  let sources = $state([
-    { id: 'work', name: 'Work', color: 'blue', visible: true },
-    { id: 'personal', name: 'Personal', color: 'green', visible: true }
-  ]);
+	const sources = $state([
+		{ id: 'work', name: 'Work', color: 'blue', visible: true },
+		{ id: 'personal', name: 'Personal', color: 'green', visible: true }
+	]);
 </script>
 
 <Calendar {events} {sources} />

@@ -8,7 +8,7 @@
 		views: CalendarView[];
 		toolbarEnd?: Snippet;
 	}
-	let { title, views, toolbarEnd }: Props = $props();
+	const { title, views, toolbarEnd }: Props = $props();
 
 	const ctx = getCalendarContext();
 </script>

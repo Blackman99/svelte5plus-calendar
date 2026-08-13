@@ -52,7 +52,8 @@ export function toICS(events: CalendarEvent[], opts: { prodId?: string } = {}): 
 		if (ev.allDay) {
 			lines.push(`DTSTART;VALUE=DATE:${fmtDate(ev.start)}`);
 			lines.push(`DTEND;VALUE=DATE:${fmtDate(ev.end)}`);
-		} else {
+		}
+		else {
 			lines.push(`DTSTART:${fmtDateTime(ev.start)}`);
 			lines.push(`DTEND:${fmtDateTime(ev.end)}`);
 		}
@@ -65,7 +66,7 @@ export function toICS(events: CalendarEvent[], opts: { prodId?: string } = {}): 
 		lines.push('END:VEVENT');
 	}
 	lines.push('END:VCALENDAR');
-	return lines.map(fold).join('\r\n') + '\r\n';
+	return `${lines.map(fold).join('\r\n')}\r\n`;
 }
 
 interface ParsedProp {
@@ -140,7 +141,8 @@ function buildEvent(props: Record<string, ParsedProp[]>, index: number): Calenda
 	const dtend = first('DTEND') ? parseICSDate(first('DTEND')!.value) : null;
 	if (dtend) {
 		end = dtend.date;
-	} else {
+	}
+	else {
 		end = new Date(dtstart.date.getTime() + (allDay ? 86_400_000 : 3_600_000));
 	}
 
@@ -154,11 +156,12 @@ function buildEvent(props: Record<string, ParsedProp[]>, index: number): Calenda
 	if (first('RRULE')) {
 		try {
 			event.recurrence = parseRRule(first('RRULE')!.value);
-		} catch {
+		}
+		catch {
 			// Unsupported rule — import as a single event.
 		}
 	}
-	const exdates = (props['EXDATE'] ?? [])
+	const exdates = (props.EXDATE ?? [])
 		.flatMap((p) => p.value.split(','))
 		.map((v) => parseICSDate(v)?.date)
 		.filter((d): d is Date => !!d);

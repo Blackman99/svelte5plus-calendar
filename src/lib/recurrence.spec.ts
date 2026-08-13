@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { expandRecurrence, parseRRule } from './recurrence.js';
 import { dayKey } from './date.js';
+import { expandRecurrence, parseRRule } from './recurrence.js';
 
 const HOUR = 3_600_000;
 
@@ -53,7 +53,7 @@ describe('expandRecurrence', () => {
 		expect(days).toEqual(['2026-08-03', '2026-08-04', '2026-08-05', '2026-08-06']);
 	});
 
-	it('COUNT counts from DTSTART even when the range starts later', () => {
+	it('cOUNT counts from DTSTART even when the range starts later', () => {
 		const days = expand(start, { freq: 'daily', count: 4 }, new Date(2026, 7, 5), rangeEnd);
 		expect(days).toEqual(['2026-08-05', '2026-08-06']);
 	});

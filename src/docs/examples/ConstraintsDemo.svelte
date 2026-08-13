@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Calendar, addDays, startOfWeek } from 'svelte5plus-calendar';
+	import { addDays, Calendar, startOfWeek } from 'svelte5plus-calendar';
 	import { sampleEvents } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	// Only this week is bookable, and bookings may not overlap.
 	const weekStart = startOfWeek(new Date(), 1);

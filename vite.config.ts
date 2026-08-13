@@ -1,6 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import process from 'node:process';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [
@@ -11,7 +12,7 @@ export default defineConfig({
 			},
 			adapter: adapter(),
 			alias: {
-				$docs: './src/docs',
+				'$docs': './src/docs',
 				// The docs import the library by its published name, so example
 				// code is copy-paste identical to real-world usage.
 				'svelte5plus-calendar': './src/lib'

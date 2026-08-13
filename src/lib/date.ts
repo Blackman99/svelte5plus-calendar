@@ -59,9 +59,9 @@ export function startOfWeek(d: Date, firstDayOfWeek: Weekday = 0): Date {
 
 export function isSameDay(a: Date, b: Date): boolean {
 	return (
-		a.getFullYear() === b.getFullYear() &&
-		a.getMonth() === b.getMonth() &&
-		a.getDate() === b.getDate()
+		a.getFullYear() === b.getFullYear()
+		&& a.getMonth() === b.getMonth()
+		&& a.getDate() === b.getDate()
 	);
 }
 
@@ -150,6 +150,7 @@ export function monthGrid(d: Date, firstDayOfWeek: Weekday = 0, fixedWeeks = fal
 	const weeks: Date[][] = [];
 	let cursor = first;
 	const monthEnd = endOfMonth(d);
+	// eslint-disable-next-line no-unmodified-loop-condition -- `fixedWeeks` is a config flag; `weeks.length` advances
 	while (cursor.getTime() < monthEnd.getTime() || (fixedWeeks && weeks.length < 6)) {
 		const week: Date[] = [];
 		for (let i = 0; i < 7; i++) {

@@ -3,8 +3,8 @@
  * FREQ (DAILY/WEEKLY/MONTHLY/YEARLY), INTERVAL, COUNT, UNTIL,
  * BYDAY (weekly, and monthly ordinal forms like `2TU` / `-1FR`), BYMONTHDAY.
  */
-import type { RecurrenceRule, RecurrenceFreq, Weekday } from './types.js';
-import { addDays, addMonths, daysInMonth, isSameDay, startOfDay, overlaps } from './date.js';
+import type { RecurrenceFreq, RecurrenceRule, Weekday } from './types.js';
+import { addDays, addMonths, daysInMonth, isSameDay, overlaps, startOfDay } from './date.js';
 
 const DAY_CODES: Record<string, Weekday> = {
 	SU: 0,
@@ -53,7 +53,8 @@ export function parseRRule(input: string): RecurrenceRule {
 					rule.byNthDay = { ordinal: ord as 1 | 2 | 3 | 4 | 5 | -1, day: DAY_CODES[m[2]] };
 				}
 			}
-		} else {
+		}
+		else {
 			const days = tokens
 				.map((t) => DAY_CODES[t.replace(/^-?\d+/, '')])
 				.filter((d): d is Weekday => d !== undefined);
@@ -137,9 +138,9 @@ export function expandRecurrence(
 		produced += 1;
 		if (r.count && produced > r.count) return false;
 		if (
-			occ.getTime() < hardEnd &&
-			overlaps(occ, new Date(occ.getTime() + Math.max(durationMs, 1)), rangeStart, rangeEnd) &&
-			!excluded(occ)
+			occ.getTime() < hardEnd
+			&& overlaps(occ, new Date(occ.getTime() + Math.max(durationMs, 1)), rangeStart, rangeEnd)
+			&& !excluded(occ)
 		) {
 			results.push(occ);
 		}
@@ -151,7 +152,8 @@ export function expandRecurrence(
 			const occ = addDays(start, i);
 			if (!push(occ)) break;
 		}
-	} else if (r.freq === 'weekly') {
+	}
+	else if (r.freq === 'weekly') {
 		const byDay = r.byDay && r.byDay.length ? [...r.byDay] : [start.getDay() as Weekday];
 		// Iterate week by week from the week of DTSTART; within a week, emit in chronological order.
 		const weekAnchor = startOfDay(start);
@@ -168,7 +170,8 @@ export function expandRecurrence(
 			}
 			if (base.getTime() > hardEnd + 7 * 86_400_000) break;
 		}
-	} else if (r.freq === 'monthly') {
+	}
+	else if (r.freq === 'monthly') {
 		outer: for (let m = 0; ; m += interval) {
 			const anchor = addMonths(start, m);
 			const year = anchor.getFullYear();
@@ -177,12 +180,14 @@ export function expandRecurrence(
 			if (r.byNthDay) {
 				const d = nthWeekdayOfMonth(year, month, r.byNthDay.ordinal, r.byNthDay.day);
 				if (d) occDates = [d];
-			} else if (r.byMonthDay && r.byMonthDay.length) {
+			}
+			else if (r.byMonthDay && r.byMonthDay.length) {
 				occDates = r.byMonthDay
 					.filter((day) => day <= daysInMonth(anchor))
 					.map((day) => new Date(year, month, day))
 					.sort((a, b) => a.getTime() - b.getTime());
-			} else {
+			}
+			else {
 				// Same day-of-month as DTSTART; skip months where it does not exist.
 				if (start.getDate() <= daysInMonth(anchor)) {
 					occDates = [new Date(year, month, start.getDate())];
@@ -201,7 +206,8 @@ export function expandRecurrence(
 			}
 			if (new Date(year, month, 1).getTime() > hardEnd) break;
 		}
-	} else {
+	}
+	else {
 		// yearly
 		for (let y = 0; ; y += interval) {
 			const occ = addMonths(start, y * 12);

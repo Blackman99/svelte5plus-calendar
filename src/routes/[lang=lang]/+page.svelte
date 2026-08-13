@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type { Lang } from '../../docs/nav.js';
 	import { page } from '$app/state';
-	import { T, REPO_URL, withBase, type Lang } from '../../docs/nav.js';
 	import FullDemo from '../../docs/examples/FullDemo.svelte';
+	import { REPO_URL, T, withBase } from '../../docs/nav.js';
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));

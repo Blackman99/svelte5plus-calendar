@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { Calendar, type CalendarEvent, type Resource } from 'svelte5plus-calendar';
+	import type { CalendarEvent, Resource } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	// svelte-ignore state_referenced_locally
 	const zh = locale.toLowerCase().startsWith('zh');

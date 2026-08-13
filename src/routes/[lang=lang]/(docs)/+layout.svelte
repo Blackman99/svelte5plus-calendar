@@ -1,8 +1,9 @@
 <script lang="ts">
+	import type { Lang } from '../../../docs/nav.js';
 	import { page } from '$app/state';
-	import { T, guideNav, docSequence, withBase, type Lang } from '../../../docs/nav.js';
+	import { docSequence, guideNav, T, withBase } from '../../../docs/nav.js';
 
-	let { children } = $props();
+	const { children } = $props();
 
 	const lang = $derived(page.params.lang as Lang);
 	const t = $derived(T(lang));

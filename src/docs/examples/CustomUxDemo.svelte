@@ -1,12 +1,12 @@
 <script lang="ts">
+	import type { EventInstance, RangeSelection } from 'svelte5plus-calendar';
 	import {
-		Calendar,
-		type EventInstance,
-		type RangeSelection
+		Calendar
+
 	} from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 	// svelte-ignore state_referenced_locally
 	const zh = locale.toLowerCase().startsWith('zh');
 	// svelte-ignore state_referenced_locally
@@ -65,7 +65,13 @@
 
 	{#if draft}
 		<div class="dim" role="presentation" onclick={() => (draft = null)}></div>
-		<form class="dialog" onsubmit={(e) => (e.preventDefault(), save())}>
+		<form
+			class="dialog"
+			onsubmit={(e) => {
+				e.preventDefault();
+				save();
+			}}
+		>
 			<h4>{zh ? '新建日程' : 'New event'}</h4>
 			<!-- svelte-ignore a11y_autofocus -->
 			<input autofocus placeholder={zh ? '做点什么？' : 'What are you planning?'} bind:value={draft.title} />

@@ -1,22 +1,22 @@
 <script lang="ts">
 	import type { EventInstance } from '../types.js';
 	import { getCalendarContext } from '../context.js';
-	import { layoutWeekRow } from '../layout.js';
-	import { isAllDayLike } from '../instances.js';
 	import {
 		addDays,
 		dayKey,
 		daysBetween,
 		endOfDay,
+		isoWeek,
 		isSameDay,
 		isSameMonth,
-		isoWeek,
 		maxDate,
 		minDate,
 		overlaps,
 		startOfDay
 	} from '../date.js';
 	import EventItem from '../EventItem.svelte';
+	import { isAllDayLike } from '../instances.js';
+	import { layoutWeekRow } from '../layout.js';
 	import MorePopover from '../MorePopover.svelte';
 
 	const ctx = getCalendarContext();
@@ -43,7 +43,7 @@
 	);
 
 	const gridCols = $derived(
-		(ctx.weekNumbers ? '44px ' : '') + `repeat(${cols}, minmax(0, 1fr))`
+		`${ctx.weekNumbers ? '44px ' : ''}repeat(${cols}, minmax(0, 1fr))`
 	);
 	const eventsInset = $derived(ctx.weekNumbers ? '44px' : '0px');
 
@@ -70,9 +70,9 @@
 		startX: number;
 		startY: number;
 	}
-	type DragData =
-		| { kind: 'event'; instance: EventInstance; moved: boolean; overDay: Date | null }
-		| { kind: 'select'; anchor: Date; head: Date; moved: boolean };
+	type DragData
+		= | { kind: 'event'; instance: EventInstance; moved: boolean; overDay: Date | null }
+			| { kind: 'select'; anchor: Date; head: Date; moved: boolean };
 	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
 
@@ -188,7 +188,8 @@
 			if (!drag.overDay || !isSameDay(drag.overDay, day)) {
 				drag = { ...drag, overDay: day, moved: true };
 			}
-		} else {
+		}
+		else {
 			if (!isSameDay(drag.head, day)) {
 				drag = { ...drag, head: day, moved: true };
 			}
@@ -216,7 +217,8 @@
 					overCell?.getBoundingClientRect()
 				);
 			}
-		} else if (d.moved) {
+		}
+		else if (d.moved) {
 			suppressNextClick();
 			const start = minDate(d.anchor, d.head);
 			const end = endOfDay(maxDate(d.anchor, d.head));
@@ -246,15 +248,26 @@
 	function onCellKeydown(idx: number, day: Date) {
 		return (e: KeyboardEvent) => {
 			let next = -1;
-			if (e.key === 'ArrowRight') next = idx + 1;
-			else if (e.key === 'ArrowLeft') next = idx - 1;
-			else if (e.key === 'ArrowDown') next = idx + cols;
-			else if (e.key === 'ArrowUp') next = idx - cols;
+			if (e.key === 'ArrowRight') {
+				next = idx + 1;
+			}
+			else if (e.key === 'ArrowLeft') {
+				next = idx - 1;
+			}
+			else if (e.key === 'ArrowDown') {
+				next = idx + cols;
+			}
+			else if (e.key === 'ArrowUp') {
+				next = idx - cols;
+			}
 			else if (e.key === 'Enter' || e.key === ' ') {
 				e.preventDefault();
 				ctx.clickDate(day, true, (e.currentTarget as HTMLElement).getBoundingClientRect());
 				return;
-			} else return;
+			}
+			else {
+				return;
+			}
 			e.preventDefault();
 			if (next < 0 || next >= ctx.visibleDays.length) return;
 			focusIdx = next;
@@ -304,9 +317,9 @@
 			<div
 				class="s5c-month-week"
 				role="row"
-				style="grid-template-columns:{gridCols}; min-height:{HEADER_H +
-					Math.max(visibleRows, 2) * ROW_H +
-					4}px"
+				style="grid-template-columns:{gridCols}; min-height:{HEADER_H
+					+ Math.max(visibleRows, 2) * ROW_H
+					+ 4}px"
 			>
 				{#if ctx.weekNumbers}
 					<div class="s5c-month-cell s5c-weekno" style="padding-top:8px">
@@ -346,12 +359,12 @@
 					{#each layout.segments as seg (seg.instance.key)}
 						<div
 							class="s5c-seg"
-							class:s5c-dragging={drag?.kind === 'event' &&
-								drag.instance.key === seg.instance.key &&
-								drag.moved}
-							style="top:{seg.row * ROW_H}px; left:{(seg.startCol / cols) * 100}%; width:{(seg.span /
-								cols) *
-								100}%"
+							class:s5c-dragging={drag?.kind === 'event'
+								&& drag.instance.key === seg.instance.key
+								&& drag.moved}
+							style="top:{seg.row * ROW_H}px; left:{(seg.startCol / cols) * 100}%; width:{(seg.span
+								/ cols)
+								* 100}%"
 						>
 							<EventItem
 								instance={seg.instance}
@@ -366,8 +379,8 @@
 							<button
 								type="button"
 								class="s5c-more-link"
-								style="top:{(ctx.dayMaxEvents - 1) * ROW_H}px; left:{(c / cols) *
-									100}%; width:{(1 / cols) * 100}%"
+								style="top:{(ctx.dayMaxEvents - 1) * ROW_H}px; left:{(c / cols)
+									* 100}%; width:{(1 / cols) * 100}%"
 								onpointerdown={(e) => e.stopPropagation()}
 								onclick={(e) => {
 									e.stopPropagation();

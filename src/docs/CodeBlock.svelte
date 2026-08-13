@@ -8,7 +8,7 @@
 		lang?: 'svelte' | 'typescript' | 'bash';
 		standalone?: boolean;
 	}
-	let { code, lang = 'svelte', standalone = false }: Props = $props();
+	const { code, lang = 'svelte', standalone = false }: Props = $props();
 
 	const html = $derived.by(() => {
 		const trimmed = code.trim();

@@ -1,8 +1,7 @@
 <script lang="ts">
+	import type { TimedPlacement } from '../layout.js';
 	import type { EventInstance } from '../types.js';
-	import { getCalendarContext, colorVars } from '../context.js';
-	import { layoutDay, type TimedPlacement } from '../layout.js';
-	import { isAllDayLike } from '../instances.js';
+	import { colorVars, getCalendarContext } from '../context.js';
 	import {
 		floorToStep,
 		isSameDay,
@@ -10,6 +9,8 @@
 		roundToStep,
 		withMinutesOfDay
 	} from '../date.js';
+	import { isAllDayLike } from '../instances.js';
+	import { layoutDay } from '../layout.js';
 
 	const ctx = getCalendarContext();
 
@@ -83,17 +84,17 @@
 		startX: number;
 		startY: number;
 	}
-	type DragData =
-		| { kind: 'create'; colIdx: number; anchorMin: number; headMin: number; moved: boolean }
-		| {
+	type DragData
+		= | { kind: 'create'; colIdx: number; anchorMin: number; headMin: number; moved: boolean }
+			| {
 				kind: 'move';
 				instance: EventInstance;
 				grabOffsetMin: number;
 				headColIdx: number;
 				headMin: number;
 				moved: boolean;
-		  }
-		| { kind: 'resize'; instance: EventInstance; colIdx: number; headMin: number; moved: boolean };
+			}
+			| { kind: 'resize'; instance: EventInstance; colIdx: number; headMin: number; moved: boolean };
 	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
 
@@ -195,14 +196,16 @@
 				colIdx: pointToColIdx(e.clientX),
 				moved: true
 			};
-		} else if (drag.kind === 'move') {
+		}
+		else if (drag.kind === 'move') {
 			drag = {
 				...drag,
 				headColIdx: pointToColIdx(e.clientX),
 				headMin: pointToMin(e.clientY),
 				moved: true
 			};
-		} else {
+		}
+		else {
 			drag = { ...drag, headMin: roundToStep(pointToMin(e.clientY), ctx.snapDuration), moved: true };
 		}
 	}
@@ -274,7 +277,8 @@
 				{ start: result.start, end: result.end, allDay: false, resourceId: cols[result.colIdx]?.id },
 				anchor
 			);
-		} else if (d.kind === 'move') {
+		}
+		else if (d.kind === 'move') {
 			ctx.applyTimes(
 				d.instance,
 				result.start,
@@ -283,7 +287,8 @@
 				anchor,
 				cols[result.colIdx]?.id
 			);
-		} else {
+		}
+		else {
 			ctx.applyTimes(d.instance, result.start, result.end, false, anchor);
 		}
 	}
@@ -364,8 +369,8 @@
 							type="button"
 							class="s5c-block"
 							class:s5c-dragging={draggingKey === p.instance.key}
-							style="{colorVars(p.instance.color)} top:{top}px; height:{height}px; left:{p.col *
-								width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
+							style="{colorVars(p.instance.color)} top:{top}px; height:{height}px; left:{p.col
+								* width}%; width:calc({width}% - 3px); z-index:{5 + p.col}"
 							aria-label={p.instance.event.title}
 							onpointerdown={onBlockPointerDown(p, colIdx)}
 							onclick={(e) => {
@@ -398,8 +403,8 @@
 						{#if drag.kind === 'create'}
 							<div
 								class="s5c-select-preview"
-								style="top:{minToY(dragResult.startMin)}px; height:{minToY(dragResult.endMin) -
-									minToY(dragResult.startMin)}px"
+								style="top:{minToY(dragResult.startMin)}px; height:{minToY(dragResult.endMin)
+									- minToY(dragResult.startMin)}px"
 							>
 								{ctx.fmt.time(dragResult.start)} – {ctx.fmt.time(dragResult.end)}
 							</div>
@@ -409,8 +414,8 @@
 								style="{colorVars(dragResult.color ?? 'blue')} top:{minToY(
 									Math.max(dragResult.startMin, startMin)
 								)}px; height:{Math.max(
-									minToY(Math.min(dragResult.endMin, endMin)) -
-										minToY(Math.max(dragResult.startMin, startMin)),
+									minToY(Math.min(dragResult.endMin, endMin))
+										- minToY(Math.max(dragResult.startMin, startMin)),
 									18
 								)}px; left:0; width:calc(100% - 3px)"
 							>

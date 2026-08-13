@@ -22,7 +22,7 @@
 		codeLabel?: string;
 		children: Snippet;
 	}
-	let {
+	const {
 		title,
 		code,
 		files = [],

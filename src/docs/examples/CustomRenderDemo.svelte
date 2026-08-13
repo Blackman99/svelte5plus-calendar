@@ -2,7 +2,7 @@
 	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	const events = $derived(sampleEvents(locale));
 	const emoji: Record<string, string> = {

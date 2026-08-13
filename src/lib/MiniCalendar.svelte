@@ -1,9 +1,9 @@
 <script lang="ts">
-	// See Calendar.svelte — keeps the stylesheet alive under rolldown bundlers.
-	import './theme.css';
 	import type { CalendarEvent, Weekday } from './types.js';
 	import { addDays, addMonths, dayKey, isSameDay, isSameMonth, monthGrid, startOfDay } from './date.js';
 	import { formatters, localeFirstDay } from './i18n.js';
+	// See Calendar.svelte — keeps the stylesheet alive under rolldown bundlers.
+	import './theme.css';
 
 	interface Props {
 		/** Selected date. Bindable. */

@@ -2,7 +2,7 @@
 	import { Calendar, MiniCalendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	// svelte-ignore state_referenced_locally
 	let events = $state(sampleEvents(locale));

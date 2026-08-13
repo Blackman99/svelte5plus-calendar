@@ -1,9 +1,7 @@
 <script lang="ts">
-	// Imported here (not only in index.ts): rolldown-based bundlers tree-shake
-	// side-effect-only imports from re-export barrels, but imports inside a
-	// component module that is actually instantiated always survive.
-	import './theme.css';
 	import type { Snippet } from 'svelte';
+	import type { CalendarContext } from './context.js';
+	import type { CalendarMessages } from './i18n.js';
 	import type {
 		BusinessHours,
 		CalendarEvent,
@@ -16,6 +14,7 @@
 		ValidRange,
 		Weekday
 	} from './types.js';
+	import { setCalendarContext } from './context.js';
 	import {
 		addDays,
 		addMinutes,
@@ -26,21 +25,24 @@
 		startOfDay,
 		startOfWeek
 	} from './date.js';
+	import EventDetails from './EventDetails.svelte';
+	import { formatters, localeFirstDay, messagesForLocale } from './i18n.js';
 	import { expandEvents } from './instances.js';
-	import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
+	import QuickCreate from './QuickCreate.svelte';
 	import { normalizeRule } from './recurrence.js';
-	import { toZoned, fromZoned } from './tz.js';
-	import { formatters, localeFirstDay, messagesForLocale, type CalendarMessages } from './i18n.js';
-	import { setCalendarContext, type CalendarContext } from './context.js';
+	import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
+	import SeriesConfirm from './SeriesConfirm.svelte';
 	import Toolbar from './Toolbar.svelte';
+	import { fromZoned, toZoned } from './tz.js';
+	import AgendaView from './views/AgendaView.svelte';
 	import MonthView from './views/MonthView.svelte';
+	import ResourceView from './views/ResourceView.svelte';
 	import TimeGrid from './views/TimeGrid.svelte';
 	import YearView from './views/YearView.svelte';
-	import AgendaView from './views/AgendaView.svelte';
-	import ResourceView from './views/ResourceView.svelte';
-	import EventDetails from './EventDetails.svelte';
-	import QuickCreate from './QuickCreate.svelte';
-	import SeriesConfirm from './SeriesConfirm.svelte';
+	// Imported here (not only in index.ts): rolldown-based bundlers tree-shake
+	// side-effect-only imports from re-export barrels, but imports inside a
+	// component module that is actually instantiated always survive.
+	import './theme.css';
 
 	interface Props {
 		/** Event list. Bindable — the calendar updates it after drag/resize edits. */
@@ -375,6 +377,10 @@
 		return source?.editable ?? true;
 	}
 
+	// ---- built-in popovers (details on event click, quick-create on selection) ----
+	let detailsPopover = $state<{ instance: EventInstance; anchor: DOMRect } | null>(null);
+	let quickPopover = $state<{ sel: RangeSelection; anchor: DOMRect } | null>(null);
+
 	// Pending “edit recurring event” confirmation after a drag/resize.
 	let seriesConfirm = $state<{
 		instance: EventInstance;
@@ -428,10 +434,10 @@
 		if (eventOverlap || allDay) return false;
 		return instances.some(
 			(i) =>
-				!i.allDay &&
-				i.event.id !== excludeId &&
-				i.start.getTime() < end.getTime() &&
-				start.getTime() < i.end.getTime()
+				!i.allDay
+					&& i.event.id !== excludeId
+					&& i.start.getTime() < end.getTime()
+					&& start.getTime() < i.end.getTime()
 		);
 	}
 
@@ -475,10 +481,10 @@
 		const realEnd = toReal(end);
 		const nextResourceId = resourceId ?? oldResourceId;
 		if (
-			oldStart.getTime() === realStart.getTime() &&
-			oldEnd.getTime() === realEnd.getTime() &&
-			oldAllDay === nextAllDay &&
-			oldResourceId === nextResourceId
+			oldStart.getTime() === realStart.getTime()
+			&& oldEnd.getTime() === realEnd.getTime()
+			&& oldAllDay === nextAllDay
+			&& oldResourceId === nextResourceId
 		) {
 			return;
 		}
@@ -508,10 +514,6 @@
 			}
 		});
 	}
-
-	// ---- built-in popovers (details on event click, quick-create on selection) ----
-	let detailsPopover = $state<{ instance: EventInstance; anchor: DOMRect } | null>(null);
-	let quickPopover = $state<{ sel: RangeSelection; anchor: DOMRect } | null>(null);
 
 	function createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }) {
 		if (!isDayAllowed(startOfDay(data.start))) return;
@@ -715,10 +717,10 @@
 	class="s5c {theme === 'dark'
 		? 's5c-dark'
 		: theme === 'auto'
-			? 's5c-auto'
-			: theme === 'light'
-				? ''
-				: 's5c-inherit'} {className}"
+		? 's5c-auto'
+		: theme === 'light'
+		? ''
+		: 's5c-inherit'} {className}"
 	role="application"
 	aria-label="Calendar"
 >

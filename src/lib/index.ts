@@ -2,8 +2,35 @@
 import './theme.css';
 
 export { default as Calendar } from './Calendar.svelte';
-export { default as MiniCalendar } from './MiniCalendar.svelte';
+export {
+	addDays,
+	addMinutes,
+	addMonths,
+	addYears,
+	dayKey,
+	daysBetween,
+	eachDay,
+	endOfDay,
+	endOfMonth,
+	isoWeek,
+	isSameDay,
+	isSameMonth,
+	isToday,
+	monthGrid,
+	startOfDay,
+	startOfMonth,
+	startOfWeek
+} from './date.js';
 
+export { type CalendarMessages, en, localeFirstDay, messagesForLocale, zhCN } from './i18n.js';
+
+export { parseICS, toICS } from './ics.js';
+export { expandEvents, PALETTE } from './instances.js';
+export { layoutDay, layoutWeekRow } from './layout.js';
+export type { TimedPlacement, WeekRowLayout, WeekSegment } from './layout.js';
+export { default as MiniCalendar } from './MiniCalendar.svelte';
+export { expandRecurrence, parseRRule, serializeRRule } from './recurrence.js';
+export { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
 export type {
 	BusinessHours,
 	CalendarEvent,
@@ -19,31 +46,4 @@ export type {
 	ValidRange,
 	Weekday
 } from './types.js';
-
-export { en, zhCN, messagesForLocale, localeFirstDay, type CalendarMessages } from './i18n.js';
-export { expandRecurrence, parseRRule, serializeRRule } from './recurrence.js';
-export { excludeOccurrence, detachOccurrence, splitSeries } from './series.js';
-export { parseICS, toICS } from './ics.js';
-export { toZoned, fromZoned } from './tz.js';
-export { expandEvents, PALETTE } from './instances.js';
-export {
-	addDays,
-	addMinutes,
-	addMonths,
-	addYears,
-	dayKey,
-	daysBetween,
-	eachDay,
-	endOfDay,
-	endOfMonth,
-	isSameDay,
-	isSameMonth,
-	isToday,
-	isoWeek,
-	monthGrid,
-	startOfDay,
-	startOfMonth,
-	startOfWeek
-} from './date.js';
-export { layoutDay, layoutWeekRow } from './layout.js';
-export type { TimedPlacement, WeekRowLayout, WeekSegment } from './layout.js';
+export { fromZoned, toZoned } from './tz.js';

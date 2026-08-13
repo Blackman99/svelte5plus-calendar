@@ -3,8 +3,8 @@
  * visible range: expands recurrences, resolves colors, filters hidden sources.
  */
 import type { CalendarEvent, CalendarSource, EventInstance } from './types.js';
+import { endOfDay, overlaps, startOfDay } from './date.js';
 import { expandRecurrence } from './recurrence.js';
-import { overlaps, startOfDay, endOfDay } from './date.js';
 
 export const PALETTE = [
 	'graphite',
@@ -31,8 +31,8 @@ function resolveColor(event: CalendarEvent, source?: CalendarSource): string {
 function allDayBounds(event: { start: Date; end: Date }): { start: Date; end: Date } {
 	const start = startOfDay(event.start);
 	// An all-day event ending exactly at midnight keeps that as its exclusive end.
-	const end =
-		event.end.getTime() <= start.getTime()
+	const end
+		= event.end.getTime() <= start.getTime()
 			? endOfDay(event.start)
 			: event.end.getTime() === startOfDay(event.end).getTime()
 				? event.end
@@ -79,7 +79,8 @@ export function expandEvents(
 					color
 				});
 			}
-		} else if (overlaps(base.start, base.end, rangeStart, rangeEnd)) {
+		}
+		else if (overlaps(base.start, base.end, rangeStart, rangeEnd)) {
 			out.push({
 				key: event.id,
 				event,
@@ -94,9 +95,9 @@ export function expandEvents(
 
 	out.sort(
 		(a, b) =>
-			a.start.getTime() - b.start.getTime() ||
-			b.end.getTime() - a.end.getTime() ||
-			a.event.title.localeCompare(b.event.title)
+			a.start.getTime() - b.start.getTime()
+			|| b.end.getTime() - a.end.getTime()
+			|| a.event.title.localeCompare(b.event.title)
 	);
 	return out;
 }

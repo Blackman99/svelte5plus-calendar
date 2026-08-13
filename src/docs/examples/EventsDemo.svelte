@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Calendar, type CalendarSource } from 'svelte5plus-calendar';
+	import type { CalendarSource } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	// Sources group events into toggleable calendars, each with its own color.
-	let sources = $state<CalendarSource[]>([
+	const sources = $state<CalendarSource[]>([
 		{ id: 'work', name: 'Work', color: 'blue', visible: true },
 		{ id: 'personal', name: 'Personal', color: 'green', visible: true },
 		{ id: 'family', name: 'Family', color: 'orange', visible: true }

@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Calendar, type CalendarView } from 'svelte5plus-calendar';
+	import type { CalendarView } from 'svelte5plus-calendar';
+	import { Calendar } from 'svelte5plus-calendar';
 	import { sampleEvents, sampleSources } from './sample-events.js';
 
-	let { locale = 'en' } = $props();
+	const { locale = 'en' } = $props();
 
 	let view = $state<CalendarView>('week');
 	// Seeded once per mount (the docs remount this demo when the locale changes).

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { EventInstance } from './types.js';
-	import { getCalendarContext, colorVars } from './context.js';
+	import { colorVars, getCalendarContext } from './context.js';
 	import { isAllDayLike } from './instances.js';
 
 	interface Props {
@@ -13,7 +13,7 @@
 		showTime?: boolean;
 		onpointerdown?: (e: PointerEvent) => void;
 	}
-	let {
+	const {
 		instance,
 		kind = 'auto',
 		continuesBefore = false,
