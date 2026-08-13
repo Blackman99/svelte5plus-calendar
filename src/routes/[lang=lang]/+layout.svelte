@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Explicit side-effect import: Vite 8 (rolldown) tree-shakes the CSS import
+	// inside $lib/index.ts despite `sideEffects: ["**/*.css"]`.
+	import '$lib/theme.css';
 	import '../../docs/docs.css';
 	import { page } from '$app/state';
 	import { base } from '$app/paths';
