@@ -61,8 +61,12 @@ export interface CalendarContext {
 
 	// --- interactions ---
 	canEdit(instance: EventInstance): boolean;
-	/** Applies new times to an event and notifies `onEventChange` (with revert). */
-	applyTimes(instance: EventInstance, start: Date, end: Date, allDay?: boolean): void;
+	/**
+	 * Applies new times to an event and notifies `onEventChange` (with revert).
+	 * For recurring instances this opens the series-edit confirm popover near
+	 * `anchor` and, on confirm, detaches the occurrence into a standalone event.
+	 */
+	applyTimes(instance: EventInstance, start: Date, end: Date, allDay?: boolean, anchor?: DOMRect): void;
 	/**
 	 * A range was drag-selected. Calls `onSelect` when provided, otherwise opens
 	 * the built-in quick-create popover near `anchor`.
@@ -82,6 +86,8 @@ export interface CalendarContext {
 	createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }): void;
 	/** Removes an event from the bound `events` array and fires `onEventDelete`. */
 	deleteEvent(instance: EventInstance): void;
+	/** Excludes a single occurrence of a recurring series (adds an exdate). */
+	deleteOccurrence(instance: EventInstance): void;
 
 	// --- optional user callbacks (read-only views may check presence) ---
 	readonly onEventClick?: (instance: EventInstance, e: MouseEvent | KeyboardEvent) => void;

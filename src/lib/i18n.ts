@@ -33,6 +33,15 @@ export interface CalendarMessages {
 	/** Details popover: label for recurring events. */
 	recurringEvent: string;
 	close: string;
+	/** Details popover: delete a single occurrence of a series. */
+	deleteOccurrence: string;
+	/** Details popover: delete the whole series. */
+	deleteSeries: string;
+	/** Series-edit confirm popover: title. */
+	editRecurring: string;
+	/** Series-edit confirm popover: apply to this occurrence only. */
+	thisEvent: string;
+	cancel: string;
 }
 
 export const en: CalendarMessages = {
@@ -55,7 +64,12 @@ export const en: CalendarMessages = {
 	titlePlaceholder: 'Add title',
 	untitled: '(no title)',
 	recurringEvent: 'Recurring event',
-	close: 'Close'
+	close: 'Close',
+	deleteOccurrence: 'Delete this occurrence',
+	deleteSeries: 'Delete series',
+	editRecurring: 'Edit recurring event',
+	thisEvent: 'This event',
+	cancel: 'Cancel'
 };
 
 export const zhCN: CalendarMessages = {
@@ -78,7 +92,12 @@ export const zhCN: CalendarMessages = {
 	titlePlaceholder: '添加标题',
 	untitled: '（无标题）',
 	recurringEvent: '重复日程',
-	close: '关闭'
+	close: '关闭',
+	deleteOccurrence: '删除仅此次',
+	deleteSeries: '删除整个系列',
+	editRecurring: '修改重复日程',
+	thisEvent: '仅此日程',
+	cancel: '取消'
 };
 
 const BUILT_IN: Record<string, CalendarMessages> = {

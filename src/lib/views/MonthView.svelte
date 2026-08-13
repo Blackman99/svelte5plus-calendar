@@ -63,10 +63,57 @@
 	});
 
 	// ---- drag: move event across days / drag-select a day range -------------
-	type Drag =
+	// Mouse drags start immediately; touch drags require a ~300 ms long-press
+	// so swipes keep scrolling the page (see TimeGrid for the same pattern).
+	interface DragBase {
+		activated: boolean;
+		startX: number;
+		startY: number;
+	}
+	type DragData =
 		| { kind: 'event'; instance: EventInstance; moved: boolean; overDay: Date | null }
 		| { kind: 'select'; anchor: Date; head: Date; moved: boolean };
+	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
+
+	const LONG_PRESS_MS = 300;
+	const TOUCH_SLOP_PX = 10;
+	let pressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	const preventTouchScroll = (e: TouchEvent) => e.preventDefault();
+	function blockTouchScroll() {
+		window.addEventListener('touchmove', preventTouchScroll, { passive: false });
+	}
+	function unblockTouchScroll() {
+		window.removeEventListener('touchmove', preventTouchScroll);
+	}
+
+	function beginDrag(e: PointerEvent, data: DragData) {
+		const base: DragBase = {
+			activated: e.pointerType === 'mouse' || e.pointerType === '',
+			startX: e.clientX,
+			startY: e.clientY
+		};
+		drag = { ...base, ...data };
+		if (!base.activated) {
+			pressTimer = setTimeout(() => {
+				if (drag && !drag.activated) {
+					drag = { ...drag, activated: true };
+					blockTouchScroll();
+					navigator.vibrate?.(10);
+				}
+			}, LONG_PRESS_MS);
+		}
+	}
+
+	function cancelDrag() {
+		if (pressTimer) clearTimeout(pressTimer);
+		pressTimer = null;
+		unblockTouchScroll();
+		drag = null;
+	}
+
+	$effect(() => () => cancelDrag());
 
 	let rootEl = $state<HTMLElement>();
 	let bodyEl = $state<HTMLDivElement>();
@@ -113,7 +160,7 @@
 		return (e: PointerEvent) => {
 			e.stopPropagation();
 			if (!ctx.canEdit(instance) || e.button !== 0) return;
-			drag = { kind: 'event', instance, moved: false, overDay: null };
+			beginDrag(e, { kind: 'event', instance, moved: false, overDay: null });
 		};
 	}
 
@@ -121,13 +168,20 @@
 		return (e: PointerEvent) => {
 			if (e.button !== 0) return;
 			if (ctx.selectable || (ctx.editable && ctx.quickCreate)) {
-				drag = { kind: 'select', anchor: day, head: day, moved: false };
+				beginDrag(e, { kind: 'select', anchor: day, head: day, moved: false });
 			}
 		};
 	}
 
 	function onPointerMove(e: PointerEvent) {
 		if (!drag) return;
+		if (!drag.activated) {
+			// Long-press pending: a real swipe means the user wants to scroll.
+			if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > TOUCH_SLOP_PX) {
+				cancelDrag();
+			}
+			return;
+		}
 		const day = dayFromPoint(e.clientX, e.clientY);
 		if (!day) return;
 		if (drag.kind === 'event') {
@@ -144,17 +198,22 @@
 	function onPointerUp() {
 		if (!drag) return;
 		const d = drag;
-		drag = null;
+		cancelDrag();
+		// A touch tap released before the long-press: the native click event
+		// on the cell/event handles it.
+		if (!d.activated) return;
 		if (d.kind === 'event') {
 			if (!d.moved || !d.overDay) return; // plain click → EventItem's onclick handles it
 			suppressNextClick();
 			const delta = daysBetween(startOfDay(d.instance.start), d.overDay);
 			if (delta !== 0) {
+				const overCell = rootEl?.querySelector(`[data-s5c-day="${dayKey(d.overDay)}"]`);
 				ctx.applyTimes(
 					d.instance,
 					addDays(d.instance.start, delta),
 					addDays(d.instance.end, delta),
-					d.instance.allDay
+					d.instance.allDay,
+					overCell?.getBoundingClientRect()
 				);
 			}
 		} else if (d.moved) {
@@ -164,6 +223,10 @@
 			const headCell = rootEl?.querySelector(`[data-s5c-day="${dayKey(d.head)}"]`);
 			ctx.select({ start, end, allDay: true }, headCell?.getBoundingClientRect());
 		}
+	}
+
+	function onPointerCancel() {
+		cancelDrag();
 	}
 
 	function cellHighlighted(day: Date): boolean {
@@ -210,7 +273,11 @@
 	}
 </script>
 
-<svelte:window onpointermove={onPointerMove} onpointerup={onPointerUp} />
+<svelte:window
+	onpointermove={onPointerMove}
+	onpointerup={onPointerUp}
+	onpointercancel={onPointerCancel}
+/>
 
 <div class="s5c-month" bind:this={rootEl}>
 	<div

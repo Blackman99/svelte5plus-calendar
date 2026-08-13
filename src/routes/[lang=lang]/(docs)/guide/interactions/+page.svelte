@@ -51,12 +51,21 @@
 <h2>{t('What users can do', '用户可以做什么')}</h2>
 <ul>
 	<li>{t('Drag an event block to another time or day (week/day views).', '把事件块拖到其他时间或日期（周/日视图）。')}</li>
-	<li>{t('Drag an event pill to another day (month view).', '把事件条拖到其他日期（月视图）。')}</li>
+	<li>{t('Drag an event pill to another day (month view), or an all-day bar along the all-day lane.', '把事件条拖到其他日期（月视图），或在全天栏内横向拖动全天事件。')}</li>
 	<li>{t('Drag the bottom edge of a block to resize it.', '拖动事件块底边调整时长。')}</li>
+	<li>{t('Drag a recurring instance — a confirm popover detaches that occurrence (“this event”).', '拖动重复实例——确认弹层将该次拆分为独立日程（“仅此日程”）。')}</li>
 	<li>{t('Drag across empty slots to select a time range (fires onSelect).', '在空白时间格上拖选一个范围（触发 onSelect）。')}</li>
 	<li>{t('Drag across month cells to select a day range.', '在月视图单元格上拖选一个日期范围。')}</li>
 	<li>{t('Click an empty slot or day (fires onDateClick).', '点击空白时间格或日期（触发 onDateClick）。')}</li>
 </ul>
+
+<div class="callout">
+	<strong>{t('Touch devices', '触屏设备')}</strong> —
+	{t(
+		'tap works like click; long-press (~300 ms, with a haptic tick) then drag to move, resize or select — a plain swipe scrolls as usual.',
+		'轻点等同于点击；长按约 300 毫秒（伴随触感反馈）后拖动即可移动、调整或框选——普通滑动仍然正常滚动页面。'
+	)}
+</div>
 
 <h2>{t('Callbacks', '回调')}</h2>
 <table>
@@ -89,8 +98,18 @@
 		</tr>
 		<tr>
 			<td><code>onEventDelete</code></td>
-			<td>{t('the details popover deletes an event', '详情弹层删除了日程')}</td>
-			<td><code>(event)</code></td>
+			<td>{t('an event (or one occurrence of a series) is deleted', '日程（或系列中的某一次）被删除')}</td>
+			<td><code>(event, occurrence?)</code></td>
+		</tr>
+		<tr>
+			<td><code>onSeriesDetach</code></td>
+			<td>{t('a dragged/resized occurrence is split out of its series', '拖拽/调整导致某次从系列中拆分')}</td>
+			<td><code>{'{ series, detached, occurrence }'}</code></td>
+		</tr>
+		<tr>
+			<td><code>onRangeChange</code></td>
+			<td>{t('the visible date range changes — fetch events here', '可见日期范围变化——适合在此拉取数据')}</td>
+			<td><code>(start, end)</code></td>
 		</tr>
 		<tr>
 			<td><code>onViewChange</code> / <code>onDateChange</code></td>

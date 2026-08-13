@@ -19,9 +19,9 @@ A full-featured, zero-dependency calendar component for **Svelte 5** — month, 
 ## Features
 
 - 🗓 **Five views** — month (with spanning multi-day bars and `+N more` popovers), week & day time grids, year overview, agenda list
-- ✋ **Drag & drop** — move events across days/slots, resize by dragging the bottom edge, drag empty space to select a range or create events
+- ✋ **Drag & drop** — move events across days/slots, drag all-day bars along the lane, resize from the bottom edge, drag empty space to select/create; touch devices long-press to drag and swipe to scroll
 - 💬 **Built-in popovers** — click an event for a details popover (with delete), click/drag empty space for a quick-create popover — zero config, and any callback you provide takes over
-- 🔁 **Recurring events** — practical RRULE subset (`FREQ`, `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` incl. `2TU`/`-1FR`, `BYMONTHDAY`) as strings or typed objects, plus `exdates`
+- 🔁 **Recurring events** — practical RRULE subset (`FREQ`, `INTERVAL`, `COUNT`, `UNTIL`, `BYDAY` incl. `2TU`/`-1FR`, `BYMONTHDAY`) as strings or typed objects, plus `exdates`; built-in “this event” edits (drag detaches the occurrence) and occurrence/series deletion
 - 🎨 **Theming** — light/dark/auto; every color, radius and font is a CSS custom property; 10-color event palette that adapts to dark mode
 - 🌍 **i18n** — any BCP-47 locale via the `Intl` API (no locale bundles); English & Chinese UI strings built in; locale-aware first day of week and 12/24-hour clock
 - 📚 **Multiple calendars** — sources with shared colors, visibility toggles, per-source and per-event edit permissions
@@ -156,7 +156,7 @@ Requires Svelte 5. Styles are imported automatically.
 | `dayMaxEvents` | `number` | `4` | month-cell rows before `+N more` |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | see docs |
 
-**Callbacks:** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event)` · `onViewChange(view)` · `onDateChange(date)`
+**Callbacks:** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
 
 **Built-in popovers:** with `editable` or `selectable` and no callbacks, clicking an event opens a details popover and clicking/drag-selecting empty space opens a quick-create popover. Providing `onEventClick` / `onSelect` / `onDateClick` replaces them; `eventDetails={false}` / `quickCreate={false}` disables them.
 

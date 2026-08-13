@@ -31,7 +31,7 @@
 			? ctx.sources.find((s) => s.id === instance.event.calendarId)
 			: undefined
 	);
-	const canDelete = $derived(!instance.isRecurring && ctx.canEdit(instance));
+	const canDelete = $derived(ctx.canEdit(instance));
 </script>
 
 <Popover {anchor} {onclose} label={instance.event.title}>
@@ -62,16 +62,39 @@
 	{/if}
 	{#if canDelete}
 		<div class="s5c-popover-actions">
-			<button
-				type="button"
-				class="s5c-btn s5c-btn-danger"
-				onclick={() => {
-					ctx.deleteEvent(instance);
-					onclose();
-				}}
-			>
-				{ctx.messages.delete}
-			</button>
+			{#if instance.isRecurring}
+				<button
+					type="button"
+					class="s5c-btn s5c-btn-danger"
+					onclick={() => {
+						ctx.deleteOccurrence(instance);
+						onclose();
+					}}
+				>
+					{ctx.messages.deleteOccurrence}
+				</button>
+				<button
+					type="button"
+					class="s5c-btn s5c-btn-danger"
+					onclick={() => {
+						ctx.deleteEvent(instance);
+						onclose();
+					}}
+				>
+					{ctx.messages.deleteSeries}
+				</button>
+			{:else}
+				<button
+					type="button"
+					class="s5c-btn s5c-btn-danger"
+					onclick={() => {
+						ctx.deleteEvent(instance);
+						onclose();
+					}}
+				>
+					{ctx.messages.delete}
+				</button>
+			{/if}
 		</div>
 	{/if}
 </Popover>

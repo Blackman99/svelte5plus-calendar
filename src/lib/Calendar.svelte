@@ -21,6 +21,7 @@
 		startOfWeek
 	} from './date.js';
 	import { expandEvents } from './instances.js';
+	import { detachOccurrence, excludeOccurrence } from './series.js';
 	import { formatters, localeFirstDay, messagesForLocale, type CalendarMessages } from './i18n.js';
 	import { setCalendarContext, type CalendarContext } from './context.js';
 	import Toolbar from './Toolbar.svelte';
@@ -30,6 +31,7 @@
 	import AgendaView from './views/AgendaView.svelte';
 	import EventDetails from './EventDetails.svelte';
 	import QuickCreate from './QuickCreate.svelte';
+	import SeriesConfirm from './SeriesConfirm.svelte';
 
 	interface Props {
 		/** Event list. Bindable — the calendar updates it after drag/resize edits. */
@@ -105,10 +107,25 @@
 		onEventChange?: (info: EventChangeInfo) => void;
 		/** Fires after the built-in quick-create popover (or `createEvent`) adds an event. */
 		onEventCreate?: (event: CalendarEvent) => void;
-		/** Fires after the built-in details popover (or `deleteEvent`) removes an event. */
-		onEventDelete?: (event: CalendarEvent) => void;
+		/**
+		 * Fires after an event is removed. When only one occurrence of a series
+		 * was deleted, `occurrence` is set and `event` is the updated series
+		 * (with the new exdate).
+		 */
+		onEventDelete?: (event: CalendarEvent, occurrence?: Date) => void;
+		/**
+		 * Fires after a dragged/resized occurrence of a recurring series is
+		 * detached into a standalone event (“this event” edit).
+		 */
+		onSeriesDetach?: (info: {
+			series: CalendarEvent;
+			detached: CalendarEvent;
+			occurrence: Date;
+		}) => void;
 		onViewChange?: (view: CalendarView) => void;
 		onDateChange?: (date: Date) => void;
+		/** Fires when the visible date range changes — ideal for fetching events. */
+		onRangeChange?: (start: Date, end: Date) => void;
 		/** Custom renderer for event content. */
 		eventContent?: Snippet<[EventInstance]>;
 		/** Extra toolbar content (right side). */
@@ -151,8 +168,10 @@
 		onEventChange,
 		onEventCreate,
 		onEventDelete,
+		onSeriesDetach,
 		onViewChange,
 		onDateChange,
+		onRangeChange,
 		eventContent,
 		toolbarEnd,
 		class: className = ''
@@ -195,6 +214,16 @@
 	const rangeStart = $derived(visibleDays[0]);
 	const rangeEnd = $derived(endOfDay(visibleDays[visibleDays.length - 1]));
 	const instances = $derived(expandEvents(events, rangeStart, rangeEnd, sources));
+
+	// Notify when the visible range changes (initial mount included).
+	let lastRange: { s: number; e: number } | null = null;
+	$effect(() => {
+		const s = rangeStart.getTime();
+		const e = rangeEnd.getTime();
+		if (lastRange && lastRange.s === s && lastRange.e === e) return;
+		lastRange = { s, e };
+		onRangeChange?.(new Date(s), new Date(e));
+	});
 
 	const title = $derived.by(() => {
 		switch (view) {
@@ -246,7 +275,7 @@
 	const sourceById = $derived(new Map(sources.map((s) => [s.id, s])));
 
 	function canEdit(instance: EventInstance): boolean {
-		if (!editable || instance.isRecurring) return false;
+		if (!editable) return false;
 		if (instance.event.editable !== undefined) return instance.event.editable;
 		const source = instance.event.calendarId
 			? sourceById.get(instance.event.calendarId)
@@ -254,7 +283,52 @@
 		return source?.editable ?? true;
 	}
 
-	function applyTimes(instance: EventInstance, start: Date, end: Date, allDay?: boolean) {
+	// Pending “edit recurring event” confirmation after a drag/resize.
+	let seriesConfirm = $state<{
+		instance: EventInstance;
+		start: Date;
+		end: Date;
+		allDay: boolean;
+		anchor: DOMRect;
+	} | null>(null);
+
+	function confirmSeriesDetach() {
+		if (!seriesConfirm) return;
+		const { instance, start, end, allDay } = seriesConfirm;
+		seriesConfirm = null;
+		const target = events.find((ev) => ev.id === instance.event.id);
+		if (!target) return;
+		const { series, detached } = detachOccurrence(
+			target,
+			instance.start,
+			{ start, end, allDay },
+			crypto.randomUUID()
+		);
+		events = [...events.map((ev) => (ev === target ? series : ev)), detached];
+		onSeriesDetach?.({ series, detached, occurrence: instance.start });
+	}
+
+	function applyTimes(
+		instance: EventInstance,
+		start: Date,
+		end: Date,
+		allDay?: boolean,
+		anchor?: DOMRect
+	) {
+		if (instance.isRecurring) {
+			// Editing one occurrence needs a decision — confirm before detaching.
+			const fallback = new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 1, 1);
+			detailsPopover = null;
+			quickPopover = null;
+			seriesConfirm = {
+				instance,
+				start,
+				end,
+				allDay: allDay ?? instance.allDay,
+				anchor: anchor ?? fallback
+			};
+			return;
+		}
 		const target = events.find((ev) => ev.id === instance.event.id);
 		if (!target) return;
 		const oldStart = target.start;
@@ -300,6 +374,14 @@
 		if (!target) return;
 		events = events.filter((ev) => ev !== target);
 		onEventDelete?.(target);
+	}
+
+	function deleteOccurrence(instance: EventInstance) {
+		const target = events.find((ev) => ev.id === instance.event.id);
+		if (!target) return;
+		const updated = excludeOccurrence(target, instance.start);
+		events = events.map((ev) => (ev === target ? updated : ev));
+		onEventDelete?.(updated, instance.start);
 	}
 
 	function handleEventClick(instance: EventInstance, e: MouseEvent | KeyboardEvent) {
@@ -433,6 +515,7 @@
 		clickDate: handleDateClick,
 		createEvent,
 		deleteEvent,
+		deleteOccurrence,
 		get onEventClick() {
 			return onEventClick;
 		},
@@ -487,6 +570,13 @@
 			sel={quickPopover.sel}
 			anchor={quickPopover.anchor}
 			onclose={() => (quickPopover = null)}
+		/>
+	{/if}
+	{#if seriesConfirm}
+		<SeriesConfirm
+			anchor={seriesConfirm.anchor}
+			onconfirm={confirmSeriesDetach}
+			onclose={() => (seriesConfirm = null)}
 		/>
 	{/if}
 </div>

@@ -63,14 +63,25 @@ exdates: [new Date(2026, 7, 19)]`;
 	<li>{t('Occurrences keep the wall-clock time of the original event across DST changes.', '跨越夏令时切换时，每次出现保持原事件的“墙上时钟”时间。')}</li>
 	<li>{t('Monthly rules skip months where the day doesn’t exist (Jan 31 → no Feb 31), matching Google Calendar.', '每月重复会跳过不存在该日期的月份（1 月 31 日 → 没有 2 月 31 日），与 Google 日历一致。')}</li>
 	<li>{t('Yearly rules starting Feb 29 only fire in leap years.', '起始于 2 月 29 日的每年重复只在闰年出现。')}</li>
-	<li>{t('Recurring instances show a ↻ mark and are not draggable.', '重复实例带 ↻ 标记，且不可拖动。')}</li>
+	<li>
+		{t(
+			'Recurring instances show a ↻ mark. Dragging or resizing one asks for confirmation and then detaches that occurrence into a standalone event (the series gains an exdate) — like “this event” edits in Google Calendar.',
+			'重复实例带 ↻ 标记。拖动或调整某一次会先弹出确认，然后把该次拆分为独立日程（系列自动添加 exdate）——即 Google 日历的“仅此日程”编辑。'
+		)}
+	</li>
+	<li>
+		{t(
+			'The details popover offers “Delete this occurrence” (adds an exdate) and “Delete series”.',
+			'详情弹层提供“删除仅此次”（添加 exdate）与“删除整个系列”两个操作。'
+		)}
+	</li>
 	<li>{t('Expansion is windowed to the visible range and hard-capped at 1000 occurrences per event, so infinite rules are safe.', '展开仅针对可见范围，且每个事件硬上限 1000 次，可安全使用无限重复规则。')}</li>
 </ul>
 
 <div class="callout">
 	<strong>{t('Editing a series', '编辑重复系列')}</strong> —
 	{t(
-		'to change “this and following” or a single occurrence, split the series in your data: shorten the original with until, add exdates, and create a new event. The calendar renders whatever your data says.',
-		'如需“此次及以后”或单次修改，请在数据层拆分系列：用 until 截断原系列、添加 exdates、再新建事件。日历只忠实渲染你的数据。'
+		'“this event” edits are built in (drag/resize detaches the occurrence; onSeriesDetach reports the split, and the pure helpers detachOccurrence / excludeOccurrence are exported). For “this and following”, split the series in your data: shorten the original with until, then create a new series.',
+		'“仅此日程”编辑已内置（拖拽/调整会自动拆分该次；onSeriesDetach 回调上报拆分结果，纯函数 detachOccurrence / excludeOccurrence 也已导出）。如需“此次及以后”，请在数据层拆分：用 until 截断原系列后新建一个系列。'
 	)}
 </div>

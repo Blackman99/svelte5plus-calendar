@@ -235,6 +235,8 @@
 	flex: 1;
 	min-height: 0;
 	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
 }
 .s5c-month-head {
 	display: grid;
@@ -398,6 +400,8 @@
 	flex: 1;
 	min-height: 0;
 	user-select: none;
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
 }
 .s5c-tg-header {
 	display: grid;
@@ -458,6 +462,9 @@
 .s5c-allday-cell {
 	border-left: 1px solid var(--s5c-border);
 	min-height: 26px;
+}
+.s5c-allday-cell.s5c-drag-over {
+	background: var(--s5c-selection);
 }
 .s5c-allday-events {
 	position: absolute;

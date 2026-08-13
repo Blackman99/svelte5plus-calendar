@@ -20,6 +20,7 @@ export type {
 
 export { en, zhCN, messagesForLocale, localeFirstDay, type CalendarMessages } from './i18n.js';
 export { expandRecurrence, parseRRule } from './recurrence.js';
+export { excludeOccurrence, detachOccurrence } from './series.js';
 export { expandEvents, PALETTE } from './instances.js';
 export {
 	addDays,

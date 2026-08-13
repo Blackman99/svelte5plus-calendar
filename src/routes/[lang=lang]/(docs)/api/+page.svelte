@@ -72,7 +72,9 @@
 		<tr><td><code>onSelect</code></td><td><code>(sel: RangeSelection) =&gt; void</code></td><td>{t('Drag-selection finished.', '拖选完成。')}</td></tr>
 		<tr><td><code>onEventChange</code></td><td><code>(info: EventChangeInfo) =&gt; void</code></td><td>{t('Drag/resize landed; info.revert() rolls back.', '拖拽落地；info.revert() 可回滚。')}</td></tr>
 		<tr><td><code>onEventCreate</code></td><td><code>(event) =&gt; void</code></td><td>{t('Quick-create added an event to the bound array.', '快速新建向绑定数组添加了日程。')}</td></tr>
-		<tr><td><code>onEventDelete</code></td><td><code>(event) =&gt; void</code></td><td>{t('Details popover removed an event.', '详情弹层删除了日程。')}</td></tr>
+		<tr><td><code>onEventDelete</code></td><td><code>(event, occurrence?) =&gt; void</code></td><td>{t('An event was removed; occurrence set when one instance of a series was deleted.', '日程被删除；仅删系列中某一次时携带 occurrence。')}</td></tr>
+		<tr><td><code>onSeriesDetach</code></td><td><code>({'{ series, detached, occurrence }'}) =&gt; void</code></td><td>{t('A dragged occurrence was split into a standalone event.', '拖拽使某次从系列拆分为独立日程。')}</td></tr>
+		<tr><td><code>onRangeChange</code></td><td><code>(start, end) =&gt; void</code></td><td>{t('Visible range changed (incl. mount) — fetch events here.', '可见范围变化（含首次挂载）——适合按需拉取数据。')}</td></tr>
 		<tr><td><code>onViewChange</code></td><td><code>(view) =&gt; void</code></td><td>{t('View switched.', '视图切换。')}</td></tr>
 		<tr><td><code>onDateChange</code></td><td><code>(date) =&gt; void</code></td><td>{t('Focused date moved.', '聚焦日期变化。')}</td></tr>
 		<tr><td><code>eventContent</code></td><td><code>Snippet&lt;[EventInstance]&gt;</code></td><td>{t('Custom event body.', '自定义事件内容。')}</td></tr>
@@ -94,6 +96,7 @@
 	<tbody>
 		<tr><td><code>MiniCalendar</code></td><td>{t('Standalone month picker component.', '独立迷你月历组件。')}</td></tr>
 		<tr><td><code>parseRRule / expandRecurrence</code></td><td>{t('Recurrence parsing & expansion.', '重复规则解析与展开。')}</td></tr>
+		<tr><td><code>detachOccurrence / excludeOccurrence</code></td><td>{t('Pure “this event” series-edit helpers.', '“仅此日程”系列编辑纯函数。')}</td></tr>
 		<tr><td><code>expandEvents</code></td><td>{t('Events → concrete instances for a range.', '事件 → 区间内的具体实例。')}</td></tr>
 		<tr><td><code>layoutDay / layoutWeekRow</code></td><td>{t('The pure layout algorithms.', '纯函数布局算法。')}</td></tr>
 		<tr><td><code>en / zhCN / messagesForLocale / localeFirstDay</code></td><td>{t('i18n helpers.', '国际化辅助。')}</td></tr>

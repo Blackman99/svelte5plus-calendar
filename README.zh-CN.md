@@ -19,9 +19,9 @@
 ## 功能特性
 
 - 🗓 **五种视图** —— 月视图（跨天长条 + “还有 N 项”弹层）、周/日时间网格、年概览、议程列表
-- ✋ **拖拽交互** —— 跨日期/时间格移动事件，拖动底边调整时长，在空白处拖选范围或新建日程
+- ✋ **拖拽交互** —— 跨日期/时间格移动事件、横向拖动全天条、拖底边调整时长、空白处拖选新建；触屏长按拖拽、轻扫滚动
 - 💬 **内置弹层** —— 点击日程弹出详情（含删除），点击/框选空白弹出快速新建——零配置可用，提供回调即可完全接管
-- 🔁 **重复事件** —— 实用的 RRULE 子集（`FREQ`、`INTERVAL`、`COUNT`、`UNTIL`、`BYDAY` 含 `2TU`/`-1FR`、`BYMONTHDAY`），支持字符串或类型化对象，以及 `exdates` 排除日期
+- 🔁 **重复事件** —— 实用的 RRULE 子集（`FREQ`、`INTERVAL`、`COUNT`、`UNTIL`、`BYDAY` 含 `2TU`/`-1FR`、`BYMONTHDAY`），支持字符串或类型化对象，以及 `exdates` 排除日期；内置“仅此日程”编辑（拖拽自动拆分系列）与单次/整系列删除
 - 🎨 **主题定制** —— 明/暗/跟随系统；所有颜色、圆角、字体均为 CSS 自定义属性；10 色事件调色板自动适配暗色模式
 - 🌍 **国际化** —— 基于 `Intl` API 支持任意 BCP-47 区域设置（无需语言包）；内置中英文界面文案；周首日与 12/24 小时制跟随区域设置
 - 📚 **多日历源** —— 分组统一配色、独立显示/隐藏、按源和按事件控制编辑权限
@@ -150,7 +150,7 @@ npm install svelte5plus-calendar
 | `dayMaxEvents` | `number` | `4` | 月格折叠阈值 |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | 详见文档 |
 
-**回调：** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event)` · `onViewChange(view)` · `onDateChange(date)`
+**回调：** `onEventClick(instance, e)` · `onDateClick(date, allDay)` · `onSelect({start, end, allDay})` · `onEventChange({event, oldStart, oldEnd, start, end, revert})` · `onEventCreate(event)` · `onEventDelete(event, occurrence?)` · `onSeriesDetach({series, detached, occurrence})` · `onViewChange(view)` · `onDateChange(date)` · `onRangeChange(start, end)`
 
 **内置弹层：** 开启 `editable` 或 `selectable` 且不提供回调时，点击日程弹出详情弹层、点击/框选空白弹出快速新建弹层。提供 `onEventClick` / `onSelect` / `onDateClick` 即接管对应交互；也可用 `eventDetails={false}` / `quickCreate={false}` 关闭。
 

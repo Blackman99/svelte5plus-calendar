@@ -4,6 +4,7 @@
 	import { layoutDay, layoutWeekRow, type TimedPlacement } from '../layout.js';
 	import { isAllDayLike } from '../instances.js';
 	import {
+		addDays,
 		dayKey,
 		endOfDay,
 		floorToStep,
@@ -109,7 +110,15 @@
 	});
 
 	// ---- pointer interactions -------------------------------------------------
-	type Drag =
+	// Mouse drags start immediately. Touch/pen drags start after a ~300 ms
+	// long-press (`activated`); a swipe before activation cancels the drag so
+	// native scrolling keeps working, and the browser's pointercancel is honored.
+	interface DragBase {
+		activated: boolean;
+		startX: number;
+		startY: number;
+	}
+	type DragData =
 		| { kind: 'create'; dayIdx: number; anchorMin: number; headMin: number; moved: boolean }
 		| {
 				kind: 'move';
@@ -119,8 +128,56 @@
 				headMin: number;
 				moved: boolean;
 		  }
-		| { kind: 'resize'; instance: EventInstance; dayIdx: number; headMin: number; moved: boolean };
+		| { kind: 'resize'; instance: EventInstance; dayIdx: number; headMin: number; moved: boolean }
+		| {
+				kind: 'allday';
+				instance: EventInstance;
+				startDayIdx: number;
+				headDayIdx: number;
+				moved: boolean;
+		  };
+	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
+
+	const LONG_PRESS_MS = 300;
+	const TOUCH_SLOP_PX = 10;
+	let pressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	const preventTouchScroll = (e: TouchEvent) => e.preventDefault();
+	function blockTouchScroll() {
+		window.addEventListener('touchmove', preventTouchScroll, { passive: false });
+	}
+	function unblockTouchScroll() {
+		window.removeEventListener('touchmove', preventTouchScroll);
+	}
+
+	/** Starts a drag: immediately for mouse, after a long-press for touch/pen. */
+	function beginDrag(e: PointerEvent, data: DragData) {
+		const base: DragBase = {
+			activated: e.pointerType === 'mouse' || e.pointerType === '',
+			startX: e.clientX,
+			startY: e.clientY
+		};
+		drag = { ...base, ...data };
+		if (!base.activated) {
+			pressTimer = setTimeout(() => {
+				if (drag && !drag.activated) {
+					drag = { ...drag, activated: true };
+					blockTouchScroll();
+					navigator.vibrate?.(10);
+				}
+			}, LONG_PRESS_MS);
+		}
+	}
+
+	function cancelDrag() {
+		if (pressTimer) clearTimeout(pressTimer);
+		pressTimer = null;
+		unblockTouchScroll();
+		drag = null;
+	}
+
+	$effect(() => () => cancelDrag());
 
 	function pointToDayIdx(x: number): number {
 		if (!bodyEl) return 0;
@@ -147,7 +204,13 @@
 			if (e.button !== 0) return;
 			if (!ctx.selectable && !(ctx.editable && ctx.quickCreate)) return;
 			const min = floorToStep(pointToMin(e.clientY), ctx.snapDuration);
-			drag = { kind: 'create', dayIdx, anchorMin: min, headMin: min + ctx.snapDuration, moved: false };
+			beginDrag(e, {
+				kind: 'create',
+				dayIdx,
+				anchorMin: min,
+				headMin: min + ctx.snapDuration,
+				moved: false
+			});
 		};
 	}
 
@@ -156,14 +219,14 @@
 			e.stopPropagation();
 			if (e.button !== 0 || !ctx.canEdit(p.instance)) return;
 			const min = pointToMin(e.clientY);
-			drag = {
+			beginDrag(e, {
 				kind: 'move',
 				instance: p.instance,
 				grabOffsetMin: min - minutesOfDay(p.instance.start),
 				headDayIdx: dayIdx,
 				headMin: min,
 				moved: false
-			};
+			});
 		};
 	}
 
@@ -171,12 +234,35 @@
 		return (e: PointerEvent) => {
 			e.stopPropagation();
 			if (e.button !== 0 || !ctx.canEdit(p.instance)) return;
-			drag = { kind: 'resize', instance: p.instance, dayIdx, headMin: p.endMin, moved: false };
+			beginDrag(e, { kind: 'resize', instance: p.instance, dayIdx, headMin: p.endMin, moved: false });
+		};
+	}
+
+	function onAllDayPointerDown(instance: EventInstance) {
+		return (e: PointerEvent) => {
+			e.stopPropagation();
+			if (e.button !== 0 || !ctx.canEdit(instance)) return;
+			const idx = pointToDayIdx(e.clientX);
+			beginDrag(e, { kind: 'allday', instance, startDayIdx: idx, headDayIdx: idx, moved: false });
 		};
 	}
 
 	function onPointerMove(e: PointerEvent) {
 		if (!drag) return;
+		if (!drag.activated) {
+			// Long-press pending: a real swipe means the user wants to scroll.
+			if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > TOUCH_SLOP_PX) {
+				cancelDrag();
+			}
+			return;
+		}
+		if (drag.kind === 'allday') {
+			const headDayIdx = pointToDayIdx(e.clientX);
+			if (headDayIdx !== drag.headDayIdx || !drag.moved) {
+				drag = { ...drag, headDayIdx, moved: true };
+			}
+			return;
+		}
 		if (drag.kind === 'create') {
 			const min = roundToStep(pointToMin(e.clientY), ctx.snapDuration);
 			const dayIdx = pointToDayIdx(e.clientX);
@@ -197,7 +283,7 @@
 
 	/** Computed times for the in-flight drag (also drives the preview block). */
 	const dragResult = $derived.by(() => {
-		if (!drag) return null;
+		if (!drag || drag.kind === 'allday') return null;
 		if (drag.kind === 'create') {
 			const lo = Math.min(drag.anchorMin, drag.headMin);
 			const hi = Math.max(drag.anchorMin, drag.headMin, lo + ctx.snapDuration);
@@ -249,8 +335,30 @@
 		if (!drag) return;
 		const d = drag;
 		const result = dragResult;
-		drag = null;
+		cancelDrag();
 		const anchor = new DOMRect(e.clientX, e.clientY, 1, 1);
+		if (!d.activated) {
+			// A touch tap released before the long-press: treat it as a click.
+			if (d.kind === 'create') {
+				ctx.clickDate(withMinutesOfDay(days[d.dayIdx], d.anchorMin), false, anchor);
+			}
+			return;
+		}
+		if (d.kind === 'allday') {
+			if (!d.moved) return; // plain click → EventItem's onclick handles it
+			suppressNextClick();
+			const delta = d.headDayIdx - d.startDayIdx;
+			if (delta !== 0) {
+				ctx.applyTimes(
+					d.instance,
+					addDays(d.instance.start, delta),
+					addDays(d.instance.end, delta),
+					true,
+					anchor
+				);
+			}
+			return;
+		}
 		if (!d.moved || !result) {
 			if (d.kind === 'create' && result) {
 				// Plain click on an empty slot.
@@ -262,12 +370,18 @@
 		if (d.kind === 'create') {
 			ctx.select({ start: result.start, end: result.end, allDay: false }, anchor);
 		} else {
-			ctx.applyTimes(d.instance, result.start, result.end, d.instance.allDay);
+			ctx.applyTimes(d.instance, result.start, result.end, d.instance.allDay, anchor);
 		}
 	}
 
+	function onPointerCancel() {
+		cancelDrag();
+	}
+
 	const draggingKey = $derived(
-		drag && drag.moved && (drag.kind === 'move' || drag.kind === 'resize')
+		drag &&
+			drag.moved &&
+			(drag.kind === 'move' || drag.kind === 'resize' || drag.kind === 'allday')
 			? drag.instance.key
 			: null
 	);
@@ -280,7 +394,11 @@
 	}
 </script>
 
-<svelte:window onpointermove={onPointerMove} onpointerup={onPointerUp} />
+<svelte:window
+	onpointermove={onPointerMove}
+	onpointerup={onPointerUp}
+	onpointercancel={onPointerCancel}
+/>
 
 <div class="s5c-timegrid">
 	<div
@@ -317,9 +435,10 @@
 		style="grid-template-columns:{headerCols}; height:{allDayLaneH}px; border-right:{scrollbarW}px solid transparent"
 	>
 		<div class="s5c-allday-label">{ctx.messages.allDay}</div>
-		{#each days as day (dayKey(day))}
+		{#each days as day, dayIdx (dayKey(day))}
 			<div
 				class="s5c-allday-cell"
+				class:s5c-drag-over={drag?.kind === 'allday' && drag.moved && drag.headDayIdx === dayIdx}
 				onclick={(e) =>
 					ctx.clickDate(day, true, (e.currentTarget as HTMLElement).getBoundingClientRect())}
 				role="button"
@@ -331,6 +450,7 @@
 			{#each allDayLayout.segments as seg (seg.instance.key)}
 				<div
 					class="s5c-seg"
+					class:s5c-dragging={draggingKey === seg.instance.key}
 					style="top:{seg.row * 24}px; left:{(seg.startCol / n) * 100}%; width:{(seg.span / n) *
 						100}%"
 				>
@@ -339,6 +459,7 @@
 						kind="bar"
 						continuesBefore={seg.continuesBefore}
 						continuesAfter={seg.continuesAfter}
+						onpointerdown={onAllDayPointerDown(seg.instance)}
 					/>
 				</div>
 			{/each}
