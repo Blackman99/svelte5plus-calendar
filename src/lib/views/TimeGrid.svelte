@@ -91,6 +91,23 @@
 		}
 	});
 
+	// ---- scrollbar compensation ----------------------------------------------
+	// With classic (space-consuming) scrollbars the body columns are narrower
+	// than the header/all-day rows outside the scroll container. Pad those rows
+	// with a transparent border matching the scrollbar width to keep columns
+	// aligned. (Transparent border, not padding: the all-day events layer is
+	// positioned against the padding box.)
+	let scrollbarW = $state(0);
+	$effect(() => {
+		if (!scrollEl) return;
+		const el = scrollEl;
+		const measure = () => (scrollbarW = el.offsetWidth - el.clientWidth);
+		measure();
+		const ro = new ResizeObserver(measure);
+		ro.observe(el);
+		return () => ro.disconnect();
+	});
+
 	// ---- pointer interactions -------------------------------------------------
 	type Drag =
 		| { kind: 'create'; dayIdx: number; anchorMin: number; headMin: number; moved: boolean }
@@ -265,7 +282,10 @@
 <svelte:window onpointermove={onPointerMove} onpointerup={onPointerUp} />
 
 <div class="s5c-timegrid">
-	<div class="s5c-tg-header" style="grid-template-columns:{headerCols}">
+	<div
+		class="s5c-tg-header"
+		style="grid-template-columns:{headerCols}; border-right:{scrollbarW}px solid transparent"
+	>
 		<div class="s5c-tg-gutter">
 			{#if ctx.weekNumbers && n > 1}
 				<div class="s5c-weekno" style="padding:8px 6px; text-align:right">
@@ -291,7 +311,10 @@
 		{/each}
 	</div>
 
-	<div class="s5c-allday" style="grid-template-columns:{headerCols}; height:{allDayLaneH}px">
+	<div
+		class="s5c-allday"
+		style="grid-template-columns:{headerCols}; height:{allDayLaneH}px; border-right:{scrollbarW}px solid transparent"
+	>
 		<div class="s5c-allday-label">{ctx.messages.allDay}</div>
 		{#each days as day (dayKey(day))}
 			<div

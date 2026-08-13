@@ -69,6 +69,20 @@
 	let drag = $state<Drag | null>(null);
 
 	let rootEl = $state<HTMLElement>();
+	let bodyEl = $state<HTMLDivElement>();
+
+	// Keep the weekday header aligned with the (scrollable) body when a classic
+	// scrollbar consumes width — compensate with a transparent border.
+	let scrollbarW = $state(0);
+	$effect(() => {
+		if (!bodyEl) return;
+		const el = bodyEl;
+		const measure = () => (scrollbarW = el.offsetWidth - el.clientWidth);
+		measure();
+		const ro = new ResizeObserver(measure);
+		ro.observe(el);
+		return () => ro.disconnect();
+	});
 
 	/**
 	 * Geometric hit test over the day cells. (`document.elementFromPoint` would
@@ -199,7 +213,10 @@
 <svelte:window onpointermove={onPointerMove} onpointerup={onPointerUp} />
 
 <div class="s5c-month" bind:this={rootEl}>
-	<div class="s5c-month-head" style="grid-template-columns:{gridCols}">
+	<div
+		class="s5c-month-head"
+		style="grid-template-columns:{gridCols}; border-right:{scrollbarW}px solid transparent"
+	>
 		{#if ctx.weekNumbers}
 			<div class="s5c-month-head-cell"></div>
 		{/if}
@@ -207,7 +224,12 @@
 			<div class="s5c-month-head-cell">{ctx.fmt.weekdayShort(day)}</div>
 		{/each}
 	</div>
-	<div class="s5c-month-body" role="grid" aria-label={ctx.fmt.monthTitle(ctx.date)}>
+	<div
+		class="s5c-month-body"
+		bind:this={bodyEl}
+		role="grid"
+		aria-label={ctx.fmt.monthTitle(ctx.date)}
+	>
 		{#each weeks as days, w (dayKey(days[0]))}
 			{@const layout = weekLayouts[w]}
 			{@const visibleRows = Math.min(layout.usedRows, ctx.dayMaxEvents)}
