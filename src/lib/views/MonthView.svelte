@@ -118,6 +118,17 @@
 	let rootEl = $state<HTMLElement>();
 	let bodyEl = $state<HTMLDivElement>();
 
+	// Cached day-cell elements for the hit test. Re-queried only when the grid
+	// re-renders, instead of on every pointermove during a drag.
+	let dayCells = $state<HTMLElement[]>([]);
+	$effect(() => {
+		// Dependency: the cell set changes when the visible days change.
+		void ctx.visibleDays;
+		if (rootEl) {
+			dayCells = Array.from(rootEl.querySelectorAll<HTMLElement>('[data-s5c-day]'));
+		}
+	});
+
 	// Keep the weekday header aligned with the (scrollable) body when a classic
 	// scrollbar consumes width — compensate with a transparent border.
 	let scrollbarW = $state(0);
@@ -136,8 +147,7 @@
 	 * miss whenever the pointer is over an event bar in the overlay layer.)
 	 */
 	function dayFromPoint(x: number, y: number): Date | null {
-		if (!rootEl) return null;
-		for (const el of rootEl.querySelectorAll<HTMLElement>('[data-s5c-day]')) {
+		for (const el of dayCells) {
 			const r = el.getBoundingClientRect();
 			if (x >= r.left && x < r.right && y >= r.top && y < r.bottom) {
 				const [yy, mm, dd] = el.dataset.s5cDay!.split('-').map(Number);

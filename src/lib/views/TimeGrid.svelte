@@ -5,12 +5,11 @@
 	import {
 		addDays,
 		dayKey,
-		endOfDay,
+		daysBetween,
 		floorToStep,
 		isoWeek,
 		isSameDay,
 		minutesOfDay,
-		overlaps,
 		roundToStep,
 		withMinutesOfDay
 	} from '../date.js';
@@ -35,15 +34,22 @@
 	const allDayLayout = $derived(layoutWeekRow(allDayLike, days, Infinity));
 	const allDayLaneH = $derived(Math.max(allDayLayout.usedRows, 1) * 24 + 4);
 
-	const timedByDay = $derived(
-		days.map((day) => {
-			const dayEnd = endOfDay(day);
-			const timed = ctx.instances.filter(
-				(i) => !isAllDayLike(i) && overlaps(i.start, i.end, day, dayEnd)
-			);
-			return layoutDay(timed, day).filter((p) => p.endMin > startMin && p.startMin < endMin);
-		})
-	);
+	const timedByDay = $derived.by(() => {
+		// Single pass: bucket each timed instance into the day column(s) it
+		// overlaps (by day index) instead of re-filtering all instances per day.
+		const buckets: EventInstance[][] = days.map(() => []);
+		const firstDay = days[0];
+		for (const i of ctx.instances) {
+			if (isAllDayLike(i)) continue;
+			const sIdx = Math.max(0, daysBetween(firstDay, i.start));
+			const eIdx = Math.min(n - 1, daysBetween(firstDay, new Date(i.end.getTime() - 1)));
+			if (sIdx > eIdx) continue;
+			for (let d = sIdx; d <= eIdx; d++) buckets[d].push(i);
+		}
+		return buckets.map((timed, d) =>
+			layoutDay(timed, days[d]).filter((p) => p.endMin > startMin && p.startMin < endMin)
+		);
+	});
 
 	// ---- hour ruler --------------------------------------------------------
 	const hours = $derived.by(() => {
