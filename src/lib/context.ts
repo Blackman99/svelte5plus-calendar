@@ -16,6 +16,7 @@ import type {
  * components. Reactive fields are exposed as getters backed by `$state`.
  */
 import { getContext, setContext } from 'svelte';
+import { isPaletteColor } from './instances.js';
 
 export interface CalendarContext {
 	// --- reactive state ---
@@ -136,7 +137,8 @@ export function getCalendarContext(): CalendarContext {
 
 /** CSS style props for an instance's color (palette name → var, else raw). */
 export function colorVars(color: string): string {
-	const named = /^[a-z]+$/.test(color);
-	const value = named ? `var(--s5c-${color}, var(--s5c-blue))` : color;
+	// Only the 10 palette names map to CSS variables. Arbitrary CSS colors —
+	// including named keywords like `coral`/`tomato` — must pass through as-is.
+	const value = isPaletteColor(color) ? `var(--s5c-${color}, var(--s5c-blue))` : color;
 	return `--s5c-event-color:${value};`;
 }
