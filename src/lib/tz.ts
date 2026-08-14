@@ -38,7 +38,21 @@ export function toZoned(date: Date, timeZone: string): Date {
 	return new Date(y, m - 1, d, h, mi, s, date.getMilliseconds());
 }
 
-/** Inverse of {@link toZoned}: the real instant whose wall-clock in `timeZone` matches `zoned`'s local fields. */
+/**
+ * Inverse of {@link toZoned}: the real instant whose wall-clock in `timeZone`
+ * matches `zoned`'s local fields.
+ *
+ * The result is exact for any wall-clock that exists. DST transitions make two
+ * wall-clocks ambiguous, which the local-fields `Date` representation cannot
+ * disambiguate (it carries no UTC offset):
+ *
+ * - **Fall-back overlap** — a wall-clock that occurs twice resolves
+ *   deterministically to one of the two instants (the iteration converges to
+ *   the later one).
+ * - **Spring-forward gap** — a wall-clock that does not exist has no exact
+ *   answer; the function returns the best-effort instant at the transition,
+ *   and callers should treat such times as invalid.
+ */
 export function fromZoned(zoned: Date, timeZone: string): Date {
 	const targetUTC = Date.UTC(
 		zoned.getFullYear(),
@@ -50,12 +64,16 @@ export function fromZoned(zoned: Date, timeZone: string): Date {
 		zoned.getMilliseconds()
 	);
 	let guess = new Date(targetUTC);
-	// Iterate: adjust by the difference between the guess's wall-clock and the target.
-	for (let i = 0; i < 3; i++) {
+	// Fixed-point iteration: adjust by the difference between the guess's
+	// wall-clock and the target. Converges in 1–2 steps for valid times
+	// (the guess lands on the opposite side of the offset change); the cap is
+	// a safety net for the spring-forward gap, where the wall-clock never
+	// exists and the iteration oscillates around the transition.
+	for (let i = 0; i < 8; i++) {
 		const [y, m, d, h, mi, s] = wallParts(guess, timeZone);
 		const wallUTC = Date.UTC(y, m - 1, d, h, mi, s, guess.getMilliseconds());
 		const diff = targetUTC - wallUTC;
-		if (diff === 0) break;
+		if (diff === 0) return guess;
 		guess = new Date(guess.getTime() + diff);
 	}
 	return guess;
