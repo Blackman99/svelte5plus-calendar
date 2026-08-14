@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { TimedPlacement } from '../layout.js';
+	import type { DragBase } from '../pointerDrag.js';
 	import type { EventInstance } from '../types.js';
 	import { colorVars, getCalendarContext } from '../context.js';
 	import {
@@ -11,6 +12,7 @@
 	} from '../date.js';
 	import { isAllDayLike } from '../instances.js';
 	import { layoutDay } from '../layout.js';
+	import { createPointerDrag } from '../pointerDrag.js';
 
 	const ctx = getCalendarContext();
 
@@ -78,12 +80,7 @@
 		return () => ro.disconnect();
 	});
 
-	// ---- pointer interactions (same long-press pattern as TimeGrid) ----------
-	interface DragBase {
-		activated: boolean;
-		startX: number;
-		startY: number;
-	}
+	// ---- pointer interactions (shared long-press pattern) --------------------
 	type DragData
 		= | { kind: 'create'; colIdx: number; anchorMin: number; headMin: number; moved: boolean }
 			| {
@@ -98,35 +95,10 @@
 	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
 
-	const LONG_PRESS_MS = 300;
-	const TOUCH_SLOP_PX = 10;
-	let pressTimer: ReturnType<typeof setTimeout> | null = null;
-	const preventTouchScroll = (e: TouchEvent) => e.preventDefault();
-
-	function beginDrag(e: PointerEvent, data: DragData) {
-		const base: DragBase = {
-			activated: e.pointerType === 'mouse' || e.pointerType === '',
-			startX: e.clientX,
-			startY: e.clientY
-		};
-		drag = { ...base, ...data };
-		if (!base.activated) {
-			pressTimer = setTimeout(() => {
-				if (drag && !drag.activated) {
-					drag = { ...drag, activated: true };
-					window.addEventListener('touchmove', preventTouchScroll, { passive: false });
-					navigator.vibrate?.(10);
-				}
-			}, LONG_PRESS_MS);
-		}
-	}
-
-	function cancelDrag() {
-		if (pressTimer) clearTimeout(pressTimer);
-		pressTimer = null;
-		window.removeEventListener('touchmove', preventTouchScroll);
-		drag = null;
-	}
+	const { begin: beginDrag, cancel: cancelDrag, isSwipe, suppressNextClick } = createPointerDrag<DragData>(
+		() => drag,
+		(d) => (drag = d)
+	);
 	$effect(() => () => cancelDrag());
 
 	function pointToColIdx(x: number): number {
@@ -138,11 +110,6 @@
 		if (!bodyEl) return startMin;
 		const rect = bodyEl.getBoundingClientRect();
 		return Math.max(startMin, Math.min(endMin, startMin + ((y - rect.top) / ctx.hourHeight) * 60));
-	}
-	function suppressNextClick() {
-		const handler = (e: MouseEvent) => e.stopPropagation();
-		window.addEventListener('click', handler, { capture: true });
-		setTimeout(() => window.removeEventListener('click', handler, { capture: true }), 0);
 	}
 
 	function onColPointerDown(colIdx: number) {
@@ -186,7 +153,7 @@
 	function onPointerMove(e: PointerEvent) {
 		if (!drag) return;
 		if (!drag.activated) {
-			if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > TOUCH_SLOP_PX) cancelDrag();
+			if (isSwipe(drag, e)) cancelDrag();
 			return;
 		}
 		if (drag.kind === 'create') {

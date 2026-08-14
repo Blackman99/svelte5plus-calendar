@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { DragBase } from '../pointerDrag.js';
 	import type { EventInstance } from '../types.js';
 	import { getCalendarContext } from '../context.js';
 	import {
@@ -18,6 +19,7 @@
 	import { isAllDayLike } from '../instances.js';
 	import { layoutWeekRow } from '../layout.js';
 	import MorePopover from '../MorePopover.svelte';
+	import { createPointerDrag } from '../pointerDrag.js';
 
 	const ctx = getCalendarContext();
 
@@ -64,54 +66,17 @@
 
 	// ---- drag: move event across days / drag-select a day range -------------
 	// Mouse drags start immediately; touch drags require a ~300 ms long-press
-	// so swipes keep scrolling the page (see TimeGrid for the same pattern).
-	interface DragBase {
-		activated: boolean;
-		startX: number;
-		startY: number;
-	}
+	// so swipes keep scrolling the page.
 	type DragData
 		= | { kind: 'event'; instance: EventInstance; moved: boolean; overDay: Date | null }
 			| { kind: 'select'; anchor: Date; head: Date; moved: boolean };
 	type Drag = DragBase & DragData;
 	let drag = $state<Drag | null>(null);
 
-	const LONG_PRESS_MS = 300;
-	const TOUCH_SLOP_PX = 10;
-	let pressTimer: ReturnType<typeof setTimeout> | null = null;
-
-	const preventTouchScroll = (e: TouchEvent) => e.preventDefault();
-	function blockTouchScroll() {
-		window.addEventListener('touchmove', preventTouchScroll, { passive: false });
-	}
-	function unblockTouchScroll() {
-		window.removeEventListener('touchmove', preventTouchScroll);
-	}
-
-	function beginDrag(e: PointerEvent, data: DragData) {
-		const base: DragBase = {
-			activated: e.pointerType === 'mouse' || e.pointerType === '',
-			startX: e.clientX,
-			startY: e.clientY
-		};
-		drag = { ...base, ...data };
-		if (!base.activated) {
-			pressTimer = setTimeout(() => {
-				if (drag && !drag.activated) {
-					drag = { ...drag, activated: true };
-					blockTouchScroll();
-					navigator.vibrate?.(10);
-				}
-			}, LONG_PRESS_MS);
-		}
-	}
-
-	function cancelDrag() {
-		if (pressTimer) clearTimeout(pressTimer);
-		pressTimer = null;
-		unblockTouchScroll();
-		drag = null;
-	}
+	const { begin: beginDrag, cancel: cancelDrag, isSwipe, suppressNextClick } = createPointerDrag<DragData>(
+		() => drag,
+		(d) => (drag = d)
+	);
 
 	$effect(() => () => cancelDrag());
 
@@ -147,15 +112,6 @@
 		return null;
 	}
 
-	function suppressNextClick() {
-		// Swallow the compat click that follows pointerup on the drag's target.
-		// Removed on a timeout too: when the drag ends over a different element
-		// no click fires at all, and the suppressor must not eat the next one.
-		const handler = (e: MouseEvent) => e.stopPropagation();
-		window.addEventListener('click', handler, { capture: true });
-		setTimeout(() => window.removeEventListener('click', handler, { capture: true }), 0);
-	}
-
 	function onSegPointerDown(instance: EventInstance) {
 		return (e: PointerEvent) => {
 			e.stopPropagation();
@@ -177,9 +133,7 @@
 		if (!drag) return;
 		if (!drag.activated) {
 			// Long-press pending: a real swipe means the user wants to scroll.
-			if (Math.hypot(e.clientX - drag.startX, e.clientY - drag.startY) > TOUCH_SLOP_PX) {
-				cancelDrag();
-			}
+			if (isSwipe(drag, e)) cancelDrag();
 			return;
 		}
 		const day = dayFromPoint(e.clientX, e.clientY);
