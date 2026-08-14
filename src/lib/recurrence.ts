@@ -4,7 +4,7 @@
  * BYDAY (weekly, and monthly ordinal forms like `2TU` / `-1FR`), BYMONTHDAY.
  */
 import type { RecurrenceFreq, RecurrenceRule, Weekday } from './types.js';
-import { addDays, addMonths, daysInMonth, isSameDay, overlaps, startOfDay } from './date.js';
+import { addDays, addMonths, daysBetween, daysInMonth, isSameDay, MS_PER_DAY, overlaps, startOfDay } from './date.js';
 
 const DAY_CODES: Record<string, Weekday> = {
 	SU: 0,
@@ -147,8 +147,22 @@ export function expandRecurrence(
 		return results.length < MAX_OCCURRENCES && occ.getTime() < rangeEnd.getTime();
 	};
 
+	// Fast-forward past occurrences that end before the visible range. This is
+	// what keeps a "every day since 2000" series from iterating ~10k times per
+	// render. Only done when COUNT is absent: COUNT must count occurrences from
+	// DTSTART, and such series are bounded (≤ MAX_OCCURRENCES) so they stay
+	// cheap. Jumps are conservative (rounded down, with margin) and `push`
+	// still filters, so no occurrence is ever skipped.
+	const durationDays = Math.ceil(durationMs / MS_PER_DAY);
+	const fastForward = !r.count;
+
 	if (r.freq === 'daily') {
-		for (let i = 0; ; i += interval) {
+		let i = 0;
+		if (fastForward) {
+			const firstRelevantDay = daysBetween(start, rangeStart) - durationDays;
+			i = Math.max(0, Math.floor(firstRelevantDay / interval) - 1) * interval;
+		}
+		for (; ; i += interval) {
 			const occ = addDays(start, i);
 			if (!push(occ)) break;
 		}
@@ -157,22 +171,35 @@ export function expandRecurrence(
 		const byDay = r.byDay && r.byDay.length ? [...r.byDay] : [start.getDay() as Weekday];
 		// Iterate week by week from the week of DTSTART; within a week, emit in chronological order.
 		const weekAnchor = startOfDay(start);
-		outer: for (let w = 0; ; w += interval) {
+		// Days of this week that match, ordered from the anchor's weekday forward.
+		const offsets = byDay
+			.map((d) => (d - start.getDay() + 7) % 7)
+			.sort((a, b) => a - b);
+		let w = 0;
+		if (fastForward) {
+			const firstRelevantDay = daysBetween(weekAnchor, rangeStart) - durationDays;
+			const firstRelevantWeek = Math.floor(firstRelevantDay / 7);
+			w = Math.max(0, Math.floor(firstRelevantWeek / interval) - 1) * interval;
+		}
+		outer: for (; ; w += interval) {
 			const base = addDays(weekAnchor, w * 7);
-			// Days of this week that match, ordered from the anchor's weekday forward.
-			const offsets = byDay
-				.map((d) => (d - start.getDay() + 7) % 7)
-				.sort((a, b) => a - b);
 			for (const off of offsets) {
-				const occ = addDays(start, w * 7 * 1 + off);
+				const occ = addDays(start, w * 7 + off);
 				if (occ.getTime() < start.getTime()) continue;
 				if (!push(occ)) break outer;
 			}
-			if (base.getTime() > hardEnd + 7 * 86_400_000) break;
+			if (base.getTime() > hardEnd + 7 * MS_PER_DAY) break;
 		}
 	}
 	else if (r.freq === 'monthly') {
-		outer: for (let m = 0; ; m += interval) {
+		let m = 0;
+		if (fastForward) {
+			const monthsBetween = (rangeStart.getFullYear() - start.getFullYear()) * 12
+				+ (rangeStart.getMonth() - start.getMonth());
+			const firstRelevantMonth = monthsBetween - Math.ceil(durationDays / 28);
+			m = Math.max(0, Math.floor(firstRelevantMonth / interval) - 1) * interval;
+		}
+		outer: for (; ; m += interval) {
 			const anchor = addMonths(start, m);
 			const year = anchor.getFullYear();
 			const month = anchor.getMonth();
@@ -209,7 +236,13 @@ export function expandRecurrence(
 	}
 	else {
 		// yearly
-		for (let y = 0; ; y += interval) {
+		let y = 0;
+		if (fastForward) {
+			const yearsBetween = rangeStart.getFullYear() - start.getFullYear();
+			const firstRelevantYear = yearsBetween - Math.ceil(durationDays / 365);
+			y = Math.max(0, Math.floor(firstRelevantYear / interval) - 1) * interval;
+		}
+		for (; ; y += interval) {
 			const occ = addMonths(start, y * 12);
 			// Skip Feb-29 in non-leap years rather than clamping.
 			if (occ.getDate() !== start.getDate()) continue;

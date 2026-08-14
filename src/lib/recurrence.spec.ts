@@ -142,4 +142,80 @@ describe('expandRecurrence', () => {
 			expect(occ.getMinutes()).toBe(0);
 		}
 	});
+
+	describe('fast-forward (far-past DTSTART, no COUNT)', () => {
+		it('skips decades of daily occurrences to the visible range', () => {
+			const old = new Date(2000, 0, 1, 9, 0);
+			const days = expand(old, { freq: 'daily' }, new Date(2026, 7, 1), new Date(2026, 7, 4));
+			expect(days).toEqual(['2026-08-01', '2026-08-02', '2026-08-03']);
+		});
+
+		it('preserves INTERVAL phase when jumping (daily, interval 7)', () => {
+			const old = new Date(2000, 0, 3, 9, 0); // Monday
+			const days = expand(
+				old,
+				{ freq: 'daily', interval: 7 },
+				new Date(2026, 7, 3),
+				new Date(2026, 7, 17)
+			);
+			expect(days).toEqual(['2026-08-03', '2026-08-10']);
+		});
+
+		it('skips decades of weekly BYDAY occurrences', () => {
+			const old = new Date(2000, 0, 3, 9, 0); // Monday
+			const days = expand(
+				old,
+				'FREQ=WEEKLY;BYDAY=MO,WE,FR',
+				new Date(2026, 7, 3),
+				new Date(2026, 7, 10)
+			);
+			expect(days).toEqual(['2026-08-03', '2026-08-05', '2026-08-07']);
+		});
+
+		it('skips decades of monthly occurrences', () => {
+			const old = new Date(2000, 0, 15, 9, 0);
+			const days = expand(old, { freq: 'monthly' }, new Date(2026, 7, 1), new Date(2026, 10, 1));
+			expect(days).toEqual(['2026-08-15', '2026-09-15', '2026-10-15']);
+		});
+
+		it('skips decades of monthly BYDAY (2nd Tuesday)', () => {
+			const old = new Date(2000, 0, 11, 9, 0); // 2nd Tuesday of Jan 2000
+			const days = expand(
+				old,
+				'FREQ=MONTHLY;BYDAY=2TU',
+				new Date(2026, 7, 1),
+				new Date(2026, 10, 1)
+			);
+			expect(days).toEqual(['2026-08-11', '2026-09-08', '2026-10-13']);
+		});
+
+		it('skips years of yearly occurrences', () => {
+			const old = new Date(2000, 5, 1, 9, 0);
+			const days = expand(old, { freq: 'yearly' }, new Date(2026, 0, 1), new Date(2029, 0, 1));
+			expect(days).toEqual(['2026-06-01', '2027-06-01', '2028-06-01']);
+		});
+
+		it('still honours UNTIL when jumping', () => {
+			const old = new Date(2000, 0, 1, 9, 0);
+			const days = expand(
+				old,
+				{ freq: 'daily', until: new Date(2026, 7, 2, 23, 59) },
+				new Date(2026, 7, 1),
+				new Date(2026, 7, 10)
+			);
+			expect(days).toEqual(['2026-08-01', '2026-08-02']);
+		});
+
+		it('still honours exdates when jumping', () => {
+			const old = new Date(2000, 0, 1, 9, 0);
+			const days = expand(
+				old,
+				{ freq: 'daily' },
+				new Date(2026, 7, 1),
+				new Date(2026, 7, 4),
+				[new Date(2026, 7, 2)]
+			);
+			expect(days).toEqual(['2026-08-01', '2026-08-03']);
+		});
+	});
 });
