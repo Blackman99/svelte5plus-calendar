@@ -403,7 +403,7 @@
 	 * Alt+↑/↓ moves by the snap step, Alt+←/→ moves by a day,
 	 * Alt+Shift+↑/↓ shrinks/grows the end time.
 	 */
-	function onBlockKeydown(p: TimedPlacement, dayIdx: number) {
+	function onBlockKeydown(p: TimedPlacement) {
 		return (e: KeyboardEvent) => {
 			if (!e.altKey || !ctx.canEdit(p.instance)) return;
 			const { instance } = p;
@@ -424,7 +424,6 @@
 				const dayDelta = e.key === 'ArrowRight' ? 1 : -1;
 				start = addDays(start, dayDelta);
 				end = addDays(end, dayDelta);
-				void dayIdx;
 			}
 			else {
 				return;
@@ -562,7 +561,7 @@
 							aria-label={p.instance.event.title}
 							aria-keyshortcuts="Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight"
 							onpointerdown={onBlockPointerDown(p, dayIdx)}
-							onkeydown={onBlockKeydown(p, dayIdx)}
+							onkeydown={onBlockKeydown(p)}
 							onclick={(e) => {
 								e.stopPropagation();
 								ctx.clickEvent(p.instance, e);
