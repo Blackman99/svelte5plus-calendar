@@ -415,9 +415,109 @@ body {
 .docs-shell {
 	display: grid;
 	grid-template-columns: 250px minmax(0, 1fr);
+	grid-template-areas: 'sidebar content';
 	max-width: 1280px;
 	margin: 0 auto;
 	min-height: calc(100vh - 60px);
+}
+.sidebar {
+	grid-area: sidebar;
+}
+.doc-content {
+	grid-area: content;
+}
+.toc {
+	grid-area: toc;
+	display: none;
+}
+
+/* Right rail table of contents (wide screens) */
+@media (min-width: 1180px) {
+	.docs-shell {
+		grid-template-columns: 240px minmax(0, 1fr) 232px;
+		grid-template-areas: 'sidebar content toc';
+		max-width: 1420px;
+	}
+	.toc {
+		display: block;
+		position: sticky;
+		top: 60px;
+		align-self: start;
+		max-height: calc(100vh - 60px);
+		overflow-y: auto;
+		padding: 44px 24px 40px 8px;
+	}
+}
+
+.toc-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	font: 600 11px var(--mono);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+	background: none;
+	border: none;
+	padding: 0 0 10px;
+	margin: 0;
+	cursor: default;
+	text-align: left;
+}
+.toc-caret {
+	display: none;
+}
+.toc-list {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	padding-left: 13px;
+}
+/* Full-height groove + the sliding highlight that rides in it. */
+.toc-track,
+.toc-rail {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 2px;
+	border-radius: 2px;
+}
+.toc-track {
+	bottom: 0;
+	background: var(--line);
+}
+.toc-rail {
+	background: var(--accent);
+	opacity: 0;
+	will-change: transform, height;
+}
+.toc-rail.ready {
+	opacity: 1;
+	transition:
+		transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+		height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.2s ease;
+}
+.toc-link {
+	display: block;
+	padding: 5px 0 5px 12px;
+	font-size: 13.5px;
+	line-height: 1.45;
+	color: var(--ink-faint);
+	text-decoration: none;
+	transition: color 0.2s ease;
+	overflow-wrap: anywhere;
+}
+.toc-link.sub {
+	padding-left: 26px;
+	font-size: 13px;
+}
+.toc-link:hover {
+	color: var(--ink);
+}
+.toc-link.active {
+	color: var(--accent);
 }
 .sidebar {
 	border-right: 1px solid var(--line);
@@ -521,6 +621,11 @@ body {
 	color: var(--ink-soft);
 	margin: 0 0 36px;
 	max-width: 60ch;
+}
+/* Anchor jumps must clear the sticky header. */
+.doc-content h2:not(.s5c *),
+.doc-content h3:not(.s5c *) {
+	scroll-margin-top: 76px;
 }
 .doc-content h2:not(.s5c *) {
 	font-family: var(--display);
@@ -975,5 +1080,70 @@ body {
 	.site-footer {
 		padding: 20px 14px;
 		font-size: 12.5px;
+	}
+}
+
+/* Collapsible “on this page” card below the right-rail breakpoint ------------- */
+@media (max-width: 1179px) {
+	.docs-shell {
+		grid-template-rows: auto 1fr;
+		grid-template-areas:
+			'sidebar toc'
+			'sidebar content';
+	}
+	.toc {
+		display: block;
+		margin: 28px 48px 0;
+		border: 1px solid var(--line-strong);
+		border-radius: 12px;
+		overflow: hidden;
+	}
+	.toc-title {
+		padding: 11px 14px;
+		cursor: pointer;
+		color: var(--ink);
+		letter-spacing: 0.08em;
+	}
+	.toc-title:hover {
+		background: color-mix(in srgb, var(--line) 35%, transparent);
+	}
+	.toc-caret {
+		display: block;
+		margin-left: auto;
+		transition: transform 0.2s ease;
+	}
+	.toc.open .toc-caret {
+		transform: rotate(180deg);
+	}
+	.toc-list {
+		display: none;
+		padding: 4px 14px 12px 27px;
+	}
+	.toc.open .toc-list {
+		display: flex;
+	}
+	.toc-track,
+	.toc-rail {
+		left: 14px;
+		top: 4px;
+	}
+	.toc-track {
+		bottom: 12px;
+	}
+	.doc-content {
+		padding-top: 24px;
+	}
+}
+
+@media (max-width: 900px) {
+	.docs-shell {
+		grid-template-rows: auto auto 1fr;
+		grid-template-areas:
+			'sidebar'
+			'toc'
+			'content';
+	}
+	.toc {
+		margin: 20px 18px 0;
 	}
 }

@@ -2,6 +2,7 @@
 	import type { Lang } from '../../../docs/nav.js';
 	import { page } from '$app/state';
 	import { docSequence, guideNav, T, withBase } from '../../../docs/nav.js';
+	import TableOfContents from '../../../docs/TableOfContents.svelte';
 
 	const { children } = $props();
 
@@ -27,6 +28,7 @@
 			{t('API Reference', 'API 参考')}
 		</a>
 	</nav>
+	<TableOfContents label={t('On this page', '本页目录')} />
 	<main class="doc-content">
 		{@render children()}
 		<nav class="doc-footer-nav">
