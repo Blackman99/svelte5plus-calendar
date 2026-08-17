@@ -1,5 +1,14 @@
 # svelte5plus-calendar
 
+## 0.5.3
+
+### Patch Changes
+
+- 8a53608: Fix named CSS color keywords (e.g. `coral`, `tomato`, `white`) being misinterpreted as palette names and falling back to blue. `colorVars` now resolves palette variables via the `PALETTE` whitelist instead of a naive lowercase regex, so arbitrary CSS colors pass through untouched.
+- d2c96f5: Quick-create popover: the picked time range is now editable before saving. Start and end use native date/time inputs (free down to the minute — values are no longer snapped to `slotDuration`), an "all day" toggle converts the range to whole days and back, and multi-day ranges can be adjusted. An end time earlier than the start on the same day rolls over to the next day (cross-midnight events, e.g. 22:00–03:00). Two new `CalendarMessages` keys, `starts` and `ends`, label the fields (added to all ten built-in locales).
+- 3cb9018: Speed up recurrence expansion for series whose DTSTART lies far before the visible range. `expandRecurrence` now fast-forwards past occurrences that end before the range (daily, weekly, monthly and yearly, with conservative jumps that never skip an occurrence) instead of iterating from DTSTART. A "every day since 2000" event previously looped ~10k times per render; it now jumps directly to the visible window. COUNT-bearing rules keep counting from DTSTART, so their semantics are unchanged.
+- 780cf55: Clarify and harden `timeZone` DST handling. `fromZoned` now iterates to convergence (bounded) instead of a fixed 3 steps and documents the two inherent ambiguities of a wall-clock-only `Date`: the fall-back overlap resolves deterministically, and the spring-forward gap (a wall-clock that does not exist) returns a best-effort instant. Added specs covering round-trips across the spring-forward jump, overlap determinism, and the non-existent wall-clock.
+
 ## 0.5.2
 
 ### Patch Changes
