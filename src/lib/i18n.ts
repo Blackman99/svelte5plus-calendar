@@ -24,6 +24,10 @@ export interface CalendarMessages {
 	events: string;
 	/** Quick-create popover: confirm button. */
 	add: string;
+	/** Quick-create popover: start-field label. */
+	starts: string;
+	/** Quick-create popover: end-field label. */
+	ends: string;
 	/** Event details popover: delete button. */
 	delete: string;
 	/** Quick-create popover: title input placeholder. */
@@ -64,6 +68,8 @@ export const en: CalendarMessages = {
 	next: 'Next',
 	events: 'events',
 	add: 'Add',
+	starts: 'Starts',
+	ends: 'Ends',
 	delete: 'Delete',
 	titlePlaceholder: 'Add title',
 	untitled: '(no title)',
@@ -94,6 +100,8 @@ export const zhCN: CalendarMessages = {
 	next: '下一页',
 	events: '项日程',
 	add: '添加',
+	starts: '开始',
+	ends: '结束',
 	delete: '删除',
 	titlePlaceholder: '添加标题',
 	untitled: '（无标题）',
@@ -124,6 +132,8 @@ export const de: CalendarMessages = {
 	next: 'Weiter',
 	events: 'Termine',
 	add: 'Hinzufügen',
+	starts: 'Beginn',
+	ends: 'Ende',
 	delete: 'Löschen',
 	titlePlaceholder: 'Titel hinzufügen',
 	untitled: '(Ohne Titel)',
@@ -154,6 +164,8 @@ export const fr: CalendarMessages = {
 	next: 'Suivant',
 	events: 'événements',
 	add: 'Ajouter',
+	starts: 'Début',
+	ends: 'Fin',
 	delete: 'Supprimer',
 	titlePlaceholder: 'Ajouter un titre',
 	untitled: '(Sans titre)',
@@ -184,6 +196,8 @@ export const es: CalendarMessages = {
 	next: 'Siguiente',
 	events: 'eventos',
 	add: 'Añadir',
+	starts: 'Comienza',
+	ends: 'Termina',
 	delete: 'Eliminar',
 	titlePlaceholder: 'Añadir título',
 	untitled: '(Sin título)',
@@ -214,6 +228,8 @@ export const pt: CalendarMessages = {
 	next: 'Próximo',
 	events: 'eventos',
 	add: 'Adicionar',
+	starts: 'Início',
+	ends: 'Fim',
 	delete: 'Excluir',
 	titlePlaceholder: 'Adicionar título',
 	untitled: '(Sem título)',
@@ -244,6 +260,8 @@ export const ja: CalendarMessages = {
 	next: '次へ',
 	events: '件',
 	add: '追加',
+	starts: '開始',
+	ends: '終了',
 	delete: '削除',
 	titlePlaceholder: 'タイトルを追加',
 	untitled: '（タイトルなし）',
@@ -274,6 +292,8 @@ export const ko: CalendarMessages = {
 	next: '다음',
 	events: '개 일정',
 	add: '추가',
+	starts: '시작',
+	ends: '종료',
 	delete: '삭제',
 	titlePlaceholder: '제목 추가',
 	untitled: '(제목 없음)',
@@ -304,6 +324,8 @@ export const ru: CalendarMessages = {
 	next: 'Вперёд',
 	events: 'события',
 	add: 'Добавить',
+	starts: 'Начало',
+	ends: 'Конец',
 	delete: 'Удалить',
 	titlePlaceholder: 'Добавьте название',
 	untitled: '(Без названия)',
@@ -334,6 +356,8 @@ export const it: CalendarMessages = {
 	next: 'Avanti',
 	events: 'eventi',
 	add: 'Aggiungi',
+	starts: 'Inizio',
+	ends: 'Fine',
 	delete: 'Elimina',
 	titlePlaceholder: 'Aggiungi titolo',
 	untitled: '(Senza titolo)',

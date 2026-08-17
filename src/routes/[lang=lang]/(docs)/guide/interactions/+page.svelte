@@ -33,6 +33,12 @@
 		'不配置任何回调时，日历开箱即用地提供类似 Google 日历的交互：点击日程弹出详情弹层（时间、所属日历、地点、描述、删除按钮）；点击或框选空白区域弹出快速新建弹层，可输入标题并选择日历。'
 	)}
 </p>
+<p>
+	{t(
+		'The quick-create popover lets you fine-tune the picked range before saving: start and end are editable date/time inputs (free down to the minute — no snapping to slotDuration), with an “all day” toggle and multi-day ranges supported.',
+		'快速新建弹层在保存前可微调所选范围：开始与结束时间都是可编辑的日期/时间输入框（可精确到任意分钟，不再吸附到 slotDuration），并支持“全天”切换与跨天范围。'
+	)}
+</p>
 <Example title={t('Try it: click events, drag empty slots', '试试：点击日程、框选空白时段')} code={defaultUxRaw}>
 	<DefaultUxDemo {locale} />
 </Example>

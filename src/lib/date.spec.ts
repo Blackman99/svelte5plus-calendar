@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	addDays,
 	addMonths,
+	applyDateInputValue,
+	applyTimeInputValue,
 	dayKey,
 	daysBetween,
 	eachDay,
@@ -15,6 +17,8 @@ import {
 	roundToStep,
 	startOfDay,
 	startOfWeek,
+	toDateInputValue,
+	toTimeInputValue,
 	withMinutesOfDay
 } from './date.js';
 
@@ -97,5 +101,38 @@ describe('date utils', () => {
 	it('isSameDay', () => {
 		expect(isSameDay(new Date(2026, 7, 13, 0), new Date(2026, 7, 13, 23, 59))).toBe(true);
 		expect(isSameDay(new Date(2026, 7, 13), new Date(2026, 7, 14))).toBe(false);
+	});
+
+	it('toTimeInputValue is 24-hour and zero-padded', () => {
+		expect(toTimeInputValue(new Date(2026, 7, 13, 9, 7))).toBe('09:07');
+		expect(toTimeInputValue(new Date(2026, 7, 13, 0, 0))).toBe('00:00');
+		expect(toTimeInputValue(new Date(2026, 7, 13, 23, 45))).toBe('23:45');
+	});
+
+	it('toDateInputValue is local and zero-padded', () => {
+		expect(toDateInputValue(new Date(2026, 7, 3))).toBe('2026-08-03');
+		expect(toDateInputValue(new Date(2026, 0, 13))).toBe('2026-01-13');
+	});
+
+	it('applyTimeInputValue applies onto the date, keeping it', () => {
+		const d = new Date(2026, 7, 13, 14, 0);
+		const out = applyTimeInputValue(d, '09:07');
+		expect(out).toEqual(new Date(2026, 7, 13, 9, 7));
+		expect(applyTimeInputValue(d, 'bad')).toBeNull();
+		expect(applyTimeInputValue(d, '24:00')).toBeNull();
+	});
+
+	it('applyDateInputValue applies onto the wall-clock, keeping it', () => {
+		const d = new Date(2026, 7, 13, 9, 30);
+		const out = applyDateInputValue(d, '2026-01-02');
+		expect(out).toEqual(new Date(2026, 0, 2, 9, 30));
+		expect(applyDateInputValue(d, '2026-13-01')).toBeNull();
+		expect(applyDateInputValue(d, '2026-08-32')).toBeNull();
+	});
+
+	it('input value conversions round-trip', () => {
+		const d = new Date(2026, 7, 13, 9, 7);
+		expect(applyTimeInputValue(d, toTimeInputValue(d))).toEqual(d);
+		expect(applyDateInputValue(d, toDateInputValue(d))).toEqual(d);
 	});
 });

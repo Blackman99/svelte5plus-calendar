@@ -801,7 +801,7 @@
 	position: fixed;
 	z-index: 1000;
 	min-width: 220px;
-	max-width: 280px;
+	max-width: 300px;
 	max-height: 320px;
 	overflow-y: auto;
 	background: var(--s5c-bg);
@@ -895,6 +895,44 @@
 	flex: 1;
 	margin: 0;
 	padding: 4px 8px;
+}
+.s5c-range-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 5px 0 2px;
+	min-width: 0;
+}
+.s5c-range-label {
+	flex: 0 0 auto;
+	width: 48px;
+	font-size: 12px;
+	color: var(--s5c-text-muted);
+}
+.s5c-input-date,
+.s5c-input-time {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 5px 8px;
+}
+.s5c-all-day-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin: 6px 0 2px;
+	font-size: 13px;
+	color: var(--s5c-text);
+	cursor: pointer;
+	user-select: none;
+}
+.s5c-all-day-toggle input {
+	accent-color: var(--s5c-accent);
+	margin: 0;
+}
+.s5c-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 .s5c-btn-accent {
 	background: var(--s5c-accent);

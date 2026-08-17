@@ -168,6 +168,39 @@ export function roundToStep(minutes: number, step: number): number {
 	return Math.round(minutes / step) * step;
 }
 
+/** `"HH:MM"` (24-hour, zero-padded) for `<input type="time">`. */
+export function toTimeInputValue(d: Date): string {
+	return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+/** `"YYYY-MM-DD"` (local time) for `<input type="date">`. */
+export function toDateInputValue(d: Date): string {
+	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+		d.getDate()
+	).padStart(2, '0')}`;
+}
+
+/** Applies a `"HH:MM"` value onto `d`, keeping its date. Returns `null` when unparseable. */
+export function applyTimeInputValue(d: Date, value: string): Date | null {
+	const m = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
+	if (!m) return null;
+	const h = Number(m[1]);
+	const min = Number(m[2]);
+	if (h > 23 || min > 59) return null;
+	return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, min);
+}
+
+/** Applies a `"YYYY-MM-DD"` value onto `d`, keeping its wall-clock time. Returns `null` when unparseable. */
+export function applyDateInputValue(d: Date, value: string): Date | null {
+	const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
+	if (!m) return null;
+	const y = Number(m[1]);
+	const mo = Number(m[2]);
+	const day = Number(m[3]);
+	if (mo < 1 || mo > 12 || day < 1 || day > 31) return null;
+	return new Date(y, mo - 1, day, d.getHours(), d.getMinutes());
+}
+
 /** Floors a minute count to a multiple of `step`. */
 export function floorToStep(minutes: number, step: number): number {
 	return Math.floor(minutes / step) * step;
