@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { CalendarContext } from './context.js';
+	import type { PendingSeriesEdit } from './eventTransaction.js';
 	import type { CalendarMessages } from './i18n.js';
 	import type {
 		BusinessHours,
@@ -26,11 +27,12 @@
 		startOfWeek
 	} from './date.js';
 	import EventDetails from './EventDetails.svelte';
+	import { transactEvent } from './eventTransaction.js';
 	import { formatters, localeFirstDay, messagesForLocale } from './i18n.js';
 	import { expandEvents } from './instances.js';
 	import QuickCreate from './QuickCreate.svelte';
 	import { normalizeRule } from './recurrence.js';
-	import { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';
+	import { excludeOccurrence } from './series.js';
 	import SeriesConfirm from './SeriesConfirm.svelte';
 	import Toolbar from './Toolbar.svelte';
 	import { fromZoned, toZoned } from './tz.js';
@@ -382,63 +384,54 @@
 	let quickPopover = $state<{ sel: RangeSelection; anchor: DOMRect } | null>(null);
 
 	// Pending “edit recurring event” confirmation after a drag/resize.
-	let seriesConfirm = $state<{
-		instance: EventInstance;
-		start: Date;
-		end: Date;
-		allDay: boolean;
-		anchor: DOMRect;
-		resourceId?: string;
-	} | null>(null);
+	let seriesConfirm = $state<(PendingSeriesEdit & { anchor: DOMRect }) | null>(null);
 
 	function confirmSeriesDetach() {
 		if (!seriesConfirm) return;
-		const { instance, start, end, allDay, resourceId } = seriesConfirm;
+		const pending = seriesConfirm;
 		seriesConfirm = null;
-		const target = events.find((ev) => ev.id === instance.event.id);
-		if (!target) return;
-		const { series, detached } = detachOccurrence(
-			target,
-			toReal(instance.start),
-			{ start: toReal(start), end: toReal(end), allDay },
-			crypto.randomUUID()
-		);
-		if (resourceId !== undefined) detached.resourceId = resourceId;
-		events = [...events.map((ev) => (ev === target ? series : ev)), detached];
-		onSeriesDetach?.({ series, detached, occurrence: toReal(instance.start) });
-		announceChange(detached.title, start, allDay);
+		const result = transactEvent({
+			kind: 'edit-series',
+			scope: 'occurrence',
+			events,
+			instances,
+			constraints: { eventOverlap, validRange },
+			pending: { instance: pending.instance, next: pending.next },
+			id: crypto.randomUUID(),
+			toReal
+		});
+		if (result.kind !== 'series-detached') return;
+		events = result.events;
+		onSeriesDetach?.({
+			series: result.series,
+			detached: result.detached,
+			occurrence: result.occurrence
+		});
+		announceChange(result.detached.title, pending.next.start, pending.next.allDay);
 	}
 
 	function confirmSeriesSplit() {
 		if (!seriesConfirm) return;
-		const { instance, start, end, allDay, resourceId } = seriesConfirm;
+		const pending = seriesConfirm;
 		seriesConfirm = null;
-		const target = events.find((ev) => ev.id === instance.event.id);
-		if (!target) return;
-		const { truncated, created } = splitSeries(
-			target,
-			toReal(instance.start),
-			{ start: toReal(start), end: toReal(end), allDay },
-			crypto.randomUUID()
-		);
-		if (resourceId !== undefined) created.resourceId = resourceId;
-		events = truncated
-			? [...events.map((ev) => (ev === target ? truncated : ev)), created]
-			: events.map((ev) => (ev === target ? created : ev));
-		onSeriesSplit?.({ truncated, created, occurrence: toReal(instance.start) });
-		announceChange(created.title, start, allDay);
-	}
-
-	/** True when a timed range would collide with another visible timed event. */
-	function violatesOverlap(start: Date, end: Date, allDay: boolean, excludeId?: string): boolean {
-		if (eventOverlap || allDay) return false;
-		return instances.some(
-			(i) =>
-				!i.allDay
-					&& i.event.id !== excludeId
-					&& i.start.getTime() < end.getTime()
-					&& start.getTime() < i.end.getTime()
-		);
+		const result = transactEvent({
+			kind: 'edit-series',
+			scope: 'following',
+			events,
+			instances,
+			constraints: { eventOverlap, validRange },
+			pending: { instance: pending.instance, next: pending.next },
+			id: crypto.randomUUID(),
+			toReal
+		});
+		if (result.kind !== 'series-split') return;
+		events = result.events;
+		onSeriesSplit?.({
+			truncated: result.truncated,
+			created: result.created,
+			occurrence: result.occurrence
+		});
+		announceChange(result.created.title, pending.next.start, pending.next.allDay);
 	}
 
 	function announceChange(title: string, start: Date, allDay: boolean) {
@@ -453,62 +446,53 @@
 		anchor?: DOMRect,
 		resourceId?: string
 	) {
-		if (!isDayAllowed(startOfDay(start))) return;
-		if (violatesOverlap(start, end, allDay ?? instance.allDay, instance.event.id)) return;
-		if (instance.isRecurring) {
+		const result = transactEvent({
+			kind: 'edit',
+			events,
+			instances,
+			constraints: { eventOverlap, validRange },
+			instance,
+			next: {
+				start,
+				end,
+				allDay: allDay ?? instance.allDay,
+				...(resourceId !== undefined ? { resourceId } : {})
+			},
+			toReal
+		});
+		if (result.kind === 'needs-series-choice') {
 			// Editing one occurrence needs a decision — confirm before applying.
 			const fallback = new DOMRect(window.innerWidth / 2, window.innerHeight / 2, 1, 1);
 			detailsPopover = null;
 			quickPopover = null;
-			seriesConfirm = {
-				instance,
-				start,
-				end,
-				allDay: allDay ?? instance.allDay,
-				anchor: anchor ?? fallback,
-				resourceId
-			};
+			seriesConfirm = { ...result.pending, anchor: anchor ?? fallback };
 			return;
 		}
-		const target = events.find((ev) => ev.id === instance.event.id);
-		if (!target) return;
-		const oldStart = target.start;
-		const oldEnd = target.end;
-		const oldAllDay = target.allDay ?? false;
-		const oldResourceId = target.resourceId;
-		const nextAllDay = allDay ?? oldAllDay;
-		const realStart = toReal(start);
-		const realEnd = toReal(end);
-		const nextResourceId = resourceId ?? oldResourceId;
-		if (
-			oldStart.getTime() === realStart.getTime()
-			&& oldEnd.getTime() === realEnd.getTime()
-			&& oldAllDay === nextAllDay
-			&& oldResourceId === nextResourceId
-		) {
-			return;
-		}
-		const updated: CalendarEvent = {
-			...target,
-			start: realStart,
-			end: realEnd,
-			allDay: nextAllDay,
-			...(nextResourceId !== undefined ? { resourceId: nextResourceId } : {})
-		};
-		events = events.map((ev) => (ev === target ? updated : ev));
-		announceChange(updated.title, start, nextAllDay);
+		if (result.kind !== 'updated') return;
+		const updated = result.event;
+		const { previous } = result;
+		events = result.events;
+		announceChange(updated.title, start, updated.allDay ?? false);
 		onEventChange?.({
 			event: updated,
-			oldStart,
-			oldEnd,
-			start: realStart,
-			end: realEnd,
-			allDay: nextAllDay,
-			...(resourceId !== undefined ? { resourceId: nextResourceId, oldResourceId } : {}),
+			oldStart: previous.start,
+			oldEnd: previous.end,
+			start: updated.start,
+			end: updated.end,
+			allDay: updated.allDay ?? false,
+			...(resourceId !== undefined
+				? { resourceId: updated.resourceId, oldResourceId: previous.resourceId }
+				: {}),
 			revert: () => {
 				events = events.map((ev) =>
 					ev.id === updated.id
-						? { ...ev, start: oldStart, end: oldEnd, allDay: oldAllDay, resourceId: oldResourceId }
+						? {
+							...ev,
+							start: previous.start,
+							end: previous.end,
+							allDay: previous.allDay,
+							resourceId: previous.resourceId
+						}
 						: ev
 				);
 			}
@@ -516,17 +500,20 @@
 	}
 
 	function createEvent(data: Omit<CalendarEvent, 'id'> & { id?: string }) {
-		if (!isDayAllowed(startOfDay(data.start))) return;
-		if (violatesOverlap(data.start, data.end, data.allDay ?? false)) return;
-		const event: CalendarEvent = {
-			id: data.id ?? crypto.randomUUID(),
-			...data,
-			start: toReal(data.start),
-			end: toReal(data.end)
-		};
-		events = [...events, event];
-		onEventCreate?.(event);
-		announceChange(event.title, data.start, data.allDay ?? false);
+		const { id = crypto.randomUUID(), ...draft } = data;
+		const result = transactEvent({
+			kind: 'create',
+			events,
+			instances,
+			constraints: { eventOverlap, validRange },
+			id,
+			draft,
+			toReal
+		});
+		if (result.kind !== 'created') return;
+		events = result.events;
+		onEventCreate?.(result.event);
+		announceChange(result.event.title, data.start, data.allDay ?? false);
 	}
 
 	function deleteEvent(instance: EventInstance) {
