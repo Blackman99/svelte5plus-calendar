@@ -18,6 +18,11 @@ A full-featured, zero-dependency calendar component for **Svelte 5** — month, 
 
 > 📖 **Docs with live examples:** https://blackman99.github.io/svelte5plus-calendar/
 
+
+<p align="center">
+  <img src="docs/design/demo.gif" alt="svelte5plus-calendar demo — month/week/day/year/agenda/resources" width="720" />
+</p>
+
 ## Features
 
 - 🗓 **Six views** — month (spanning multi-day bars, `+N more` popovers), week & day time grids, year overview, agenda list, and a **resources view** (rooms/people columns) for booking apps
@@ -173,6 +178,18 @@ Requires Svelte 5. Styles are imported automatically.
 **Also exported:** `MiniCalendar` (standalone month picker), `parseRRule`, `expandRecurrence`, `expandEvents`, `layoutDay`, `layoutWeekRow`, date utilities, and all TypeScript types.
 
 Full reference: see the **API Reference** page in the docs site.
+
+
+## Compared to…
+
+Honest matrix vs SVAR, Schedule-X, @event-calendar/core, and FullCalendar: **[docs/comparison.md](docs/comparison.md)**.
+
+**Killer line:** zero-dep Svelte 5 calendar — **MIT features SVAR puts behind PRO** (agenda / year / resources + recurrence). Resources here are **column-style** rooms/people (not a horizontal Timeline yet).
+
+
+<p align="center">
+  <img src="docs/design/compare-sheet.png" alt="svelte5plus-calendar vs SVAR / Schedule-X / FullCalendar comparison sheet" width="900" />
+</p>
 
 ## Contributing
 
