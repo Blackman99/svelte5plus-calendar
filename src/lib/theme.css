@@ -39,6 +39,7 @@
 	--s5c-non-business: color-mix(in srgb, var(--s5c-text-faint) 8%, transparent);
 
 	/* shape & type */
+	--s5c-time-gutter: 56px;
 	--s5c-font:
 		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
 		'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -415,7 +416,7 @@
 	border-bottom: 1px solid var(--s5c-border);
 }
 .s5c-tg-gutter {
-	width: 56px;
+	width: var(--s5c-time-gutter);
 	flex: none;
 }
 .s5c-tg-head-day {
@@ -486,7 +487,7 @@
 	display: flex;
 }
 .s5c-tg-times {
-	width: 56px;
+	width: var(--s5c-time-gutter);
 	flex: none;
 	position: relative;
 }
@@ -995,9 +996,8 @@
 	}
 }
 @media (max-width: 640px) {
-	.s5c-tg-gutter,
-	.s5c-tg-times {
-		width: 44px;
+	.s5c {
+		--s5c-time-gutter: 44px;
 	}
 	.s5c-agenda-date {
 		width: 64px;

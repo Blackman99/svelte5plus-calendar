@@ -28,7 +28,7 @@
 	const totalH = $derived(((endMin - startMin) / 60) * ctx.hourHeight);
 	const minToY = (min: number) => ((min - startMin) / 60) * ctx.hourHeight;
 
-	const headerCols = $derived(`56px repeat(${n}, minmax(0,1fr))`);
+	const headerCols = $derived(`var(--s5c-time-gutter) repeat(${n}, minmax(0,1fr))`);
 	const bodyCols = $derived(`repeat(${n}, minmax(0,1fr))`);
 
 	// ---- instances --------------------------------------------------------
@@ -446,7 +446,7 @@
 				onkeydown={() => {}}
 			></div>
 		{/each}
-		<div class="s5c-allday-events" style="left:56px">
+		<div class="s5c-allday-events" style="left:var(--s5c-time-gutter)">
 			{#each allDayLayout.segments as seg (seg.instance.key)}
 				<div
 					class="s5c-seg"

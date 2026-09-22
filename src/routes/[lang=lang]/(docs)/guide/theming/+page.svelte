@@ -63,6 +63,7 @@
 		<tr><td><code>--s5c-red … --s5c-pink</code></td><td>{t('The 10 palette colors used by events.', '事件使用的 10 个调色板颜色。')}</td></tr>
 		<tr><td><code>--s5c-font / --s5c-font-size</code></td><td>{t('Typography.', '字体排印。')}</td></tr>
 		<tr><td><code>--s5c-radius / --s5c-event-radius</code></td><td>{t('Corner radii for chrome and events.', '组件与事件的圆角。')}</td></tr>
+		<tr><td><code>--s5c-time-gutter</code></td><td>{t('Width of the hour-label column in day, week and resource views. Header, all-day lane and time column share it, so overriding it keeps them aligned. Narrows to 44px below 640px.', '日、周、资源视图里时标列的宽度。表头、全天栏和时标列共用这一宽度，覆盖后仍保持对齐。视口窄于 640px 时收为 44px。')}</td></tr>
 	</tbody>
 </table>
 

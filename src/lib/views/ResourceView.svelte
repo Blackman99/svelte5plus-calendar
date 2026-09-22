@@ -24,7 +24,7 @@
 	const totalH = $derived(((endMin - startMin) / 60) * ctx.hourHeight);
 	const minToY = (min: number) => ((min - startMin) / 60) * ctx.hourHeight;
 
-	const headerCols = $derived(`56px repeat(${n}, minmax(0,1fr))`);
+	const headerCols = $derived(`var(--s5c-time-gutter) repeat(${n}, minmax(0,1fr))`);
 	const bodyCols = $derived(`repeat(${n}, minmax(0,1fr))`);
 
 	/** Timed instances of the day, laid out per resource column. */
