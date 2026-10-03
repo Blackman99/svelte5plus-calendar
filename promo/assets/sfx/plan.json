@@ -1,0 +1,242 @@
+[
+	[
+		"air-pass",
+		1.0,
+		2.5,
+		"peak",
+		"chip wall hits with the groove (bar 19 downbeat)"
+	],
+	[
+		"pop-whoosh",
+		1.5,
+		3,
+		"onset",
+		"chips collapse into the code card"
+	],
+	[
+		"typing",
+		1.95,
+		2,
+		"onset",
+		"<Calendar … /> typed"
+	],
+	[
+		"swoosh-short",
+		3.45,
+		2.5,
+		"peak",
+		"code card becomes the calendar"
+	],
+	[
+		"pop-bright",
+		4.32,
+		4,
+		"onset",
+		"Release sync lands in the month"
+	],
+	[
+		"air-pass",
+		5.1,
+		2,
+		"peak",
+		"ring of views swings in"
+	],
+	[
+		"detent",
+		5.55,
+		-3.0,
+		"onset",
+		"carousel step"
+	],
+	[
+		"detent",
+		6.05,
+		-3.0,
+		"onset",
+		"carousel step (trimmed −5 dB: critic 4)",
+		-5.0
+	],
+	[
+		"detent",
+		6.55,
+		-3.0,
+		"onset",
+		"carousel step"
+	],
+	[
+		"detent",
+		7.05,
+		-3.0,
+		"onset",
+		"carousel step (trimmed −5 dB: critic 4)",
+		-5.0
+	],
+	[
+		"detent",
+		7.55,
+		-3.0,
+		"onset",
+		"carousel step"
+	],
+	[
+		"swoosh-short",
+		8.22,
+		2,
+		"peak",
+		"dive into the week"
+	],
+	[
+		"click",
+		8.76,
+		3,
+		"onset",
+		"grab"
+	],
+	[
+		"seat",
+		9.62,
+		3,
+		"onset",
+		"drop"
+	],
+	[
+		"click",
+		10.03,
+		3,
+		"onset",
+		"grab the bottom edge"
+	],
+	[
+		"seat",
+		10.55,
+		3,
+		"onset",
+		"resize released"
+	],
+	[
+		"swoosh-short",
+		10.95,
+		2,
+		"peak",
+		"pull back"
+	],
+	[
+		"typing",
+		11.2,
+		2,
+		"onset",
+		"recurrence rule typed"
+	],
+	[
+		"pop-bright",
+		11.75,
+		4.5,
+		"onset",
+		"occurrence appears"
+	],
+	[
+		"pop-bright",
+		12.0,
+		4.5,
+		"onset",
+		"occurrence appears"
+	],
+	[
+		"pop-bright",
+		12.25,
+		4.5,
+		"onset",
+		"occurrence appears"
+	],
+	[
+		"pop-bright",
+		12.5,
+		4.5,
+		"onset",
+		"occurrence appears"
+	],
+	[
+		"wipe",
+		13.12,
+		-1.0,
+		"peak",
+		"dark-mode wipe (low-passed 1.5 kHz)"
+	],
+	[
+		"swoosh-short",
+		13.9,
+		2,
+		"peak",
+		"grid folds into the header strip"
+	],
+	[
+		"detent",
+		14.3,
+		-3.0,
+		"onset",
+		"language flips (every other)"
+	],
+	[
+		"detent",
+		14.9,
+		-3.0,
+		"onset",
+		"language flips (every other)"
+	],
+	[
+		"detent",
+		15.5,
+		-3.0,
+		"onset",
+		"language flips (every other)"
+	],
+	[
+		"tick",
+		16.45,
+		3,
+		"onset",
+		"time zone starts stepping"
+	],
+	[
+		"seat",
+		16.93,
+		2.5,
+		"onset",
+		"lands on Europe/London"
+	],
+	[
+		"pop-hard",
+		17.5,
+		4,
+		"onset",
+		"cut to the zero"
+	],
+	[
+		"air-pass",
+		19.3,
+		3,
+		"peak",
+		"through the zero onto the logo"
+	],
+	[
+		"seat",
+		19.82,
+		2.5,
+		"onset",
+		"install command lands"
+	],
+	[
+		"swoosh-short",
+		20.8,
+		2,
+		"peak",
+		"pill flies home"
+	],
+	[
+		"seat",
+		21.0,
+		3,
+		"onset",
+		"pill seats on the final downbeat"
+	]
+]

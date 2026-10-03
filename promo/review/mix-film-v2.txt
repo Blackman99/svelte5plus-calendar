@@ -1,0 +1,35 @@
+music-only -15.0 LUFS (LRA 2.3); mix -14.5 LUFS, LRA 3.1, true peak -1.4 dBFS; 34 effects; cues [(0.0, 37.128, 21.0), (21.0, 94.128, 3.5)]
+  1.00 air-pass      peak  band   183-  868 Hz  target +2.5  in-band  +4.0 dB  2-8k  +0.3 dB  gain 0.908  chip wall hits with the groove (bar 19 downbeat)
+  1.62 pop-whoosh    onset band   166- 1004 Hz  target +3.0  in-band  +4.2 dB  2-8k  +0.0 dB  gain 0.776  chips collapse into the code card
+  1.95 typing        onset band   953- 1906 Hz  target +2.0  in-band  +3.4 dB  2-8k  +0.0 dB  gain 1.084  <Calendar … /> typed
+  3.45 swoosh-short  peak  band   329-  658 Hz  target +2.5  in-band  +3.1 dB  2-8k  -0.0 dB  gain 0.405  code card becomes the calendar
+  4.32 pop-bright    onset band   491-  982 Hz  target +4.0  in-band  +4.4 dB  2-8k  +0.2 dB  gain 0.705  Release sync lands in the month
+  5.10 air-pass      peak  band   183-  868 Hz  target +2.0  in-band  +3.3 dB  2-8k  +1.0 dB  gain 0.830  ring of views swings in
+  5.55 detent        onset band  2082- 4165 Hz  target +2.0  in-band  +3.2 dB  2-8k  +3.4 dB  gain 1.766  carousel step
+  6.05 detent        onset band  2082- 4165 Hz  target +2.0  in-band  +2.3 dB  2-8k  +2.6 dB  gain 1.759  carousel step
+  6.55 detent        onset band  2082- 4165 Hz  target +2.0  in-band  +4.0 dB  2-8k  +3.7 dB  gain 1.829  carousel step
+  7.05 detent        onset band  2082- 4165 Hz  target +2.0  in-band  +2.4 dB  2-8k  +2.5 dB  gain 2.175  carousel step
+  7.55 detent        onset band  2082- 4165 Hz  target +2.0  in-band  +2.6 dB  2-8k  +3.3 dB  gain 1.878  carousel step
+  8.22 swoosh-short  peak  band   329-  658 Hz  target +2.0  in-band  +2.4 dB  2-8k  +0.0 dB  gain 0.255  dive into the week
+  8.76 click         onset band  1045- 2090 Hz  target +3.0  in-band  +3.4 dB  2-8k  +0.0 dB  gain 0.752  grab
+  9.62 seat          onset band   611- 1223 Hz  target +3.0  in-band  +4.8 dB  2-8k  +0.0 dB  gain 1.046  drop
+ 10.03 click         onset band  1045- 2090 Hz  target +3.0  in-band  +3.6 dB  2-8k  -0.0 dB  gain 0.505  grab the bottom edge
+ 10.55 seat          onset band   611- 1223 Hz  target +3.0  in-band  +4.8 dB  2-8k  +0.0 dB  gain 1.741  resize released
+ 10.95 swoosh-short  peak  band   329-  658 Hz  target +2.0  in-band  +2.9 dB  2-8k  +0.0 dB  gain 0.302  pull back
+ 11.20 typing        onset band   953- 1906 Hz  target +2.0  in-band  +3.3 dB  2-8k  +0.0 dB  gain 1.932  recurrence rule typed
+ 11.75 pop-bright    onset band   491-  982 Hz  target +4.5  in-band  +4.6 dB  2-8k  +0.5 dB  gain 0.611  occurrence appears
+ 12.00 pop-bright    onset band   491-  982 Hz  target +4.5  in-band  +5.7 dB  2-8k  +0.3 dB  gain 0.415  occurrence appears
+ 12.25 pop-bright    onset band   491-  982 Hz  target +4.5  in-band  +5.5 dB  2-8k  +0.3 dB  gain 0.530  occurrence appears
+ 12.50 pop-bright    onset band   491-  982 Hz  target +4.5  in-band  +4.6 dB  2-8k  +0.7 dB  gain 0.960  occurrence appears
+ 13.12 wipe          peak  band  2255- 4511 Hz  target +1.5  in-band  +0.1 dB  2-8k  +2.4 dB  gain 3.513  dark-mode wipe (low-passed 4 kHz)
+ 14.45 swoosh-short  peak  band   329-  658 Hz  target +2.0  in-band  +2.4 dB  2-8k  -0.0 dB  gain 0.416  grid folds into the header strip
+ 14.90 detent        onset band  2082- 4165 Hz  target +1.5  in-band  +2.1 dB  2-8k  +1.7 dB  gain 1.909  language flips (every other)
+ 15.50 detent        onset band  2082- 4165 Hz  target +1.5  in-band  +3.5 dB  2-8k  +2.8 dB  gain 2.544  language flips (every other)
+ 16.10 detent        onset band  2082- 4165 Hz  target +1.5  in-band  +2.4 dB  2-8k  +2.5 dB  gain 1.565  language flips (every other)
+ 17.00 tick          onset band  1965- 3930 Hz  target +3.0  in-band  +4.4 dB  2-8k  +3.8 dB  gain 1.660  time zone starts stepping
+ 17.48 seat          onset band   611- 1223 Hz  target +2.5  in-band  +4.7 dB  2-8k  -0.0 dB  gain 1.168  lands on Europe/London
+ 18.50 pop-hard      onset band   623- 1247 Hz  target +4.0  in-band  +4.5 dB  2-8k  +0.8 dB  gain 0.528  cut to the zero
+ 20.30 air-pass      peak  band   183-  868 Hz  target +3.0  in-band  +3.8 dB  2-8k  +2.6 dB  gain 0.474  through the zero onto the logo
+ 20.82 seat          onset band   611- 1223 Hz  target +2.5  in-band  +3.3 dB  2-8k  +0.0 dB  gain 1.159  install command lands
+ 22.78 swoosh-short  peak  band   329-  658 Hz  target +2.0  in-band  +3.6 dB  2-8k  +0.1 dB  gain 0.640  pill swings home
+ 23.00 seat          onset band   611- 1223 Hz  target +3.0  in-band  +3.3 dB  2-8k  +0.0 dB  gain 1.224  pill seats on the final downbeat

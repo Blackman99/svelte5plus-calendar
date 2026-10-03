@@ -7,6 +7,7 @@ Thanks for your interest in improving svelte5plus-calendar!
 - `src/lib/` — the published component library (zero runtime dependencies)
 - `src/routes/` — the bilingual documentation site (SvelteKit, prerendered)
 - `src/docs/` — docs-site components and the live examples shown on every page
+- `promo/` — the launch film, rendered from the real component (see `promo/README.md`); not published
 
 ## Development
 

@@ -1,0 +1,6 @@
+node_modules
+renders
+# Licensed library audio: used inside the film, never redistributed as standalone files.
+assets/music/*.mp3
+assets/sfx/*.mp3
+assets/sfx/*.wav

@@ -1,0 +1,14 @@
+{
+	"name": "svelte5plus-calendar-promo",
+	"type": "module",
+	"private": true,
+	"description": "Launch film for svelte5plus-calendar — every frame is the real component rendered in Chromium.",
+	"scripts": {
+		"dev": "../node_modules/.bin/vite --config vite.config.ts",
+		"render": "node tools/render.mjs",
+		"mix": "python3 tools/offline-mix.py"
+	},
+	"devDependencies": {
+		"playwright-core": "^1.55.0"
+	}
+}

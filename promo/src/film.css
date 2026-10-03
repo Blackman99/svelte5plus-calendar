@@ -1,0 +1,29 @@
+:root {
+	--blue: #0f3cd9;
+	--blue-deep: #0a2ca8;
+	--blue-bright: #2b54ee;
+	--amber: #ffb52e;
+	--ink: #0b1640;
+	--paper: #f4f6fc;
+	--display: -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', sans-serif;
+	--mono: ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+html,
+body {
+	margin: 0;
+	width: 1920px;
+	height: 1080px;
+	overflow: hidden;
+	background: var(--blue);
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Every pixel must be a function of the seek clock: no CSS-driven motion anywhere. */
+*,
+*::before,
+*::after {
+	transition: none !important;
+	animation: none !important;
+	caret-color: transparent !important;
+}
