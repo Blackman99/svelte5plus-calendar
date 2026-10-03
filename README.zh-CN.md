@@ -18,6 +18,8 @@
 
 > 📖 **带在线示例的完整文档：** https://blackman99.github.io/svelte5plus-calendar/zh/
 
+https://github.com/user-attachments/assets/39d24356-4a02-4951-8c11-32a6548545b9
+
 ## 功能特性
 
 - 🗓 **六种视图** —— 月视图（跨天长条 + “还有 N 项”弹层）、周/日时间网格、年概览、议程列表，以及面向预约场景的**资源视图**（按会议室/人员分列）

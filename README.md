@@ -19,9 +19,7 @@ A full-featured, zero-dependency calendar component for **Svelte 5** — month, 
 > 📖 **Docs with live examples:** https://blackman99.github.io/svelte5plus-calendar/
 
 
-<p align="center">
-  <img src="docs/design/demo.gif" alt="svelte5plus-calendar demo — month/week/day/year/agenda/resources" width="720" />
-</p>
+https://github.com/user-attachments/assets/39d24356-4a02-4951-8c11-32a6548545b9
 
 ## Features
 
