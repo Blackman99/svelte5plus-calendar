@@ -56,6 +56,56 @@ describe('layoutDay (time-grid column packing)', () => {
 		expect(placements[0].startMin).toBe(0);
 		expect(placements[0].endMin).toBe(120);
 	});
+
+	describe('minDuration (blocks drawn taller than their real duration)', () => {
+		// 30-min routines drawn 48px tall at 56px/h ⇒ each visually lasts ~51 min.
+		const routines = () => [
+			inst(at(8, 30), at(9), false, 'A'),
+			inst(at(9), at(9, 30), false, 'B'),
+			inst(at(9), at(9, 30), false, 'C')
+		];
+
+		it('without it, back-to-back blocks are separate clusters (regression guard)', () => {
+			const byTitle = Object.fromEntries(
+				layoutDay(routines(), day).map((p) => [p.instance.event.title, p])
+			);
+			expect(byTitle.A.cols).toBe(1);
+			expect(byTitle.B.cols).toBe(2);
+		});
+
+		it('packs on the visual extent so a tall block never covers its neighbours', () => {
+			const placements = layoutDay(routines(), day, { minDuration: (48 / 56) * 60 });
+			expect(placements.map((p) => p.cols)).toEqual([3, 3, 3]);
+			expect(new Set(placements.map((p) => p.col))).toEqual(new Set([0, 1, 2]));
+		});
+
+		it('leaves startMin / endMin as the real times', () => {
+			const placements = layoutDay(routines(), day, { minDuration: 60 });
+			const a = placements.find((p) => p.instance.event.title === 'A')!;
+			expect([a.startMin, a.endMin]).toEqual([510, 540]);
+			expect(Object.keys(a)).not.toContain('packEnd');
+		});
+
+		it('short back-to-back events split columns at the default 18px / 48px-per-hour', () => {
+			const placements = layoutDay(
+				[inst(at(9), at(9, 10)), inst(at(9, 10), at(9, 20))],
+				day,
+				{ minDuration: (18 / 48) * 60 }
+			);
+			expect(placements.map((p) => p.cols)).toEqual([2, 2]);
+		});
+
+		it('still reuses a column once the visual extent has passed', () => {
+			// Visual extent 22.5 min: 9:00 and 9:30 do not collide, 9:00 and 9:15 do.
+			const placements = layoutDay(
+				[inst(at(9), at(9, 5)), inst(at(9, 15), at(9, 20)), inst(at(9, 30), at(9, 35))],
+				day,
+				{ minDuration: 22.5 }
+			);
+			expect(placements.map((p) => p.col)).toEqual([0, 1, 0]);
+			expect(placements.every((p) => p.cols === 2)).toBe(true);
+		});
+	});
 });
 
 describe('layoutWeekRow (month/all-day segments)', () => {

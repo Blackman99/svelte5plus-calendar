@@ -154,6 +154,7 @@ npm install svelte5plus-calendar
 | `firstDayOfWeek` | `0–6` | 由 locale 推断 | 0 = 周日 |
 | `dayStartHour` / `dayEndHour` | `number` | `0` / `24` | 可见小时范围 |
 | `slotDuration` / `snapDuration` | 分钟 | `30` / `15` | 网格密度与吸附 |
+| `hourHeight` / `eventMinHeight` | px | `48` / `18` | 网格缩放与事件块最小高度（重叠排列会考虑它） |
 | `businessHours` | `boolean \| { days, startHour, endHour }` | `null` | 营业时间阴影 |
 | `dayMaxEvents` | `number` | `4` | 月格折叠阈值 |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | 详见文档 |

@@ -91,6 +91,12 @@
 		dayEndHour?: number;
 		/** Pixel height of one hour in the time grid. */
 		hourHeight?: number;
+		/**
+		 * Minimum pixel height of a timed event block. Shorter events are drawn
+		 * this tall, and overlap packing accounts for it so they never cover a
+		 * neighbour. Set this instead of a CSS `min-height` on `.s5c-block`.
+		 */
+		eventMinHeight?: number;
 		/** Hour scrolled into view when a time-grid view opens. */
 		scrollToHour?: number;
 		/** Shade non-working time. `true` = Mon–Fri 9–17. */
@@ -189,6 +195,7 @@
 		dayStartHour = 0,
 		dayEndHour = 24,
 		hourHeight = 48,
+		eventMinHeight = 18,
 		scrollToHour = 7,
 		businessHours = null,
 		editable = false,
@@ -626,6 +633,9 @@
 		},
 		get hourHeight() {
 			return hourHeight;
+		},
+		get eventMinHeight() {
+			return eventMinHeight;
 		},
 		get scrollToHour() {
 			return scrollToHour;

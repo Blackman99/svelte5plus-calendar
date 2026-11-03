@@ -28,14 +28,18 @@
 	const bodyCols = $derived(`repeat(${n}, minmax(0,1fr))`);
 
 	/** Timed instances of the day, laid out per resource column. */
-	const byResource = $derived(
-		cols.map((resource) => {
+	const byResource = $derived.by(() => {
+		// Blocks are drawn at least eventMinHeight tall; pack on that visual extent.
+		const minDuration = (ctx.eventMinHeight / ctx.hourHeight) * 60;
+		return cols.map((resource) => {
 			const timed = ctx.instances.filter(
 				(i) => !isAllDayLike(i) && i.event.resourceId === resource.id
 			);
-			return layoutDay(timed, day).filter((p) => p.endMin > startMin && p.startMin < endMin);
-		})
-	);
+			return layoutDay(timed, day, { minDuration }).filter(
+				(p) => p.endMin > startMin && p.startMin < endMin
+			);
+		});
+	});
 
 	const hours = $derived.by(() => {
 		const out: number[] = [];
@@ -330,7 +334,10 @@
 
 					{#each byResource[colIdx] as p (p.instance.key)}
 						{@const top = minToY(Math.max(p.startMin, startMin))}
-						{@const height = Math.max(minToY(Math.min(p.endMin, endMin)) - top, 18)}
+						{@const height = Math.max(
+							minToY(Math.min(p.endMin, endMin)) - top,
+							ctx.eventMinHeight
+						)}
 						{@const width = 100 / p.cols}
 						<button
 							type="button"
@@ -383,7 +390,7 @@
 								)}px; height:{Math.max(
 									minToY(Math.min(dragResult.endMin, endMin))
 										- minToY(Math.max(dragResult.startMin, startMin)),
-									18
+									ctx.eventMinHeight
 								)}px; left:0; width:calc(100% - 3px)"
 							>
 								<span class="s5c-ev-title">{drag.instance.event.title}</span>

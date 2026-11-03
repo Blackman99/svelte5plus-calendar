@@ -37,6 +37,7 @@
 		<tr><td><code>slotDuration</code></td><td><code>30</code></td><td>{t('Minutes between minor grid lines.', '次级网格线的分钟间隔。')}</td></tr>
 		<tr><td><code>snapDuration</code></td><td><code>15</code></td><td>{t('Snapping step for dragging, resizing and selecting.', '拖动、调整、框选时的吸附步长。')}</td></tr>
 		<tr><td><code>hourHeight</code></td><td><code>48</code></td><td>{t('Pixel height of one hour — the zoom level.', '每小时的像素高度，相当于缩放级别。')}</td></tr>
+		<tr><td><code>eventMinHeight</code></td><td><code>18</code></td><td>{t('Minimum pixel height of an event block. Short events are drawn this tall and packed as if they lasted that long.', '事件块的最小像素高度。短事件按此高度绘制，并按这段视觉时长参与重叠排列。')}</td></tr>
 		<tr><td><code>scrollToHour</code></td><td><code>7</code></td><td>{t('Hour scrolled into view when the grid opens.', '打开视图时自动滚动到的小时。')}</td></tr>
 		<tr><td><code>businessHours</code></td><td><code>null</code></td><td>{t('true = Mon–Fri 9–17, or { days, startHour, endHour }. Non-working time is shaded.', 'true 表示周一至五 9–17，或传 { days, startHour, endHour }。非工作时段置灰。')}</td></tr>
 		<tr><td><code>nowIndicator</code></td><td><code>true</code></td><td>{t('The red current-time line on today’s column, updated every 30 s.', '今日列上的红色当前时间线，每 30 秒刷新。')}</td></tr>
@@ -50,6 +51,13 @@
 	{t(
 		'Overlapping events are packed into columns per collision cluster — the same algorithm family used by Google and Apple calendars. Freed columns are reused, so a long event and two short consecutive ones only need two columns.',
 		'重叠事件按“碰撞簇”打包分列——与 Google、Apple 日历同族的算法。释放的列会被复用：一个长事件加两个前后相接的短事件只占两列。'
+	)}
+</p>
+
+<p>
+	{t(
+		'Packing uses what you see, not just the clock: a block shorter than eventMinHeight is drawn at that height, and it collides with anything it covers. If a custom eventContent needs taller blocks, raise eventMinHeight — a CSS min-height on .s5c-block makes blocks taller without the layout knowing, so they cover their neighbours.',
+		'排列依据的是实际看到的高度，而不只是时间：短于 eventMinHeight 的事件块按该高度绘制，它覆盖到的事件都算作重叠。如果自定义的 eventContent 需要更高的事件块，请调大 eventMinHeight——直接给 .s5c-block 设置 CSS min-height 只会让块变高，布局并不知道，结果就会盖住相邻事件。'
 	)}
 </p>
 
