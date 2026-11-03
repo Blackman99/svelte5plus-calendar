@@ -19,15 +19,31 @@ export interface TimedPlacement {
 	cols: number;
 }
 
+export interface LayoutDayOptions {
+	/**
+	 * Minimum duration, in minutes, an event occupies on screen. A block drawn
+	 * taller than its real duration (minimum block height) still collides with
+	 * whatever it covers, so packing treats each event as lasting at least this
+	 * long. It affects only `col` / `cols`; `startMin` / `endMin` stay the real
+	 * times. Default `0`.
+	 */
+	minDuration?: number;
+}
+
 /**
  * Packs the timed instances of a single day into columns.
  * Classic cluster algorithm: sort by start (longer first on ties), place each
  * event in the leftmost column free at its start; events connected by overlap
  * form a cluster and share the cluster's total column count.
  */
-export function layoutDay(instances: EventInstance[], day: Date): TimedPlacement[] {
+export function layoutDay(
+	instances: EventInstance[],
+	day: Date,
+	options: LayoutDayOptions = {}
+): TimedPlacement[] {
 	const dayStart = startOfDay(day);
 	const dayEnd = new Date(dayStart.getTime() + 86_400_000);
+	const minDuration = Math.max(0, options.minDuration ?? 0);
 
 	const items = instances
 		.map((instance) => {
@@ -35,12 +51,14 @@ export function layoutDay(instances: EventInstance[], day: Date): TimedPlacement
 			const e = Math.min(instance.end.getTime(), dayEnd.getTime());
 			const startMin = Math.floor((s - dayStart.getTime()) / 60_000);
 			const endMin = Math.max(startMin + 1, Math.ceil((e - dayStart.getTime()) / 60_000));
-			return { instance, startMin, endMin, col: 0, cols: 1 };
+			// Where the block visually ends: packing works on this, not endMin.
+			const packEnd = Math.max(endMin, startMin + minDuration);
+			return { instance, startMin, endMin, packEnd, col: 0, cols: 1 };
 		})
-		.sort((a, b) => a.startMin - b.startMin || b.endMin - a.endMin);
+		.sort((a, b) => a.startMin - b.startMin || b.packEnd - a.packEnd || b.endMin - a.endMin);
 
 	// Assign columns greedily; track cluster membership.
-	const colEnds: number[] = []; // per column: end minute of the last event placed
+	const colEnds: number[] = []; // per column: visual end minute of the last event placed
 	let clusterStart = 0; // index of first item in current cluster
 	let clusterMaxEnd = -1;
 	let clusterCols = 0;
@@ -61,21 +79,21 @@ export function layoutDay(instances: EventInstance[], day: Date): TimedPlacement
 		for (let c = 0; c < colEnds.length; c++) {
 			if (item.startMin >= colEnds[c]) {
 				item.col = c;
-				colEnds[c] = item.endMin;
+				colEnds[c] = item.packEnd;
 				placed = true;
 				break;
 			}
 		}
 		if (!placed) {
 			item.col = colEnds.length;
-			colEnds.push(item.endMin);
+			colEnds.push(item.packEnd);
 		}
 		clusterCols = Math.max(clusterCols, colEnds.length);
-		clusterMaxEnd = Math.max(clusterMaxEnd, item.endMin);
+		clusterMaxEnd = Math.max(clusterMaxEnd, item.packEnd);
 	});
 	closeCluster(items.length);
 
-	return items;
+	return items.map(({ packEnd: _p, ...placement }) => placement);
 }
 
 /** A horizontal bar spanning one or more day cells within a single week row. */

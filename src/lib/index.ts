@@ -27,7 +27,7 @@ export { type CalendarMessages, en, localeFirstDay, messagesForLocale, zhCN } fr
 export { parseICS, toICS } from './ics.js';
 export { expandEvents, PALETTE } from './instances.js';
 export { layoutDay, layoutWeekRow } from './layout.js';
-export type { TimedPlacement, WeekRowLayout, WeekSegment } from './layout.js';
+export type { LayoutDayOptions, TimedPlacement, WeekRowLayout, WeekSegment } from './layout.js';
 export { default as MiniCalendar } from './MiniCalendar.svelte';
 export { expandRecurrence, parseRRule, serializeRRule } from './recurrence.js';
 export { detachOccurrence, excludeOccurrence, splitSeries } from './series.js';

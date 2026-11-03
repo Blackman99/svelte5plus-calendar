@@ -58,6 +58,7 @@
 		<tr><td><code>dayStartHour</code> / <code>dayEndHour</code></td><td><code>number</code></td><td><code>0</code> / <code>24</code></td></tr>
 		<tr><td><code>slotDuration</code> / <code>snapDuration</code></td><td><code>number</code> {t('(minutes)', '（分钟）')}</td><td><code>30</code> / <code>15</code></td></tr>
 		<tr><td><code>hourHeight</code></td><td><code>number</code> (px)</td><td><code>48</code></td></tr>
+		<tr><td><code>eventMinHeight</code></td><td><code>number</code> (px)</td><td><code>18</code></td></tr>
 		<tr><td><code>scrollToHour</code></td><td><code>number</code></td><td><code>7</code></td></tr>
 		<tr><td><code>businessHours</code></td><td><code>boolean | BusinessHours</code></td><td><code>null</code></td></tr>
 		<tr><td><code>nowIndicator</code></td><td><code>boolean</code></td><td><code>true</code></td></tr>

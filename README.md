@@ -161,6 +161,7 @@ Requires Svelte 5. Styles are imported automatically.
 | `firstDayOfWeek` | `0–6` | from locale | 0 = Sunday |
 | `dayStartHour` / `dayEndHour` | `number` | `0` / `24` | visible hours |
 | `slotDuration` / `snapDuration` | minutes | `30` / `15` | grid & snapping |
+| `hourHeight` / `eventMinHeight` | px | `48` / `18` | grid zoom & shortest block (overlap packing respects it) |
 | `businessHours` | `boolean \| { days, startHour, endHour }` | `null` | shading |
 | `dayMaxEvents` | `number` | `4` | month-cell rows before `+N more` |
 | `weekNumbers` / `weekends` / `fixedWeeks` / `nowIndicator` / `hour12` / `agendaDays` / `views` / `header` / `messages` | — | — | see docs |

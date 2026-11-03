@@ -48,8 +48,12 @@
 			if (sIdx > eIdx) continue;
 			for (let d = sIdx; d <= eIdx; d++) buckets[d].push(i);
 		}
+		// Blocks are drawn at least eventMinHeight tall; pack on that visual extent.
+		const minDuration = (ctx.eventMinHeight / ctx.hourHeight) * 60;
 		return buckets.map((timed, d) =>
-			layoutDay(timed, days[d]).filter((p) => p.endMin > startMin && p.startMin < endMin)
+			layoutDay(timed, days[d], { minDuration }).filter(
+				(p) => p.endMin > startMin && p.startMin < endMin
+			)
 		);
 	});
 
@@ -509,7 +513,7 @@
 						{@const top = minToY(Math.max(p.startMin, startMin))}
 						{@const height = Math.max(
 							minToY(Math.min(p.endMin, endMin)) - top,
-							18
+							ctx.eventMinHeight
 						)}
 						{@const width = 100 / p.cols}
 						<button
@@ -568,7 +572,7 @@
 								)}px; height:{Math.max(
 									minToY(Math.min(dragResult.endMin, endMin))
 										- minToY(Math.max(dragResult.startMin, startMin)),
-									18
+									ctx.eventMinHeight
 								)}px; left:0; width:calc(100% - 3px)"
 							>
 								<span class="s5c-ev-title">{drag.instance.event.title}</span>

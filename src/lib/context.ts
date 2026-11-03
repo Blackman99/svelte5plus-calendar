@@ -40,6 +40,8 @@ export interface CalendarContext {
 	readonly dayStartHour: number;
 	readonly dayEndHour: number;
 	readonly hourHeight: number;
+	/** Minimum pixel height of a timed block (time grid & resource view). */
+	readonly eventMinHeight: number;
 	readonly scrollToHour: number;
 	readonly businessHours: BusinessHours | null;
 	readonly editable: boolean;
